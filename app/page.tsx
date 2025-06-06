@@ -643,8 +643,13 @@ export default function Page() {
                         <div className="bg-gray-50 rounded-lg p-6" data-oid="config-content">
                             {activeTab === 'send_msg' && renderSendMsgConfig()}
                             {activeTab === 'warning' && renderWarningConfig()}
-                            {activeTab === 'activity' && renderActivityConfig()}
+                            {activeTab === 'mission_pool' && renderMissionPoolConfig()}
+                            {activeTab === 'open_box' && renderOpenBoxConfig()}
+                            {activeTab === 'gift_hat' && renderGiftHatConfig()}
+                            {activeTab === 'birthday' && renderBirthdayConfig()}
                             {activeTab === 'stones' && renderStoneConfig()}
+                            {activeTab === 'wash_hands' && renderWashHandsConfig()}
+                            {activeTab === 'prop_img' && renderPropImgConfig()}
                         </div>
 
                         {/* API操作和状态 */}
