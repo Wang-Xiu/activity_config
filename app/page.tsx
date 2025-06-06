@@ -9,28 +9,87 @@ export default function Page() {
     const [activeTab, setActiveTab] = useState('send_msg');
     const [apiStatus, setApiStatus] = useState('');
 
-    // 模拟API请求
+    // 从API获取配置数据
     const fetchData = async () => {
         setApiStatus('正在获取数据...');
         try {
-            setTimeout(() => {
-                setApiStatus('数据获取成功');
-                setTimeout(() => setApiStatus(''), 2000);
-            }, 1000);
+            const response = await fetch('/api/config/get', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setConfig(result.data || defaultConfig);
+            setApiStatus('数据获取成功');
+            console.log('获取成功:', result);
+            
+            setTimeout(() => setApiStatus(''), 2000);
         } catch (error) {
-            setApiStatus('获取数据失败');
+            console.error('获取失败:', error);
+            setApiStatus('获取数据失败: ' + (error as Error).message);
+            setTimeout(() => setApiStatus(''), 3000);
         }
     };
 
     const submitData = async () => {
         setApiStatus('正在提交数据...');
         try {
-            setTimeout(() => {
-                setApiStatus('数据提交成功');
-                setTimeout(() => setApiStatus(''), 2000);
-            }, 1000);
+            // 调用真实的API接口
+            const response = await fetch('/api/config/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setApiStatus('数据提交成功');
+            console.log('保存成功:', result);
+            
+            setTimeout(() => setApiStatus(''), 2000);
         } catch (error) {
-            setApiStatus('提交数据失败');
+            console.error('保存失败:', error);
+            setApiStatus('提交数据失败: ' + (error as Error).message);
+            setTimeout(() => setApiStatus(''), 3000);
+        }
+    };
+=======
+    const submitData = async () => {
+        setApiStatus('正在提交数据...');
+        try {
+            // 调用真实的API接口
+            const response = await fetch('/api/config/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setApiStatus('数据提交成功');
+            console.log('保存成功:', result);
+            
+            setTimeout(() => setApiStatus(''), 2000);
+        } catch (error) {
+            console.error('保存失败:', error);
+            setApiStatus('提交数据失败: ' + (error as Error).message);
+            setTimeout(() => setApiStatus(''), 3000);
         }
     };
 
