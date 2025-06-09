@@ -79,13 +79,13 @@ export default function Page() {
     };
 
     const renderSendMsgConfig = () => (
-        <div className="space-y-6" data-oid=".j9s094">
-            <h3 className="text-lg font-medium mb-4" data-oid="a9v-oku">
+        <div className="space-y-6" data-oid="h45_h0o">
+            <h3 className="text-lg font-medium mb-4" data-oid="yj214ik">
                 发送消息配置
             </h3>
 
-            <div data-oid="e:bwxkr">
-                <label className="block text-sm font-medium mb-2" data-oid="_qkr0dh">
+            <div data-oid="r-ri7_.">
+                <label className="block text-sm font-medium mb-2" data-oid=":jvjrpx">
                     是否开启发送通知
                 </label>
                 <select
@@ -94,24 +94,24 @@ export default function Page() {
                         updateConfig('send_msg_config.send_msg', parseInt(e.target.value))
                     }
                     className="border border-gray-300 rounded px-3 py-2"
-                    data-oid=":h-fdk."
+                    data-oid="ylz65x8"
                 >
-                    <option value={1} data-oid="ctjsx-5">
+                    <option value={1} data-oid="wcl-70q">
                         开启
                     </option>
-                    <option value={0} data-oid="cwprh2-">
+                    <option value={0} data-oid="kdfpyy8">
                         关闭
                     </option>
                 </select>
             </div>
 
-            <div className="space-y-4" data-oid="biwvbs_">
-                <h4 className="font-medium" data-oid="py61htv">
+            <div className="space-y-4" data-oid=":glcxty">
+                <h4 className="font-medium" data-oid="ysk9w3m">
                     通知消息内容
                 </h4>
 
-                <div data-oid="5e1o94f">
-                    <label className="block text-sm font-medium mb-2" data-oid="aflft1q">
+                <div data-oid="e3rxg7:">
+                    <label className="block text-sm font-medium mb-2" data-oid="ystf0dl">
                         匹配完成消息
                     </label>
                     <textarea
@@ -120,12 +120,12 @@ export default function Page() {
                             updateConfig('send_msg_config.send_msg_info.match_done', e.target.value)
                         }
                         className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                        data-oid="d62::w."
+                        data-oid="w6jrzqm"
                     />
                 </div>
 
-                <div data-oid="jocayki">
-                    <label className="block text-sm font-medium mb-2" data-oid="ggtr-21">
+                <div data-oid="myyiq:p">
+                    <label className="block text-sm font-medium mb-2" data-oid=":cw.2wh">
                         周四提醒消息
                     </label>
                     <textarea
@@ -137,12 +137,12 @@ export default function Page() {
                             )
                         }
                         className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                        data-oid="oba27.4"
+                        data-oid="z-4ax3x"
                     />
                 </div>
 
-                <div data-oid="eem6xwl">
-                    <label className="block text-sm font-medium mb-2" data-oid="k19_67d">
+                <div data-oid="jmjvjy0">
+                    <label className="block text-sm font-medium mb-2" data-oid="o7od1ic">
                         差20点提醒消息
                     </label>
                     <textarea
@@ -154,12 +154,12 @@ export default function Page() {
                             )
                         }
                         className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                        data-oid="erhi9ez"
+                        data-oid="l7g2f-g"
                     />
                 </div>
 
-                <div data-oid="xzequp6">
-                    <label className="block text-sm font-medium mb-2" data-oid="223ze5f">
+                <div data-oid="uhae2wo">
+                    <label className="block text-sm font-medium mb-2" data-oid="0udz46g">
                         两天停滞提醒
                     </label>
                     <textarea
@@ -171,12 +171,12 @@ export default function Page() {
                             )
                         }
                         className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                        data-oid="0o0fvtw"
+                        data-oid="nda0xvf"
                     />
                 </div>
 
-                <div data-oid="82mr9cl">
-                    <label className="block text-sm font-medium mb-2" data-oid="nbd3cxe">
+                <div data-oid="r-harkf">
+                    <label className="block text-sm font-medium mb-2" data-oid="8p-3k30">
                         第四周提醒
                     </label>
                     <textarea
@@ -188,7 +188,7 @@ export default function Page() {
                             )
                         }
                         className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                        data-oid="purt8x4"
+                        data-oid=":p1ul25"
                     />
                 </div>
             </div>
@@ -196,13 +196,13 @@ export default function Page() {
     );
 
     const renderWarningConfig = () => (
-        <div className="space-y-6" data-oid="q04hcye">
-            <h3 className="text-lg font-medium mb-4" data-oid="djl1_:z">
+        <div className="space-y-6" data-oid="d6cfn.j">
+            <h3 className="text-lg font-medium mb-4" data-oid="x9wrwh7">
                 活动告警配置
             </h3>
 
-            <div data-oid="klaec51">
-                <label className="block text-sm font-medium mb-2" data-oid="mqkrkq2">
+            <div data-oid="o349ejl">
+                <label className="block text-sm font-medium mb-2" data-oid="o7y84a-">
                     是否开启告警邮件发送
                 </label>
                 <select
@@ -211,19 +211,19 @@ export default function Page() {
                         updateConfig('send_warning_config.send_warning', parseInt(e.target.value))
                     }
                     className="border border-gray-300 rounded px-3 py-2"
-                    data-oid="c6_7.5:"
+                    data-oid="sgn.o2u"
                 >
-                    <option value={1} data-oid="3t54mks">
+                    <option value={1} data-oid="da:mxig">
                         开启
                     </option>
-                    <option value={0} data-oid="ce_s1kd">
+                    <option value={0} data-oid="b3vne19">
                         关闭
                     </option>
                 </select>
             </div>
 
-            <div data-oid="psew31p">
-                <label className="block text-sm font-medium mb-2" data-oid="g11ngle">
+            <div data-oid="4lf7q0n">
+                <label className="block text-sm font-medium mb-2" data-oid="20gxg90">
                     告警产生的活动名
                 </label>
                 <input
@@ -233,12 +233,12 @@ export default function Page() {
                         updateConfig('send_warning_config.send_warning_act_name', e.target.value)
                     }
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="i0jac2:"
+                    data-oid="7ln.a.j"
                 />
             </div>
 
-            <div data-oid="11vg8ez">
-                <label className="block text-sm font-medium mb-2" data-oid="zt8pvld">
+            <div data-oid="bsim2fn">
+                <label className="block text-sm font-medium mb-2" data-oid="o7-8.mz">
                     告警邮件发送间隔(秒)
                 </label>
                 <input
@@ -248,12 +248,12 @@ export default function Page() {
                         updateConfig('send_warning_config.send_warning_interval', e.target.value)
                     }
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="r8fj4r3"
+                    data-oid="v7wtde-"
                 />
             </div>
 
-            <div data-oid="b6z:p_0">
-                <label className="block text-sm font-medium mb-2" data-oid="k:vqefz">
+            <div data-oid="xxlcoce">
+                <label className="block text-sm font-medium mb-2" data-oid="cljvv.0">
                     接口访问次数风控告警-指定时间内(秒)
                 </label>
                 <input
@@ -263,12 +263,12 @@ export default function Page() {
                         updateConfig('send_warning_config.report_time', e.target.value)
                     }
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="7k8qeh4"
+                    data-oid="tz8nlse"
                 />
             </div>
 
-            <div data-oid="zrxu6a3">
-                <label className="block text-sm font-medium mb-2" data-oid="714m-61">
+            <div data-oid="p7u3z2t">
+                <label className="block text-sm font-medium mb-2" data-oid="6:-7qbc">
                     接口访问次数风控告警-访问次数阈值
                 </label>
                 <input
@@ -276,24 +276,24 @@ export default function Page() {
                     value={config.send_warning_config.report_num}
                     onChange={(e) => updateConfig('send_warning_config.report_num', e.target.value)}
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="y.1sjiw"
+                    data-oid="t27ywhr"
                 />
             </div>
 
-            <div data-oid="3y6-vdi">
-                <label className="block text-sm font-medium mb-2" data-oid="bt1qd94">
+            <div data-oid="z080ssy">
+                <label className="block text-sm font-medium mb-2" data-oid="mm4th-u">
                     告警消息模板
                 </label>
                 <textarea
                     value={config.send_warning_config.msg_1}
                     onChange={(e) => updateConfig('send_warning_config.msg_1', e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                    data-oid="h:n6jfl"
+                    data-oid="f2zj0lx"
                 />
             </div>
 
-            <div data-oid="_yhetau">
-                <label className="block text-sm font-medium mb-2" data-oid="3c4-11r">
+            <div data-oid="j7f439s">
+                <label className="block text-sm font-medium mb-2" data-oid="47_.mhw">
                     礼物数量阈值
                 </label>
                 <input
@@ -303,38 +303,38 @@ export default function Page() {
                         updateConfig('send_warning_config.give_gift_num', e.target.value)
                     }
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="ayv6cd3"
+                    data-oid="1btitxv"
                 />
             </div>
         </div>
     );
 
     const renderMissionPoolConfig = () => (
-        <div className="space-y-8" data-oid="_10id-3">
-            <h3 className="text-lg font-medium mb-4" data-oid="jqmrf9w">
+        <div className="space-y-8" data-oid="duy06_r">
+            <h3 className="text-lg font-medium mb-4" data-oid="d5e1v1u">
                 任务池配置
             </h3>
 
             {/* 新用户任务池 */}
-            <div data-oid="rbaaju0">
-                <h4 className="font-medium mb-4 text-blue-600" data-oid="m9cfbdo">
+            <div data-oid="5c94j5m">
+                <h4 className="font-medium mb-4 text-blue-600" data-oid="ynweh7c">
                     新用户任务池
                 </h4>
-                <div className="space-y-4" data-oid="x7bd8pw">
+                <div className="space-y-4" data-oid="60mj.kw">
                     {Object.entries(config.act_config.mission_pool.new_user).map(([key, task]) => (
                         <div
                             key={key}
                             className="border border-gray-200 rounded p-4"
-                            data-oid="c-5i80a"
+                            data-oid="puj8uuz"
                         >
-                            <h5 className="font-medium mb-3" data-oid="jy1mzje">
+                            <h5 className="font-medium mb-3" data-oid="do63c5p">
                                 {key}
                             </h5>
-                            <div className="grid grid-cols-3 gap-4" data-oid="4qnad1:">
-                                <div data-oid="1a2x4.4">
+                            <div className="grid grid-cols-3 gap-4" data-oid="uuwi0mq">
+                                <div data-oid="tydvu.:">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="rdork-b"
+                                        data-oid="2urkfel"
                                     >
                                         描述
                                     </label>
@@ -348,13 +348,13 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="nas:m77"
+                                        data-oid="x8jlome"
                                     />
                                 </div>
-                                <div data-oid="mp-y513">
+                                <div data-oid="bl7s_7h">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="vwivc80"
+                                        data-oid="yic3y4-"
                                     >
                                         需要
                                     </label>
@@ -368,13 +368,13 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="_t.a20z"
+                                        data-oid="2.kcs2o"
                                     />
                                 </div>
-                                <div data-oid="t_s43-y">
+                                <div data-oid="k1vx7ad">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="huj_9_w"
+                                        data-oid="l676cl1"
                                     >
                                         获得
                                     </label>
@@ -388,7 +388,7 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="og98x.s"
+                                        data-oid="3k4jz7."
                                     />
                                 </div>
                             </div>
@@ -398,25 +398,25 @@ export default function Page() {
             </div>
 
             {/* 老用户任务池 */}
-            <div data-oid="1-7rr.3">
-                <h4 className="font-medium mb-4 text-green-600" data-oid="8n6i337">
+            <div data-oid="7fv4-vh">
+                <h4 className="font-medium mb-4 text-green-600" data-oid="zydlhms">
                     老用户任务池
                 </h4>
-                <div className="space-y-4" data-oid="4wl1r7s">
+                <div className="space-y-4" data-oid="w_wh3mf">
                     {Object.entries(config.act_config.mission_pool.old_user).map(([key, task]) => (
                         <div
                             key={key}
                             className="border border-gray-200 rounded p-4"
-                            data-oid="d5o05co"
+                            data-oid="nijq7bc"
                         >
-                            <h5 className="font-medium mb-3" data-oid="84bw7rq">
+                            <h5 className="font-medium mb-3" data-oid="n2-hbca">
                                 {key}
                             </h5>
-                            <div className="grid grid-cols-3 gap-4" data-oid="bk6:.xv">
-                                <div data-oid="8xxg58z">
+                            <div className="grid grid-cols-3 gap-4" data-oid="up.7pcn">
+                                <div data-oid="n6.usi2">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="31_iuyh"
+                                        data-oid="o1fc:6i"
                                     >
                                         描述
                                     </label>
@@ -430,13 +430,13 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="ks-tb1q"
+                                        data-oid="ek3.f1b"
                                     />
                                 </div>
-                                <div data-oid="yshy81s">
+                                <div data-oid="qnbgc:-">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="mo93g.u"
+                                        data-oid="_4k0_fg"
                                     >
                                         需要
                                     </label>
@@ -450,13 +450,13 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="0.jcr7u"
+                                        data-oid=".gz-llc"
                                     />
                                 </div>
-                                <div data-oid="jzi5fc.">
+                                <div data-oid="o88z3fj">
                                     <label
                                         className="block text-sm font-medium mb-2"
-                                        data-oid="80wk96d"
+                                        data-oid="jgal7-y"
                                     >
                                         获得
                                     </label>
@@ -470,7 +470,7 @@ export default function Page() {
                                             )
                                         }
                                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                                        data-oid="2q-dqgh"
+                                        data-oid="u_10.5r"
                                     />
                                 </div>
                             </div>
@@ -482,22 +482,22 @@ export default function Page() {
     );
 
     const renderOpenBoxConfig = () => (
-        <div className="space-y-6" data-oid="fkz0m7_">
-            <h3 className="text-lg font-medium mb-4" data-oid="e8_m-ku">
+        <div className="space-y-6" data-oid="ty6wja2">
+            <h3 className="text-lg font-medium mb-4" data-oid="_e.:x9u">
                 开宝箱配置
             </h3>
 
             {/* 免费时段配置 */}
-            <div data-oid="27rw8sy">
-                <h4 className="font-medium mb-3" data-oid="_j8.5ug">
+            <div data-oid="3ya-c6x">
+                <h4 className="font-medium mb-3" data-oid="0kw:94v">
                     免费时段配置
                 </h4>
-                <div className="grid grid-cols-2 gap-6" data-oid="q4420sz">
-                    <div data-oid="_:ja3ms">
-                        <label className="block text-sm font-medium mb-2" data-oid="bfl:h4l">
+                <div className="grid grid-cols-2 gap-6" data-oid="g1m304l">
+                    <div data-oid="2a2yobo">
+                        <label className="block text-sm font-medium mb-2" data-oid="i61a055">
                             免费时段1
                         </label>
-                        <div className="flex space-x-2" data-oid=":t_gfpf">
+                        <div className="flex space-x-2" data-oid="eo6rj9.">
                             <input
                                 type="time"
                                 value={config.act_config.open_box_config.free_box_time_1.start}
@@ -508,10 +508,10 @@ export default function Page() {
                                     )
                                 }
                                 className="border border-gray-300 rounded px-3 py-2"
-                                data-oid="s6c.ll0"
+                                data-oid="nvx-6hq"
                             />
 
-                            <span className="self-center" data-oid="31hts1n">
+                            <span className="self-center" data-oid="6243w.2">
                                 至
                             </span>
                             <input
@@ -524,15 +524,15 @@ export default function Page() {
                                     )
                                 }
                                 className="border border-gray-300 rounded px-3 py-2"
-                                data-oid="hto779_"
+                                data-oid="jfznt5u"
                             />
                         </div>
                     </div>
-                    <div data-oid="cmcwh3q">
-                        <label className="block text-sm font-medium mb-2" data-oid="w1-4n_.">
+                    <div data-oid="-w4j:h2">
+                        <label className="block text-sm font-medium mb-2" data-oid="6f9kcof">
                             免费时段2
                         </label>
-                        <div className="flex space-x-2" data-oid="glr17gf">
+                        <div className="flex space-x-2" data-oid="11y1dyf">
                             <input
                                 type="time"
                                 value={config.act_config.open_box_config.free_box_time_2.start}
@@ -543,10 +543,10 @@ export default function Page() {
                                     )
                                 }
                                 className="border border-gray-300 rounded px-3 py-2"
-                                data-oid="1v8g:ln"
+                                data-oid="efexlqp"
                             />
 
-                            <span className="self-center" data-oid="w0s:-r8">
+                            <span className="self-center" data-oid="emvrk0m">
                                 至
                             </span>
                             <input
@@ -559,7 +559,7 @@ export default function Page() {
                                     )
                                 }
                                 className="border border-gray-300 rounded px-3 py-2"
-                                data-oid="_fdjmqz"
+                                data-oid="zdblmms"
                             />
                         </div>
                     </div>
@@ -567,13 +567,13 @@ export default function Page() {
             </div>
 
             {/* 送礼得宝箱配置 */}
-            <div data-oid="p0a-v-0">
-                <h4 className="font-medium mb-3" data-oid="49tjm.2">
+            <div data-oid="1nw6fo5">
+                <h4 className="font-medium mb-3" data-oid="bf0g6ku">
                     送礼得宝箱配置
                 </h4>
-                <div className="grid grid-cols-2 gap-4" data-oid="4dh_n18">
-                    <div data-oid="laxire:">
-                        <label className="block text-sm font-medium mb-2" data-oid="i-nd2et">
+                <div className="grid grid-cols-2 gap-4" data-oid="thi1.bj">
+                    <div data-oid="g73-sio">
+                        <label className="block text-sm font-medium mb-2" data-oid="lj:2qsl">
                             礼物ID
                         </label>
                         <input
@@ -586,11 +586,11 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="qmzzmz:"
+                            data-oid="4gilcrz"
                         />
                     </div>
-                    <div data-oid="wefvkaz">
-                        <label className="block text-sm font-medium mb-2" data-oid="jg:v.ge">
+                    <div data-oid="zv3ofha">
+                        <label className="block text-sm font-medium mb-2" data-oid=":xkjd2g">
                             礼物名称
                         </label>
                         <input
@@ -603,11 +603,11 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="y68seul"
+                            data-oid="b5ij_m."
                         />
                     </div>
-                    <div data-oid="3cbsfck">
-                        <label className="block text-sm font-medium mb-2" data-oid="if1mlub">
+                    <div data-oid="2xnfd:z">
+                        <label className="block text-sm font-medium mb-2" data-oid="u9vevsg">
                             礼物图片
                         </label>
                         <input
@@ -620,11 +620,11 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="9s96hxu"
+                            data-oid="wmje4u7"
                         />
                     </div>
-                    <div data-oid="rp0r7a.">
-                        <label className="block text-sm font-medium mb-2" data-oid="0k1voul">
+                    <div data-oid="xqj_5nq">
+                        <label className="block text-sm font-medium mb-2" data-oid="os6js:o">
                             获得道具数量
                         </label>
                         <input
@@ -637,7 +637,7 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="-gkma4l"
+                            data-oid="d2b3:7l"
                         />
                     </div>
                 </div>
@@ -646,14 +646,14 @@ export default function Page() {
     );
 
     const renderGiftHatConfig = () => (
-        <div className="space-y-6" data-oid="35jkzvj">
-            <h3 className="text-lg font-medium mb-4" data-oid="ky.m5js">
+        <div className="space-y-6" data-oid="xht:ikh">
+            <h3 className="text-lg font-medium mb-4" data-oid="kj6kvto">
                 收礼送尾巴配置
             </h3>
 
-            <div className="grid grid-cols-3 gap-4" data-oid="ock2vlc">
-                <div data-oid="_k454pa">
-                    <label className="block text-sm font-medium mb-2" data-oid="u17q.nn">
+            <div className="grid grid-cols-3 gap-4" data-oid="6oh2hl1">
+                <div data-oid="qin7k6y">
+                    <label className="block text-sm font-medium mb-2" data-oid="pd1ghzw">
                         收到礼物ID
                     </label>
                     <input
@@ -663,11 +663,11 @@ export default function Page() {
                             updateConfig('act_config.get_gift_send_hat.get_gift_id', e.target.value)
                         }
                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                        data-oid="mz9r34s"
+                        data-oid="l944tws"
                     />
                 </div>
-                <div data-oid="pagzd.o">
-                    <label className="block text-sm font-medium mb-2" data-oid="8kwrfm7">
+                <div data-oid="w7jgje0">
+                    <label className="block text-sm font-medium mb-2" data-oid="rsrn11l">
                         收到礼物图片
                     </label>
                     <input
@@ -680,11 +680,11 @@ export default function Page() {
                             )
                         }
                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                        data-oid="tkgmq7e"
+                        data-oid="ahjnt1t"
                     />
                 </div>
-                <div data-oid="34a545n">
-                    <label className="block text-sm font-medium mb-2" data-oid="-s7cpw1">
+                <div data-oid="lugfzx6">
+                    <label className="block text-sm font-medium mb-2" data-oid="9ivavlk">
                         收到礼物名称
                     </label>
                     <input
@@ -697,7 +697,7 @@ export default function Page() {
                             )
                         }
                         className="border border-gray-300 rounded px-3 py-2 w-full"
-                        data-oid="p6zj74w"
+                        data-oid="105d_.r"
                     />
                 </div>
             </div>
@@ -724,15 +724,15 @@ export default function Page() {
         };
 
         return (
-            <div className="space-y-6" data-oid="ea64zns">
-                <h3 className="text-lg font-medium mb-4" data-oid="-61d0p9">
+            <div className="space-y-6" data-oid="wfx63g-">
+                <h3 className="text-lg font-medium mb-4" data-oid="x15:4pc">
                     生日配置
                 </h3>
 
                 {/* 价格配置 */}
-                <div className="grid grid-cols-2 gap-4" data-oid="60m5s0m">
-                    <div data-oid="h_950ah">
-                        <label className="block text-sm font-medium mb-2" data-oid="dwlw1hz">
+                <div className="grid grid-cols-2 gap-4" data-oid="u03dmfh">
+                    <div data-oid="1.67vx.">
+                        <label className="block text-sm font-medium mb-2" data-oid="7ul:oya">
                             原价格
                         </label>
                         <input
@@ -745,11 +745,11 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="zj:cya-"
+                            data-oid="9goakkw"
                         />
                     </div>
-                    <div data-oid="a0wbihc">
-                        <label className="block text-sm font-medium mb-2" data-oid="3bjspy-">
+                    <div data-oid="h4f8ib7">
+                        <label className="block text-sm font-medium mb-2" data-oid="rdc31ya">
                             现价格
                         </label>
                         <input
@@ -762,32 +762,32 @@ export default function Page() {
                                 )
                             }
                             className="border border-gray-300 rounded px-3 py-2 w-full"
-                            data-oid="2tgypz2"
+                            data-oid="r1f499h"
                         />
                     </div>
                 </div>
 
                 {/* 任务列表配置 */}
-                <div data-oid="13615cz">
-                    <h4 className="font-medium mb-3" data-oid="pul1u.c">
+                <div data-oid="vnzl_gu">
+                    <h4 className="font-medium mb-3" data-oid="i8ylucc">
                         任务列表配置
                     </h4>
-                    <div className="space-y-4" data-oid="9ltbin5">
+                    <div className="space-y-4" data-oid="9rhduj_">
                         {Object.entries(config.act_config.happy_birthday_config.mission_list).map(
                             ([key, mission]) => (
                                 <div
                                     key={key}
                                     className="border border-gray-200 rounded p-4"
-                                    data-oid="tjxr7zx"
+                                    data-oid="vtomoo0"
                                 >
-                                    <h5 className="font-medium mb-3" data-oid="t3r5dr9">
+                                    <h5 className="font-medium mb-3" data-oid="252.kh:">
                                         {key}
                                     </h5>
-                                    <div className="grid grid-cols-4 gap-4" data-oid="_7x4qtj">
-                                        <div data-oid="f8_mse6">
+                                    <div className="grid grid-cols-4 gap-4" data-oid="qwkxi45">
+                                        <div data-oid="-k125:p">
                                             <label
                                                 className="block text-sm font-medium mb-2"
-                                                data-oid="sqw0m.0"
+                                                data-oid="6u8spg9"
                                             >
                                                 描述
                                             </label>
@@ -801,13 +801,13 @@ export default function Page() {
                                                     )
                                                 }
                                                 className="border border-gray-300 rounded px-3 py-2 w-full"
-                                                data-oid="6k-cc0x"
+                                                data-oid="6cg1_sz"
                                             />
                                         </div>
-                                        <div data-oid=":d58ttg">
+                                        <div data-oid="4jrje8z">
                                             <label
                                                 className="block text-sm font-medium mb-2"
-                                                data-oid="d381un_"
+                                                data-oid="c.k_qcs"
                                             >
                                                 需要
                                             </label>
@@ -821,13 +821,13 @@ export default function Page() {
                                                     )
                                                 }
                                                 className="border border-gray-300 rounded px-3 py-2 w-full"
-                                                data-oid="c54shqr"
+                                                data-oid="m_4kc8m"
                                             />
                                         </div>
-                                        <div data-oid="37p0ksl">
+                                        <div data-oid=".auqbpe">
                                             <label
                                                 className="block text-sm font-medium mb-2"
-                                                data-oid=".vl2db-"
+                                                data-oid="_yota8q"
                                             >
                                                 获得
                                             </label>
@@ -841,13 +841,13 @@ export default function Page() {
                                                     )
                                                 }
                                                 className="border border-gray-300 rounded px-3 py-2 w-full"
-                                                data-oid="h80fu7n"
+                                                data-oid="684oiue"
                                             />
                                         </div>
-                                        <div data-oid="ddt2s.e">
+                                        <div data-oid="_5wolco">
                                             <label
                                                 className="block text-sm font-medium mb-2"
-                                                data-oid="jwswk:d"
+                                                data-oid="pth2xhg"
                                             >
                                                 排序
                                             </label>
@@ -861,7 +861,7 @@ export default function Page() {
                                                     )
                                                 }
                                                 className="border border-gray-300 rounded px-3 py-2 w-full"
-                                                data-oid="-0xi8_n"
+                                                data-oid="1f1bx1n"
                                             />
                                         </div>
                                     </div>
@@ -872,18 +872,18 @@ export default function Page() {
                 </div>
 
                 {/* 生日消息列表 */}
-                <div data-oid="iy7719.">
-                    <h4 className="font-medium mb-3" data-oid="x4b6dc9">
+                <div data-oid="4ql-pz6">
+                    <h4 className="font-medium mb-3" data-oid="xs2p3pu">
                         生日祝福消息列表
                     </h4>
-                    <div className="space-y-2" data-oid="4615bt-">
+                    <div className="space-y-2" data-oid="jafl44r">
                         {config.act_config.happy_birthday_config.msg_list.map((msg, index) => (
                             <div
                                 key={index}
                                 className="flex items-center space-x-2"
-                                data-oid="j:1t_mm"
+                                data-oid="c3s8y5m"
                             >
-                                <span className="text-sm text-gray-500 w-8" data-oid="t9jyqaz">
+                                <span className="text-sm text-gray-500 w-8" data-oid="4t9knjn">
                                     #{index + 1}
                                 </span>
                                 <input
@@ -892,13 +892,13 @@ export default function Page() {
                                     onChange={(e) => updateBirthdayMessage(index, e.target.value)}
                                     className="border border-gray-300 rounded px-3 py-2 flex-1"
                                     placeholder="输入生日祝福消息"
-                                    data-oid="76im1dr"
+                                    data-oid="lwcnb:4"
                                 />
 
                                 <button
                                     onClick={() => removeBirthdayMessage(index)}
                                     className="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600"
-                                    data-oid="5s2ow_4"
+                                    data-oid="87m8vh-"
                                 >
                                     删除
                                 </button>
@@ -907,7 +907,7 @@ export default function Page() {
                         <button
                             onClick={addBirthdayMessage}
                             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                            data-oid="r5nc:lm"
+                            data-oid="58tzy2p"
                         >
                             添加消息
                         </button>
@@ -918,13 +918,13 @@ export default function Page() {
     };
 
     const renderWashHandsConfig = () => (
-        <div className="space-y-6" data-oid="3ws5:kt">
-            <h3 className="text-lg font-medium mb-4" data-oid="3q23t_l">
+        <div className="space-y-6" data-oid="d.wicj7">
+            <h3 className="text-lg font-medium mb-4" data-oid="03onpww">
                 洗手池晨辉配置
             </h3>
 
-            <div data-oid="jj5iv.v">
-                <label className="block text-sm font-medium mb-2" data-oid="i2l4--m">
+            <div data-oid="zkpwd6x">
+                <label className="block text-sm font-medium mb-2" data-oid="awbejjj">
                     每日次数
                 </label>
                 <input
@@ -934,28 +934,28 @@ export default function Page() {
                         updateConfig('act_config.wash_hands_config.day_chance', e.target.value)
                     }
                     className="border border-gray-300 rounded px-3 py-2 w-full"
-                    data-oid="qg842wn"
+                    data-oid="sj85:rk"
                 />
             </div>
 
-            <div data-oid="jw-j-5s">
-                <h4 className="font-medium mb-3" data-oid="5vsr72y">
+            <div data-oid="wnuptjj">
+                <h4 className="font-medium mb-3" data-oid=":h18tjg">
                     奖励池配置
                 </h4>
-                <div className="space-y-3" data-oid="v8i48gc">
+                <div className="space-y-3" data-oid="p:6qc57">
                     {Object.entries(config.act_config.wash_hands_config.pool).map(([key, pool]) => (
                         <div
                             key={key}
                             className="flex space-x-4 items-center border border-gray-200 rounded p-3"
-                            data-oid="kmh4h0i"
+                            data-oid="y9-1vqa"
                         >
-                            <span className="w-12 text-sm font-medium" data-oid="gqa-wsk">
+                            <span className="w-12 text-sm font-medium" data-oid="zdpcgs8">
                                 池子{key}
                             </span>
-                            <div data-oid="w7bid5f">
+                            <div data-oid="yhuvcad">
                                 <label
                                     className="block text-xs text-gray-500 mb-1"
-                                    data-oid="1::ds.u"
+                                    data-oid="j:7ya1s"
                                 >
                                     晨辉值
                                 </label>
@@ -969,13 +969,13 @@ export default function Page() {
                                         )
                                     }
                                     className="border border-gray-300 rounded px-2 py-1 w-24"
-                                    data-oid="58810l2"
+                                    data-oid="imjjwsp"
                                 />
                             </div>
-                            <div data-oid="xea-qgh">
+                            <div data-oid="3jyb-u7">
                                 <label
                                     className="block text-xs text-gray-500 mb-1"
-                                    data-oid="9xxxbii"
+                                    data-oid="2uwh50l"
                                 >
                                     概率
                                 </label>
@@ -989,7 +989,7 @@ export default function Page() {
                                         )
                                     }
                                     className="border border-gray-300 rounded px-2 py-1 w-24"
-                                    data-oid="9xddco."
+                                    data-oid="leypcb1"
                                 />
                             </div>
                         </div>
@@ -1000,13 +1000,13 @@ export default function Page() {
     );
 
     const renderPropImgConfig = () => (
-        <div className="space-y-6" data-oid="z83_sbw">
-            <h3 className="text-lg font-medium mb-4" data-oid="b51o7kr">
+        <div className="space-y-6" data-oid="iqkp:d0">
+            <h3 className="text-lg font-medium mb-4" data-oid="cla2pcf">
                 晨辉图片配置
             </h3>
 
-            <div data-oid="z0knb3u">
-                <label className="block text-sm font-medium mb-2" data-oid="3pgjs_j">
+            <div data-oid="p7wa92k">
+                <label className="block text-sm font-medium mb-2" data-oid="ai3-7de">
                     晨辉图片文件名
                 </label>
                 <input
@@ -1015,29 +1015,29 @@ export default function Page() {
                     onChange={(e) => updateConfig('act_config.prop_img', e.target.value)}
                     className="border border-gray-300 rounded px-3 py-2 w-full"
                     placeholder="例如: fjlw_xyq_0111.png"
-                    data-oid="4w_i063"
+                    data-oid="kjmgwut"
                 />
             </div>
         </div>
     );
 
     const renderStoneConfig = () => (
-        <div className="space-y-6" data-oid="xlus4i1">
-            <h3 className="text-lg font-medium mb-4" data-oid="m_geoes">
+        <div className="space-y-6" data-oid="x-gkrv:">
+            <h3 className="text-lg font-medium mb-4" data-oid="ym3ff1r">
                 12个月石头配置
             </h3>
-            <div className="grid grid-cols-1 gap-4" data-oid="6ik.b52">
+            <div className="grid grid-cols-1 gap-4" data-oid=":qp.1ur">
                 {Object.entries(config.act_config.all_stone).map(([month, stone]) => (
                     <div
                         key={month}
                         className="border border-gray-200 rounded p-4"
-                        data-oid="v0l5mlq"
+                        data-oid="f_xc.l6"
                     >
-                        <h4 className="font-medium mb-2" data-oid="qz9fgys">
+                        <h4 className="font-medium mb-2" data-oid="q72j2xv">
                             {month}月 - {stone.name}
                         </h4>
-                        <div data-oid=".44x-sd">
-                            <label className="block text-sm font-medium mb-2" data-oid="eu_c_p.">
+                        <div data-oid="j0-0lje">
+                            <label className="block text-sm font-medium mb-2" data-oid="hs1mo4s">
                                 石头名称
                             </label>
                             <input
@@ -1050,11 +1050,11 @@ export default function Page() {
                                     )
                                 }
                                 className="border border-gray-300 rounded px-3 py-2 w-full mb-2"
-                                data-oid="pjfbmuw"
+                                data-oid="5fa.143"
                             />
                         </div>
-                        <div data-oid="al-xe40">
-                            <label className="block text-sm font-medium mb-2" data-oid="c24wmzn">
+                        <div data-oid=":zjrtuj">
+                            <label className="block text-sm font-medium mb-2" data-oid="mgb1ud6">
                                 描述
                             </label>
                             <textarea
@@ -1066,7 +1066,7 @@ export default function Page() {
                                     )
                                 }
                                 className="w-full border border-gray-300 rounded px-3 py-2 h-20"
-                                data-oid="6n_deg1"
+                                data-oid="0nd6cmj"
                             />
                         </div>
                     </div>
@@ -1076,30 +1076,30 @@ export default function Page() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-100 flex" data-oid="ck__995">
+        <div className="min-h-screen bg-gray-100 flex" data-oid="_p.:hkn">
             {/* 侧边栏 */}
-            <div className="w-64 bg-gray-800 text-white" data-oid="nvub4jl">
-                <div className="p-4" data-oid="jqm:fep">
-                    <div className="flex items-center mb-8" data-oid="a-h4x6s">
-                        <div className="w-4 h-4 bg-gray-600 rounded mr-2" data-oid="tr7oj-u"></div>
-                        <span className="text-sm" data-oid="j47-b:q">
+            <div className="w-64 bg-gray-800 text-white" data-oid="4d1vqk:">
+                <div className="p-4" data-oid="eb.s2lm">
+                    <div className="flex items-center mb-8" data-oid="w:hsnuu">
+                        <div className="w-4 h-4 bg-gray-600 rounded mr-2" data-oid="vt6alzf"></div>
+                        <span className="text-sm" data-oid="vlgnz5n">
                             宝石活动配置管理
                         </span>
                     </div>
 
-                    <nav className="space-y-2" data-oid=".q8aq1a">
+                    <nav className="space-y-2" data-oid="t6tnsxo">
                         <div
                             className={`flex items-center p-2 rounded cursor-pointer ${
                                 activeTab === 'send_msg' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('send_msg')}
-                            data-oid="e7b2m9k"
+                            data-oid=".ea4iwp"
                         >
                             <div
                                 className="w-4 h-4 bg-blue-500 rounded-sm mr-2"
-                                data-oid="m.pcbt9"
+                                data-oid=":._i.da"
                             ></div>
-                            <span className="text-sm" data-oid="96l8zu2">
+                            <span className="text-sm" data-oid="ot-wp7k">
                                 发送消息配置
                             </span>
                         </div>
@@ -1108,13 +1108,13 @@ export default function Page() {
                                 activeTab === 'warning' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('warning')}
-                            data-oid="13wunj2"
+                            data-oid="g9k_k69"
                         >
                             <div
                                 className="w-4 h-4 bg-red-500 rounded-sm mr-2"
-                                data-oid="lrfq6kw"
+                                data-oid="-4fpnq."
                             ></div>
-                            <span className="text-sm" data-oid="0f4q48y">
+                            <span className="text-sm" data-oid="y9z_gg6">
                                 活动告警配置
                             </span>
                         </div>
@@ -1123,13 +1123,13 @@ export default function Page() {
                                 activeTab === 'mission_pool' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('mission_pool')}
-                            data-oid="mission-tab"
+                            data-oid="ql4ckae"
                         >
                             <div
                                 className="w-4 h-4 bg-green-500 rounded-sm mr-2"
-                                data-oid="mission-icon"
+                                data-oid="h_el1rh"
                             ></div>
-                            <span className="text-sm" data-oid="mission-text">
+                            <span className="text-sm" data-oid="t0p1rh2">
                                 任务池配置
                             </span>
                         </div>
@@ -1138,13 +1138,13 @@ export default function Page() {
                                 activeTab === 'open_box' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('open_box')}
-                            data-oid="openbox-tab"
+                            data-oid="c7lakqw"
                         >
                             <div
                                 className="w-4 h-4 bg-yellow-500 rounded-sm mr-2"
-                                data-oid="openbox-icon"
+                                data-oid="sz_-pmu"
                             ></div>
-                            <span className="text-sm" data-oid="openbox-text">
+                            <span className="text-sm" data-oid="jpe-grw">
                                 开宝箱配置
                             </span>
                         </div>
@@ -1153,13 +1153,13 @@ export default function Page() {
                                 activeTab === 'gift_hat' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('gift_hat')}
-                            data-oid="gifthat-tab"
+                            data-oid="z1fddm_"
                         >
                             <div
                                 className="w-4 h-4 bg-pink-500 rounded-sm mr-2"
-                                data-oid="gifthat-icon"
+                                data-oid="78wr8ya"
                             ></div>
-                            <span className="text-sm" data-oid="gifthat-text">
+                            <span className="text-sm" data-oid="h-rzjyf">
                                 收礼送尾巴
                             </span>
                         </div>
@@ -1168,13 +1168,13 @@ export default function Page() {
                                 activeTab === 'birthday' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('birthday')}
-                            data-oid="birthday-tab"
+                            data-oid="d5sp635"
                         >
                             <div
                                 className="w-4 h-4 bg-orange-500 rounded-sm mr-2"
-                                data-oid="birthday-icon"
+                                data-oid="nul_7rp"
                             ></div>
-                            <span className="text-sm" data-oid="birthday-text">
+                            <span className="text-sm" data-oid="x9_2_om">
                                 生日配置
                             </span>
                         </div>
@@ -1183,13 +1183,13 @@ export default function Page() {
                                 activeTab === 'stones' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('stones')}
-                            data-oid="stones-tab"
+                            data-oid="t74w8e3"
                         >
                             <div
                                 className="w-4 h-4 bg-purple-500 rounded-sm mr-2"
-                                data-oid="stones-icon"
+                                data-oid="hhtmbob"
                             ></div>
-                            <span className="text-sm" data-oid="stones-text">
+                            <span className="text-sm" data-oid="nqfv-st">
                                 石头配置
                             </span>
                         </div>
@@ -1198,13 +1198,13 @@ export default function Page() {
                                 activeTab === 'wash_hands' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('wash_hands')}
-                            data-oid="washhands-tab"
+                            data-oid="ngj6dn."
                         >
                             <div
                                 className="w-4 h-4 bg-cyan-500 rounded-sm mr-2"
-                                data-oid="washhands-icon"
+                                data-oid="db5m2-e"
                             ></div>
-                            <span className="text-sm" data-oid="washhands-text">
+                            <span className="text-sm" data-oid="dgc3k_-">
                                 洗手池配置
                             </span>
                         </div>
@@ -1213,13 +1213,13 @@ export default function Page() {
                                 activeTab === 'prop_img' ? 'bg-gray-700' : 'hover:bg-gray-700'
                             }`}
                             onClick={() => setActiveTab('prop_img')}
-                            data-oid="propimg-tab"
+                            data-oid="q9gwrgy"
                         >
                             <div
                                 className="w-4 h-4 bg-indigo-500 rounded-sm mr-2"
-                                data-oid="propimg-icon"
+                                data-oid="qo4:gr6"
                             ></div>
-                            <span className="text-sm" data-oid="propimg-text">
+                            <span className="text-sm" data-oid="5hutn6s">
                                 晨辉图片
                             </span>
                         </div>
@@ -1228,21 +1228,21 @@ export default function Page() {
             </div>
 
             {/* 主内容区 */}
-            <div className="flex-1 p-6" data-oid=":ei-9t4">
-                <div className="bg-white rounded-lg shadow-sm" data-oid="-ub5gff">
+            <div className="flex-1 p-6" data-oid="hwawr1c">
+                <div className="bg-white rounded-lg shadow-sm" data-oid="o67vuu.">
                     {/* 头部 */}
-                    <div className="border-b border-gray-200 p-6" data-oid="gaa-6:1">
-                        <h1 className="text-2xl font-medium text-gray-800 mb-2" data-oid="fnq6hob">
+                    <div className="border-b border-gray-200 p-6" data-oid="_hi56dn">
+                        <h1 className="text-2xl font-medium text-gray-800 mb-2" data-oid="e2v9u9q">
                             宝石活动配置管理
                         </h1>
-                        <div className="text-sm text-gray-500" data-oid="dx_xphm">
+                        <div className="text-sm text-gray-500" data-oid=":944.-1">
                             操作员：Wang-Xiu 当前时间：{new Date().toLocaleString('zh-CN')}
                         </div>
                     </div>
 
-                    <div className="p-6" data-oid="s10iugi">
+                    <div className="p-6" data-oid="5.ids:p">
                         {/* 配置内容 */}
-                        <div className="bg-gray-50 rounded-lg p-6" data-oid="config-content">
+                        <div className="bg-gray-50 rounded-lg p-6" data-oid="ixs900d">
                             {activeTab === 'send_msg' && renderSendMsgConfig()}
                             {activeTab === 'warning' && renderWarningConfig()}
                             {activeTab === 'mission_pool' && renderMissionPoolConfig()}
@@ -1257,27 +1257,27 @@ export default function Page() {
                         {/* API操作和状态 */}
                         <div
                             className="flex items-center justify-between pt-6 border-t mt-6"
-                            data-oid="::20-4d"
+                            data-oid="96wjtki"
                         >
-                            <div className="flex space-x-4" data-oid="l45p-ko">
+                            <div className="flex space-x-4" data-oid="r83.0sf">
                                 <button
                                     onClick={fetchData}
                                     className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-                                    data-oid="de3t39j"
+                                    data-oid="pog20km"
                                 >
                                     获取配置
                                 </button>
                                 <button
                                     onClick={submitData}
                                     className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
-                                    data-oid="uz7:yvk"
+                                    data-oid="pufv2o1"
                                 >
                                     保存配置
                                 </button>
                                 <button
                                     onClick={() => setConfig(defaultConfig)}
                                     className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
-                                    data-oid="reset-btn"
+                                    data-oid="wo80j1."
                                 >
                                     重置配置
                                 </button>
@@ -1285,7 +1285,7 @@ export default function Page() {
                             {apiStatus && (
                                 <div
                                     className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded"
-                                    data-oid="bsu:t2q"
+                                    data-oid="i7h5.s:"
                                 >
                                     {apiStatus}
                                 </div>
@@ -1293,13 +1293,13 @@ export default function Page() {
                         </div>
 
                         {/* JSON预览 */}
-                        <div className="mt-8" data-oid=".4ep7us">
-                            <h3 className="text-lg font-medium mb-4" data-oid="mq1ji_z">
+                        <div className="mt-8" data-oid="l0vlcdg">
+                            <h3 className="text-lg font-medium mb-4" data-oid="ywxleus">
                                 配置JSON预览
                             </h3>
                             <pre
                                 className="bg-gray-100 p-4 rounded text-sm overflow-auto max-h-96 border"
-                                data-oid="rw-5qb9"
+                                data-oid="_v85fs."
                             >
                                 {JSON.stringify(config, null, 2)}
                             </pre>
