@@ -1236,7 +1236,7 @@ export default function Page() {
                             宝石活动配置管理
                         </h1>
                         <div className="text-sm text-gray-500" data-oid=":944.-1">
-                            操作员：Wang-Xiu 当前时间：{new Date().toLocaleString('zh-CN')}
+                            {/* 操作员：Wang-Xiu 当前时间：{new Date().toLocaleString('zh-CN')} */}
                         </div>
                     </div>
 
