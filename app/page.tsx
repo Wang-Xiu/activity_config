@@ -1,6 +1,5 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { defaultConfig } from '../config/defaultConfig';
 import { MainConfig } from '../types/config';
 
@@ -8,6 +7,14 @@ export default function Page() {
     const [config, setConfig] = useState<MainConfig>(defaultConfig);
     const [activeTab, setActiveTab] = useState('send_msg');
     const [apiStatus, setApiStatus] = useState('');
+    const hasFetched = useRef(false);
+
+    useEffect(() => {
+        if (!hasFetched.current) {
+            fetchData();
+            hasFetched.current = true;
+        }
+    }, []);
 
     // 从API获取配置数据
     const fetchData = async () => {
@@ -25,7 +32,13 @@ export default function Page() {
             }
 
             const result = await response.json();
-            setConfig(result.data || defaultConfig);
+            // 兼容后端多层 data 嵌套
+            let realConfig = result.data;
+            if (realConfig && realConfig.success && realConfig.data) {
+                realConfig = realConfig.data;
+            }
+            console.log('接口返回数据:', JSON.stringify(realConfig, null, 2));
+            setConfig(realConfig || defaultConfig);
             setApiStatus('数据获取成功');
             console.log('获取成功:', result);
 
@@ -916,7 +929,7 @@ export default function Page() {
             </div>
         );
     };
-
+    
     const renderWashHandsConfig = () => (
         <div className="space-y-6" data-oid="d.wicj7">
             <h3 className="text-lg font-medium mb-4" data-oid="03onpww">

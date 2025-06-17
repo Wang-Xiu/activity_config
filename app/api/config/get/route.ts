@@ -10,16 +10,12 @@ export async function GET(request: NextRequest) {
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         // 这里可以调用你的后端API获取配置
-        // const backendResponse = await fetch('YOUR_BACKEND_API_URL', {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
-        // const configData = await backendResponse.json();
-
-        // 目前返回默认配置，你可以替换为从实际数据源获取的配置
-        const configData = defaultConfig;
+        const backendUrl = 'https://testmqgitfrontend.meequ.cn/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261';
+        const backendResponse = await fetch(backendUrl, {
+            method: 'GET',
+            // PHP接口一般不需要 application/json 头部，除非后端要求
+        });
+        const configData = await backendResponse.json();
 
         return NextResponse.json({
             success: true,
