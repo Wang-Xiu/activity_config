@@ -6,21 +6,20 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
-<<<<<<< HEAD
   async headers() {
     return [
       {
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: 'http://localhost:3000' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
           { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS,HEAD,PATCH' },
           { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization, Origin, Cache-Control' },
           { key: 'Access-Control-Max-Age', value: '86400' }
         ],
       },
     ];
-=======
+  },
   async rewrites() {
     return process.env.NODE_ENV === 'development'
       ? [
@@ -30,7 +29,6 @@ const nextConfig = {
           },
         ]
       : [];
->>>>>>> 772b29880119a3a9a67cca4af3ee8173fca2d4cd
   },
 };
 export default nextConfig;
