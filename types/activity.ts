@@ -8,6 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
+    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge';
 }
 
 // 活动配置
@@ -21,6 +22,7 @@ export const ACTIVITIES: Activity[] = [
         status: 'active',
         configUrl: '/api/gemstone/config',
         monitorUrl: '/api/gemstone/monitor',
+        type: 'gem',
     },
     {
         id: 'lottery',
@@ -31,6 +33,7 @@ export const ACTIVITIES: Activity[] = [
         status: 'active',
         configUrl: '/api/lottery/config',
         monitorUrl: '/api/lottery/monitor',
+        type: 'lottery',
     },
     {
         id: 'signin',
@@ -41,6 +44,7 @@ export const ACTIVITIES: Activity[] = [
         status: 'active',
         configUrl: '/api/signin/config',
         monitorUrl: '/api/signin/monitor',
+        type: 'signin',
     },
     {
         id: 'recharge',
@@ -48,29 +52,10 @@ export const ACTIVITIES: Activity[] = [
         description: '充值返利活动配置管理',
         icon: '💰',
         color: 'yellow',
+        type: 'recharge',
         status: 'active',
         configUrl: '/api/recharge/config',
         monitorUrl: '/api/recharge/monitor',
-    },
-    {
-        id: 'task',
-        name: '任务活动',
-        description: '每日任务活动配置管理',
-        icon: '📋',
-        color: 'indigo',
-        status: 'active',
-        configUrl: '/api/task/config',
-        monitorUrl: '/api/task/monitor',
-    },
-    {
-        id: 'festival',
-        name: '节日活动',
-        description: '节日特殊活动配置管理',
-        icon: '🎉',
-        color: 'pink',
-        status: 'pending',
-        configUrl: '/api/festival/config',
-        monitorUrl: '/api/festival/monitor',
     },
 ];
 

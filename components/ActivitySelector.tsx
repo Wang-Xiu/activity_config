@@ -14,10 +14,7 @@ export default function ActivitySelector({
     onActivitySelect,
 }: ActivitySelectorProps) {
     return (
-        <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6"
-            data-oid="w.et:bd"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
             {activities.map((activity) => (
                 <div
                     key={activity.id}
@@ -32,55 +29,40 @@ export default function ActivitySelector({
                         ${activity.status === 'pending' ? 'opacity-75' : ''}
                     `}
                     onClick={() => onActivitySelect(activity)}
-                    data-oid="s--:u7n"
                 >
                     {/* 状态标识 */}
-                    <div className="absolute top-2 right-2" data-oid="srqj7h_">
+                    <div className="absolute top-2 right-2">
                         {activity.status === 'active' && (
-                            <span
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                                data-oid="9qt1b_p"
-                            >
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 运行中
                             </span>
                         )}
                         {activity.status === 'pending' && (
-                            <span
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
-                                data-oid="9f0nt6f"
-                            >
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                 待上线
                             </span>
                         )}
                         {activity.status === 'inactive' && (
-                            <span
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                                data-oid="e028356"
-                            >
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                 已下线
                             </span>
                         )}
                     </div>
 
                     {/* 活动图标 */}
-                    <div
-                        className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-4xl"
-                        data-oid="9b6xqmo"
-                    >
+                    <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-4xl">
                         {activity.icon}
                     </div>
 
                     {/* 活动信息 */}
-                    <div className="text-center" data-oid="98yl7pd">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2" data-oid="gjppdon">
+                    <div className="text-center">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
                             {activity.name}
                         </h3>
-                        <p className="text-sm text-gray-600 mb-4" data-oid="m4jp1ei">
-                            {activity.description}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-4">{activity.description}</p>
 
                         {/* 操作按钮 */}
-                        <div className="flex space-x-2 justify-center" data-oid="6ourbaf">
+                        <div className="flex space-x-2 justify-center">
                             <button
                                 className={`
                                     px-3 py-1 rounded text-xs font-medium transition-colors
@@ -91,7 +73,6 @@ export default function ActivitySelector({
                                     }
                                 `}
                                 disabled={activity.status !== 'active'}
-                                data-oid="pd763i-"
                             >
                                 配置管理
                             </button>
@@ -105,7 +86,6 @@ export default function ActivitySelector({
                                     }
                                 `}
                                 disabled={activity.status !== 'active'}
-                                data-oid="0mktucc"
                             >
                                 数据监控
                             </button>
@@ -116,11 +96,9 @@ export default function ActivitySelector({
                     {selectedActivity?.id === activity.id && (
                         <div
                             className={`absolute inset-0 rounded-lg border-2 border-${activity.color}-500 pointer-events-none`}
-                            data-oid="ile520-"
                         >
                             <div
                                 className={`absolute top-2 left-2 w-3 h-3 bg-${activity.color}-500 rounded-full`}
-                                data-oid="w8t140x"
                             ></div>
                         </div>
                     )}
