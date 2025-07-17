@@ -3,6 +3,7 @@
 import { Activity } from '../../types/activity';
 import GemActivityConfig from './GemActivityConfig';
 import RedPacketActivityConfig from './RedPacketActivityConfig';
+import MidYearActivityConfig from './MidYearActivityConfig';
 
 interface ActivityConfigRouterProps {
     activity: Activity;
@@ -16,6 +17,8 @@ export default function ActivityConfigRouter({ activity, onStatusChange }: Activ
             return <GemActivityConfig activity={activity} onStatusChange={onStatusChange} />;
         case 'red_packet':
             return <RedPacketActivityConfig activity={activity} onStatusChange={onStatusChange} />;
+        case 'midyear':
+            return <MidYearActivityConfig activity={activity} onStatusChange={onStatusChange} />;
         case 'lottery':
         case 'signin':
         case 'recharge':
