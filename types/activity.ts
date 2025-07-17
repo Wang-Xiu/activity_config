@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge';
+    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge' | 'midyear';
 }
 
 // 活动配置
@@ -23,6 +23,17 @@ export const ACTIVITIES: Activity[] = [
         configUrl: '/api/gemstone/config',
         monitorUrl: '/api/gemstone/monitor',
         type: 'gem',
+    },
+    {
+        id: 'midyear',
+        name: '年中活动',
+        description: '年中盛典活动配置管理',
+        icon: '🎭',
+        color: 'red',
+        status: 'active',
+        configUrl: '/api/midyear/config',
+        monitorUrl: '/api/midyear/monitor',
+        type: 'midyear',
     },
     {
         id: 'lottery',
