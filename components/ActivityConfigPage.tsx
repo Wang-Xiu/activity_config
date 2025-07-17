@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Activity } from '../types/activity';
 import { MainConfig } from '../types/config';
+import { MidYearConfig } from '../types/midyear-config';
 
 interface ActivityConfigPageProps {
     activity: Activity;
@@ -10,7 +11,7 @@ interface ActivityConfigPageProps {
 }
 
 export default function ActivityConfigPage({ activity, onStatusChange }: ActivityConfigPageProps) {
-    const [config, setConfig] = useState<MainConfig | null>(null);
+    const [config, setConfig] = useState<MainConfig | MidYearConfig | null>(null);
     const [apiStatus, setApiStatus] = useState('');
 
     // 页面加载时自动获取配置数据

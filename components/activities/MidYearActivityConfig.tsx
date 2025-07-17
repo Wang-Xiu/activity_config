@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Activity } from '../../types/activity';
 import ActivityConfigPage from '../ActivityConfigPage';
+import { MidYearConfig } from '../../types/midyear-config';
 
 interface MidYearActivityConfigProps {
     activity: Activity;
@@ -15,13 +16,16 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
         activity,
         onStatusChange,
     });
+    
+    // 类型断言，确保config是MidYearConfig类型
+    const midYearConfig = config as MidYearConfig;
 
     // 更新配置字段的处理函数
     const handleConfigChange = (path: string[], value: any) => {
-        if (!config) return;
+        if (!midYearConfig) return;
         
         // 创建配置的深拷贝
-        const newConfig = JSON.parse(JSON.stringify(config));
+        const newConfig = JSON.parse(JSON.stringify(midYearConfig));
         
         // 根据路径更新配置
         let current = newConfig;
@@ -176,7 +180,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
         );
     };
 
-    if (!config) {
+    if (!midYearConfig) {
         return <div className="flex items-center justify-center h-full">加载中...</div>;
     }
 
@@ -229,20 +233,20 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                     <div>
                         <h3 className="text-lg font-semibold mb-4">发送消息配置</h3>
                         <div className="space-y-6">
-                            {renderToggle('是否开启发送通知', ['send_msg_config', 'send_msg'], config.send_msg_config.send_msg)}
+                            {renderToggle('是否开启发送通知', ['send_msg_config', 'send_msg'], midYearConfig.send_msg_config.send_msg)}
                             
                             <div className="border-t pt-4">
                                 <h4 className="font-medium text-gray-800 mb-3">通知发送内容</h4>
                                 {renderTextField('匹配完成通知', ['send_msg_config', 'send_msg_info', 'match_done'], 
-                                    config.send_msg_config.send_msg_info.match_done)}
+                                    midYearConfig.send_msg_config.send_msg_info.match_done)}
                                 {renderTextField('周四提示通知', ['send_msg_config', 'send_msg_info', 'thursday_tips'], 
-                                    config.send_msg_config.send_msg_info.thursday_tips)}
+                                    midYearConfig.send_msg_config.send_msg_info.thursday_tips)}
                                 {renderTextField('差20点提示', ['send_msg_config', 'send_msg_info', 'need_20_value'], 
-                                    config.send_msg_config.send_msg_info.need_20_value)}
+                                    midYearConfig.send_msg_config.send_msg_info.need_20_value)}
                                 {renderTextField('两天提示', ['send_msg_config', 'send_msg_info', 'two_days_tips'], 
-                                    config.send_msg_config.send_msg_info.two_days_tips)}
+                                    midYearConfig.send_msg_config.send_msg_info.two_days_tips)}
                                 {renderTextField('第四周提示', ['send_msg_config', 'send_msg_info', 'fourth_week'], 
-                                    config.send_msg_config.send_msg_info.fourth_week)}
+                                    midYearConfig.send_msg_config.send_msg_info.fourth_week)}
                             </div>
                         </div>
                     </div>
@@ -254,24 +258,24 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                         <h3 className="text-lg font-semibold mb-4">告警配置</h3>
                         <div className="space-y-6">
                             {renderToggle('是否开启告警邮件发送', ['send_warning_config', 'send_warning'], 
-                                config.send_warning_config.send_warning)}
+                                midYearConfig.send_warning_config.send_warning)}
                             
                             {renderTextField('告警产生的活动名', ['send_warning_config', 'send_warning_act_name'], 
-                                config.send_warning_config.send_warning_act_name)}
+                                midYearConfig.send_warning_config.send_warning_act_name)}
                             
                             {renderTextField('告警邮件发送间隔(秒)', ['send_warning_config', 'send_warning_interval'], 
-                                config.send_warning_config.send_warning_interval)}
+                                midYearConfig.send_warning_config.send_warning_interval)}
                             
                             <div className="border-t pt-4">
                                 <h4 className="font-medium text-gray-800 mb-3">告警礼物时间间隔配置</h4>
-                                {Object.entries(config.send_warning_config.interval_warning_time).map(([key, value]) => (
+                                {Object.entries(midYearConfig.send_warning_config.interval_warning_time).map(([key, value]) => (
                                     <div key={key} className="flex items-center space-x-2 mb-2">
                                         <span className="text-sm text-gray-600 w-24">礼物ID: {key}</span>
                                         <input
                                             type="text"
                                             value={value}
                                             onChange={(e) => {
-                                                const newIntervalWarningTime = {...config.send_warning_config.interval_warning_time};
+                                                const newIntervalWarningTime = {...midYearConfig.send_warning_config.interval_warning_time};
                                                 newIntervalWarningTime[key] = e.target.value;
                                                 handleConfigChange(['send_warning_config', 'interval_warning_time'], newIntervalWarningTime);
                                             }}
@@ -283,14 +287,14 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                             
                             <div className="border-t pt-4">
                                 <h4 className="font-medium text-gray-800 mb-3">告警礼物数量阈值配置</h4>
-                                {Object.entries(config.send_warning_config.interval_warning_prize).map(([key, value]) => (
+                                {Object.entries(midYearConfig.send_warning_config.interval_warning_prize).map(([key, value]) => (
                                     <div key={key} className="flex items-center space-x-2 mb-2">
                                         <span className="text-sm text-gray-600 w-24">礼物ID: {key}</span>
                                         <input
                                             type="text"
                                             value={value}
                                             onChange={(e) => {
-                                                const newIntervalWarningPrize = {...config.send_warning_config.interval_warning_prize};
+                                                const newIntervalWarningPrize = {...midYearConfig.send_warning_config.interval_warning_prize};
                                                 newIntervalWarningPrize[key] = e.target.value;
                                                 handleConfigChange(['send_warning_config', 'interval_warning_prize'], newIntervalWarningPrize);
                                             }}
@@ -314,7 +318,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                     <label className="block text-sm font-medium text-gray-700 mb-1">导入礼物ID列表</label>
                                     <input
                                         type="text"
-                                        value={config.act_config.import_gifts ? config.act_config.import_gifts.join(', ') : ''}
+                                        value={midYearConfig.act_config.import_gifts ? midYearConfig.act_config.import_gifts.join(', ') : ''}
                                         onChange={(e) => {
                                             const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
                                             handleConfigChange(['act_config', 'import_gifts'], giftIds);
@@ -330,33 +334,33 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextAreaField('介绍信息', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'intro_msg'], 
-                                    config.act_config.rank_game_config.family_rank_config.intro_msg)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.intro_msg)}
                                 
                                 {renderTextAreaField('备用信息1', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg'], 
-                                    config.act_config.rank_game_config.family_rank_config.spare_msg)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.spare_msg)}
                                 
                                 {renderTextAreaField('备用信息2', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg_2'], 
-                                    config.act_config.rank_game_config.family_rank_config.spare_msg_2)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.spare_msg_2)}
                                 
                                 {renderDateTimeField('开始时间', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'start_time'], 
-                                    config.act_config.rank_game_config.family_rank_config.start_time)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.start_time)}
                                 
                                 {renderDateTimeField('结束时间', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'end_time'], 
-                                    config.act_config.rank_game_config.family_rank_config.end_time)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.end_time)}
                                 
                                 {renderTextField('榜单值比例', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'rank_value_ratio'], 
-                                    config.act_config.rank_game_config.family_rank_config.rank_value_ratio)}
+                                    midYearConfig.act_config.rank_game_config.family_rank_config.rank_value_ratio)}
                                 
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">家族赛上榜礼物ID</label>
                                     <input
                                         type="text"
-                                        value={config.act_config.rank_game_config.family_rank_config.rank_gift.join(', ')}
+                                        value={midYearConfig.act_config.rank_game_config.family_rank_config.rank_gift.join(', ')}
                                         onChange={(e) => {
                                             const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
                                             handleConfigChange(['act_config', 'rank_game_config', 'family_rank_config', 'rank_gift'], giftIds);
@@ -373,30 +377,30 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <h6 className="font-medium mb-2">第一阶段</h6>
                                             {renderDateTimeField('开始时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'start_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.start_time)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.first_stage.start_time)}
                                             
                                             {renderDateTimeField('结束时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'end_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.end_time)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.first_stage.end_time)}
                                             
                                             {renderTextField('晋级所需值', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'winner_need_value'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.winner_need_value)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.first_stage.winner_need_value)}
                                         </div>
                                         
                                         <div className="border p-3 rounded-md">
                                             <h6 className="font-medium mb-2">第二阶段</h6>
                                             {renderDateTimeField('开始时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'start_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.start_time)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.second_stage.start_time)}
                                             
                                             {renderDateTimeField('结束时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'end_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.end_time)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.second_stage.end_time)}
                                             
                                             {renderTextField('晋级所需值', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'winner_need_value'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.winner_need_value)}
+                                                midYearConfig.act_config.rank_game_config.family_rank_config.second_stage.winner_need_value)}
                                         </div>
                                     </div>
                                 </div>
@@ -920,7 +924,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
             <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-2">配置预览</h3>
                 <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-60">
-                    {JSON.stringify(config, null, 2)}
+                    {JSON.stringify(midYearConfig, null, 2)}
                 </pre>
             </div>
         </div>
