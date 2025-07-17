@@ -1,76 +1,138 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MonitorData } from '../../../../types/monitor';
+import { buildApiUrl } from '../../../../config/environment';
 
-// 模拟的监控数据
-const mockMonitorData: MonitorData = {
-  status: 'active',
-  startTime: '2025-07-15 00:00:00',
-  endTime: '2025-07-20 23:59:59',
-  metrics: {
-    userCount: 12345,
-    giftCount: 5678,
-    revenueTotal: 98765.43,
-  },
-  logs: [
-    {
-      time: '2025-07-17 10:15:23',
-      level: 'info',
-      message: '年中活动配置更新',
-    },
-    {
-      time: '2025-07-17 09:30:45',
-      level: 'warning',
-      message: '礼物发放速率异常',
-    },
-    {
-      time: '2025-07-17 08:45:12',
-      level: 'error',
-      message: '榜单数据同步失败',
-    },
-  ],
-  charts: {
-    hourlyUsers: [
-      { hour: '00:00', count: 234 },
-      { hour: '01:00', count: 123 },
-      { hour: '02:00', count: 87 },
-      { hour: '03:00', count: 65 },
-      { hour: '04:00', count: 43 },
-      { hour: '05:00', count: 32 },
-      { hour: '06:00', count: 54 },
-      { hour: '07:00', count: 87 },
-      { hour: '08:00', count: 143 },
-      { hour: '09:00', count: 232 },
-      { hour: '10:00', count: 321 },
-      { hour: '11:00', count: 456 },
-      { hour: '12:00', count: 567 },
-      { hour: '13:00', count: 678 },
-      { hour: '14:00', count: 789 },
-      { hour: '15:00', count: 890 },
-      { hour: '16:00', count: 987 },
-      { hour: '17:00', count: 876 },
-      { hour: '18:00', count: 765 },
-      { hour: '19:00', count: 654 },
-      { hour: '20:00', count: 543 },
-      { hour: '21:00', count: 432 },
-      { hour: '22:00', count: 321 },
-      { hour: '23:00', count: 210 },
-    ],
-    dailyRevenue: [
-      { date: '2025-07-15', amount: 12345.67 },
-      { date: '2025-07-16', amount: 23456.78 },
-      { date: '2025-07-17', amount: 34567.89 },
-    ],
-  },
-};
-
-// GET 请求处理函数
 export async function GET(request: NextRequest) {
-  // 模拟延迟
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  return NextResponse.json({
-    code: 0,
-    message: 'success',
-    data: mockMonitorData
-  });
+    try {
+        // 获取查询参数
+        const { searchParams } = new URL(request.url);
+        const dateType = searchParams.get('dateType') || 'daily'; // daily 或 total
+        const date = searchParams.get('date') || new Date().toISOString().split('T')[0];
+
+        // 调用后端API获取监控数据
+        const apiUrl = buildApiUrl('getMonitorData');
+        const fullUrl = `${apiUrl}&dateType=${dateType}&date=${date}`;
+        
+        console.log('正在调用监控数据API:', fullUrl);
+
+        const backendResponse = await fetch(fullUrl, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!backendResponse.ok) {
+            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
+        }
+
+        const result = await backendResponse.json();
+        
+        // 如果后端接口还未实现，返回模拟数据
+        if (result.error && result.error.includes('not found')) {
+            return NextResponse.json({
+                success: true,
+                message: '监控数据获取成功（模拟数据）',
+                data: getMockMonitorData(dateType),
+                timestamp: new Date().toISOString(),
+            });
+        }
+
+        // 检查后端返回的数据格式
+        if (!result.success) {
+            throw new Error(result.message || '后端返回错误');
+        }
+
+        return NextResponse.json({
+            success: true,
+            message: '监控数据获取成功',
+            data: result.data,
+            timestamp: new Date().toISOString(),
+        });
+    } catch (error) {
+        console.error('获取监控数据时出错:', error);
+        
+        // 返回模拟数据作为fallback
+        const { searchParams } = new URL(request.url);
+        const dateType = searchParams.get('dateType') || 'daily';
+        
+        return NextResponse.json({
+            success: true,
+            message: '监控数据获取成功（模拟数据）',
+            data: getMockMonitorData(dateType),
+            timestamp: new Date().toISOString(),
+        });
+    }
+}
+
+// 模拟监控数据
+function getMockMonitorData(dateType: string) {
+    const baseData = {
+        // 光华宝箱数据
+        guanghua_box: {
+            output: dateType === 'daily' ? 1250 : 45000,
+            users: dateType === 'daily' ? 320 : 8500,
+            times: dateType === 'daily' ? 890 : 25000,
+        },
+        // 月华宝箱数据
+        yuehua_box: {
+            output: dateType === 'daily' ? 680 : 18500,
+            users: dateType === 'daily' ? 180 : 4200,
+            times: dateType === 'daily' ? 420 : 12000,
+        },
+        // 活动总产出
+        total_output: {
+            output: dateType === 'daily' ? 2800 : 89000,
+            users: dateType === 'daily' ? 450 : 12000,
+        },
+        // 任务完成数据
+        mission_completion: {
+            first_recharge_page: { users: dateType === 'daily' ? 120 : 3200, times: dateType === 'daily' ? 150 : 4100 },
+            shi_tu_page: { users: dateType === 'daily' ? 95 : 2800, times: dateType === 'daily' ? 110 : 3200 },
+            gift_pack_page: { users: dateType === 'daily' ? 200 : 5500, times: dateType === 'daily' ? 280 : 7200 },
+            user_home_page: { users: dateType === 'daily' ? 350 : 9800, times: dateType === 'daily' ? 520 : 15000 },
+            attention_user: { users: dateType === 'daily' ? 180 : 4800, times: dateType === 'daily' ? 220 : 6200 },
+            room_stay: { users: dateType === 'daily' ? 280 : 7200, times: dateType === 'daily' ? 380 : 9800 },
+            user_chat: { users: dateType === 'daily' ? 320 : 8500, times: dateType === 'daily' ? 450 : 12000 },
+        },
+        // 入口PV/UV数据
+        entrance_data: {
+            main_page: { pv: dateType === 'daily' ? 2800 : 85000, uv: dateType === 'daily' ? 1200 : 32000 },
+            task_page: { pv: dateType === 'daily' ? 1500 : 42000, uv: dateType === 'daily' ? 800 : 18000 },
+            box_page: { pv: dateType === 'daily' ? 2200 : 68000, uv: dateType === 'daily' ? 950 : 25000 },
+            birthday_page: { pv: dateType === 'daily' ? 680 : 18500, uv: dateType === 'daily' ? 320 : 8200 },
+        },
+        // 用户道具数据
+        user_props: {
+            guanghua_box: { 
+                total: dateType === 'daily' ? 1250 : 45000, 
+                used: dateType === 'daily' ? 890 : 32000 
+            },
+            yuehua_box: { 
+                total: dateType === 'daily' ? 680 : 18500, 
+                used: dateType === 'daily' ? 420 : 12800 
+            },
+            exchange_mall: { 
+                total: dateType === 'daily' ? 950 : 28000, 
+                used: dateType === 'daily' ? 720 : 21000 
+            },
+        },
+        // 洗手池数据
+        wash_hands: {
+            pv: dateType === 'daily' ? 1800 : 52000,
+            uv: dateType === 'daily' ? 650 : 18500,
+        },
+        // 点亮宝石用户数
+        light_gem_users: dateType === 'daily' ? 280 : 7800,
+        // 寿星奖励数据
+        birthday_reward: {
+            users: dateType === 'daily' ? 45 : 1200,
+            times: dateType === 'daily' ? 68 : 1850,
+        },
+        // 你最特别报名人数
+        special_signup: dateType === 'daily' ? 120 : 3500,
+    };
+
+    return baseData;
 }

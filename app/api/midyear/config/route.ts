@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MidYearConfig } from '../../../../types/midyear-config';
 
+import { defaultConfig } from '../../../../config/defaultConfig';
+import { buildApiUrl } from '../../../../config/environment';
+
 // 模拟的年中活动配置数据
 const mockMidYearConfig: MidYearConfig = {
   send_msg_config: {
@@ -798,38 +801,49 @@ const mockMidYearConfig: MidYearConfig = {
   }
 };
 
-// GET 请求处理函数
 export async function GET(request: NextRequest) {
-  // 模拟延迟
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  return NextResponse.json({
-    code: 0,
-    message: 'success',
-    data: mockMidYearConfig
-  });
-}
+    try {
+        // 调用后端API获取配置
+        const apiUrl = buildApiUrl('getConfigByMidyear');
+        console.log('正在调用API:', apiUrl);
 
-// POST 请求处理函数
-export async function POST(request: NextRequest) {
-  // 模拟延迟
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  try {
-    const body = await request.json();
-    
-    // 这里可以添加保存配置的逻辑
-    
-    return NextResponse.json({
-      code: 0,
-      message: 'success',
-      data: body.config
-    });
-  } catch (error) {
-    return NextResponse.json({
-      code: 1,
-      message: 'Invalid request body',
-      data: null
-    }, { status: 400 });
-  }
+        const backendResponse = await fetch(apiUrl, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!backendResponse.ok) {
+            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
+        }
+
+        const result = await backendResponse.json();
+        
+        // 检查后端返回的数据格式
+        if (!result.success) {
+            throw new Error(result.message || '后端返回错误');
+        }
+        console.log('从后端获取的原始配置:', result.data);
+        // 返回配置数据
+        return NextResponse.json({
+            success: true,
+            message: '配置获取成功',
+            data: result.data || mockMidYearConfig,
+            timestamp: new Date().toISOString(),
+        });
+    } catch (error) {
+        console.error('获取配置时出错:', error);
+        return NextResponse.json(
+            {
+                success: false,
+                message: '获取配置失败',
+                error: error instanceof Error ? error.message : '未知错误',
+                data: mockMidYearConfig, // 失败时返回默认配置
+            },
+            { status: 500 },
+        );
+    }
 }
