@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MainConfig } from '../../../../types/config';
 import { validateConfig, sanitizeConfig } from '../../../../utils/configValidator';
+import { buildApiUrl } from '../../../../config/environment';
 
 export async function POST(request: NextRequest) {
     try {
@@ -22,26 +23,27 @@ export async function POST(request: NextRequest) {
         // 清理和格式化配置数据
         const config: MainConfig = sanitizeConfig(rawConfig);
 
-        // 在这里添加你的实际保存逻辑
-        // 例如：保存到数据库、文件系统或调用其他API
-        console.log('接收到配置数据:', JSON.stringify(config, null, 2));
+        // 调用后端API保存配置
+        const apiUrl = buildApiUrl('saveConfig');
+        const backendResponse = await fetch(apiUrl, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(config),
+        });
 
-        // 模拟保存过程
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        if (!backendResponse.ok) {
+            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
+        }
 
-        // 这里可以调用你的后端API
-        // const backendResponse = await fetch('YOUR_BACKEND_API_URL', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer YOUR_TOKEN', // 如果需要认证
-        //     },
-        //     body: JSON.stringify(config),
-        // });
+        const result = await backendResponse.json();
 
-        // if (!backendResponse.ok) {
-        //     throw new Error(`后端API调用失败: ${backendResponse.status}`);
-        // }
+        if (!result.success) {
+            throw new Error(result.message || '后端返回错误');
+        }
 
         return NextResponse.json({
             success: true,

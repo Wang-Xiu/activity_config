@@ -1,30 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { defaultConfig } from '../../../../config/defaultConfig';
+import { buildApiUrl } from '../../../../config/environment';
 
 export async function GET(request: NextRequest) {
     try {
-        // 在这里添加你的实际获取逻辑
-        // 例如：从数据库、文件系统或其他API获取配置
+        // 调用后端API获取配置
+        const apiUrl = buildApiUrl('getConfig');
+        console.log('正在调用API:', apiUrl);
 
-        // 模拟获取过程
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        const backendResponse = await fetch(apiUrl, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-        // 这里可以调用你的后端API获取配置
-        // const backendResponse = await fetch('YOUR_BACKEND_API_URL', {
-        //     method: 'GET',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
-        // const configData = await backendResponse.json();
+        if (!backendResponse.ok) {
+            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
+        }
 
-        // 目前返回默认配置，你可以替换为从实际数据源获取的配置
-        const configData = defaultConfig;
-
+        const result = await backendResponse.json();
+        
+        // 检查后端返回的数据格式
+        if (!result.success) {
+            throw new Error(result.message || '后端返回错误');
+        }
+console.log(result.data)
+        // 返回配置数据
         return NextResponse.json({
             success: true,
             message: '配置获取成功',
-            data: configData,
+            data: result.data || defaultConfig,
             timestamp: new Date().toISOString(),
         });
     } catch (error) {
