@@ -17,9 +17,13 @@ export async function GET(request: NextRequest) {
             },
         });
 
-        if (!backendResponse.ok) {
-            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
-        }
+        // 这里可以调用你的后端API获取配置
+        const backendUrl = 'https://testmqgitfrontend.meequ.cn/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261';
+        const backendResponse = await fetch(backendUrl, {
+            method: 'GET',
+            // PHP接口一般不需要 application/json 头部，除非后端要求
+        });
+        const configData = await backendResponse.json();
 
         const result = await backendResponse.json();
         

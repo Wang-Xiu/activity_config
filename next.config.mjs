@@ -6,6 +6,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
+<<<<<<< HEAD
   async headers() {
     return [
       {
@@ -19,6 +20,17 @@ const nextConfig = {
         ],
       },
     ];
+=======
+  async rewrites() {
+    return process.env.NODE_ENV === 'development'
+      ? [
+          {
+            source: '/api/:path*',
+            destination: 'https://testmqgitfrontend.meequ.cn/index.php?r=:path*',
+          },
+        ]
+      : [];
+>>>>>>> 772b29880119a3a9a67cca4af3ee8173fca2d4cd
   },
 };
 export default nextConfig;
