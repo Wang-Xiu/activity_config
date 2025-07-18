@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge' | 'midyear';
+    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge' | 'midyear' | 'universal';
 }
 
 // 活动配置
@@ -34,6 +34,17 @@ export const ACTIVITIES: Activity[] = [
         configUrl: '/api/midyear/config',
         monitorUrl: '/api/midyear/monitor',
         type: 'midyear',
+    },
+    {
+        id: 'universal',
+        name: '通用配置',
+        description: '通用活动配置管理（自动适配）',
+        icon: '⚙️',
+        color: 'indigo',
+        status: 'active',
+        configUrl: '/api/midyear/config',
+        monitorUrl: '/api/midyear/monitor',
+        type: 'universal',
     },
     {
         id: 'lottery',

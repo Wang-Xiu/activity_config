@@ -171,6 +171,17 @@ export interface ActConfig {
     quarter_prize: QuarterPrize;
 }
 
+// 红包配置类型
+export interface RedPacketConfig {
+    name?: string;
+    description?: string;
+    enabled?: number;
+    min_amount?: string;
+    max_amount?: string;
+    min_count?: string;
+    max_count?: string;
+}
+
 // 主配置类型
 export interface MainConfig {
     send_msg_config: SendMsgConfig;
@@ -178,4 +189,5 @@ export interface MainConfig {
     send_warning_config: SendWarningConfig;
     '活动配置 ↓↓↓': string;
     act_config: ActConfig;
+    red_packet_config?: RedPacketConfig;
 }

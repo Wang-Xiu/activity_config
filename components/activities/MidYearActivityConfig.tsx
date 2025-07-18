@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Activity } from '../../types/activity';
+import { MainConfig, Activity } from '../../types/activity';
 import ActivityConfigPage from '../ActivityConfigPage';
 
 interface MidYearActivityConfigProps {
@@ -229,20 +229,20 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                     <div>
                         <h3 className="text-lg font-semibold mb-4">发送消息配置</h3>
                         <div className="space-y-6">
-                            {renderToggle('是否开启发送通知', ['send_msg_config', 'send_msg'], config.send_msg_config.send_msg)}
+                            {renderToggle('是否开启发送通知', ['send_msg_config', 'send_msg'], MainConfig.send_msg_config.send_msg)}
                             
                             <div className="border-t pt-4">
                                 <h4 className="font-medium text-gray-800 mb-3">通知发送内容</h4>
                                 {renderTextField('匹配完成通知', ['send_msg_config', 'send_msg_info', 'match_done'], 
-                                    config.send_msg_config.send_msg_info.match_done)}
+                                    MainConfig.send_msg_config.send_msg_info.match_done)}
                                 {renderTextField('周四提示通知', ['send_msg_config', 'send_msg_info', 'thursday_tips'], 
-                                    config.send_msg_config.send_msg_info.thursday_tips)}
+                                    MainConfig.send_msg_config.send_msg_info.thursday_tips)}
                                 {renderTextField('差20点提示', ['send_msg_config', 'send_msg_info', 'need_20_value'], 
-                                    config.send_msg_config.send_msg_info.need_20_value)}
+                                    MainConfig.send_msg_config.send_msg_info.need_20_value)}
                                 {renderTextField('两天提示', ['send_msg_config', 'send_msg_info', 'two_days_tips'], 
-                                    config.send_msg_config.send_msg_info.two_days_tips)}
+                                    MainConfig.send_msg_config.send_msg_info.two_days_tips)}
                                 {renderTextField('第四周提示', ['send_msg_config', 'send_msg_info', 'fourth_week'], 
-                                    config.send_msg_config.send_msg_info.fourth_week)}
+                                    MainConfig.send_msg_config.send_msg_info.fourth_week)}
                             </div>
                         </div>
                     </div>
@@ -314,7 +314,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                     <label className="block text-sm font-medium text-gray-700 mb-1">导入礼物ID列表</label>
                                     <input
                                         type="text"
-                                        value={config.act_config.import_gifts ? config.act_config.import_gifts.join(', ') : ''}
+                                        value={MainConfig.act_config.import_gifts ? MainConfig.act_config.import_gifts.join(', ') : ''}
                                         onChange={(e) => {
                                             const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
                                             handleConfigChange(['act_config', 'import_gifts'], giftIds);
@@ -330,33 +330,33 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextAreaField('介绍信息', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'intro_msg'], 
-                                    config.act_config.rank_game_config.family_rank_config.intro_msg)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.intro_msg)}
                                 
                                 {renderTextAreaField('备用信息1', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg'], 
-                                    config.act_config.rank_game_config.family_rank_config.spare_msg)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.spare_msg)}
                                 
                                 {renderTextAreaField('备用信息2', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg_2'], 
-                                    config.act_config.rank_game_config.family_rank_config.spare_msg_2)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.spare_msg_2)}
                                 
                                 {renderDateTimeField('开始时间', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'start_time'], 
-                                    config.act_config.rank_game_config.family_rank_config.start_time)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.start_time)}
                                 
                                 {renderDateTimeField('结束时间', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'end_time'], 
-                                    config.act_config.rank_game_config.family_rank_config.end_time)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.end_time)}
                                 
                                 {renderTextField('榜单值比例', 
                                     ['act_config', 'rank_game_config', 'family_rank_config', 'rank_value_ratio'], 
-                                    config.act_config.rank_game_config.family_rank_config.rank_value_ratio)}
+                                    MainConfig.act_config.rank_game_config.family_rank_config.rank_value_ratio)}
                                 
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">家族赛上榜礼物ID</label>
                                     <input
                                         type="text"
-                                        value={config.act_config.rank_game_config.family_rank_config.rank_gift.join(', ')}
+                                        value={MainConfig.act_config.rank_game_config.family_rank_config.rank_gift.join(', ')}
                                         onChange={(e) => {
                                             const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
                                             handleConfigChange(['act_config', 'rank_game_config', 'family_rank_config', 'rank_gift'], giftIds);
@@ -373,30 +373,30 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <h6 className="font-medium mb-2">第一阶段</h6>
                                             {renderDateTimeField('开始时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'start_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.start_time)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.first_stage.start_time)}
                                             
                                             {renderDateTimeField('结束时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'end_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.end_time)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.first_stage.end_time)}
                                             
                                             {renderTextField('晋级所需值', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'winner_need_value'], 
-                                                config.act_config.rank_game_config.family_rank_config.first_stage.winner_need_value)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.first_stage.winner_need_value || '')}
                                         </div>
                                         
                                         <div className="border p-3 rounded-md">
                                             <h6 className="font-medium mb-2">第二阶段</h6>
                                             {renderDateTimeField('开始时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'start_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.start_time)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.second_stage.start_time)}
                                             
                                             {renderDateTimeField('结束时间', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'end_time'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.end_time)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.second_stage.end_time)}
                                             
                                             {renderTextField('晋级所需值', 
                                                 ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'winner_need_value'], 
-                                                config.act_config.rank_game_config.family_rank_config.second_stage.winner_need_value)}
+                                                MainConfig.act_config.rank_game_config.family_rank_config.second_stage.winner_need_value || '')}
                                         </div>
                                     </div>
                                 </div>
@@ -407,33 +407,33 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextAreaField('介绍信息', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'intro_msg'], 
-                                    config.act_config.rank_game_config.user_rank_config.intro_msg)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.intro_msg)}
                                 
                                 {renderTextAreaField('备用信息1', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'spare_msg'], 
-                                    config.act_config.rank_game_config.user_rank_config.spare_msg)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.spare_msg)}
                                 
                                 {renderTextAreaField('备用信息2', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'spare_msg_2'], 
-                                    config.act_config.rank_game_config.user_rank_config.spare_msg_2)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.spare_msg_2)}
                                 
                                 {renderDateTimeField('开始时间', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'start_time'], 
-                                    config.act_config.rank_game_config.user_rank_config.start_time)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.start_time)}
                                 
                                 {renderDateTimeField('结束时间', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'end_time'], 
-                                    config.act_config.rank_game_config.user_rank_config.end_time)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.end_time)}
                                 
                                 {renderTextField('榜单值比例', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'rank_value_ratio'], 
-                                    config.act_config.rank_game_config.user_rank_config.rank_value_ratio)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.rank_value_ratio)}
                                 
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">风云榜上榜礼物ID</label>
                                     <input
                                         type="text"
-                                        value={config.act_config.rank_game_config.user_rank_config.rank_gift.join(', ')}
+                                        value={MainConfig.act_config.rank_game_config.user_rank_config.rank_gift.join(', ')}
                                         onChange={(e) => {
                                             const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
                                             handleConfigChange(['act_config', 'rank_game_config', 'user_rank_config', 'rank_gift'], giftIds);
@@ -445,7 +445,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextField('参与奖所需榜单值', 
                                     ['act_config', 'rank_game_config', 'user_rank_config', 'patch_in_prize_need_value'], 
-                                    config.act_config.rank_game_config.user_rank_config.patch_in_prize_need_value)}
+                                    MainConfig.act_config.rank_game_config.user_rank_config.patch_in_prize_need_value || '')}
                             </div>
                         </div>
                     </div>
@@ -461,16 +461,16 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextField('最大补签数', 
                                     ['act_config', 'sign_game_config', 'rich_sign_in', 'remedy_sign_in_max_num'], 
-                                    config.act_config.sign_game_config.rich_sign_in.remedy_sign_in_max_num)}
+                                    MainConfig.act_config.sign_game_config.rich_sign_in.remedy_sign_in_max_num)}
                                 
                                 {renderTextField('补签需人民币', 
                                     ['act_config', 'sign_game_config', 'rich_sign_in', 'remedy_sign_in_need_rmb'], 
-                                    config.act_config.sign_game_config.rich_sign_in.remedy_sign_in_need_rmb)}
+                                    MainConfig.act_config.sign_game_config.rich_sign_in.remedy_sign_in_need_rmb)}
                                 
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">累计签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config.act_config.sign_game_config.rich_sign_in.total_sign_in_prize).map(([key, prize]) => (
+                                        {Object.entries(MainConfig.act_config.sign_game_config.rich_sign_in.total_sign_in_prize).map(([key, prize]) => (
                                             <div key={key} className="border p-3 rounded-md">
                                                 <div className="flex justify-between items-center mb-2">
                                                     <h6 className="font-medium">累计{prize.need_num}天奖励</h6>
@@ -515,16 +515,16 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextField('最大补签数', 
                                     ['act_config', 'sign_game_config', 'user_sign_in', 'remedy_sign_in_max_num'], 
-                                    config.act_config.sign_game_config.user_sign_in.remedy_sign_in_max_num)}
+                                    MainConfig.act_config.sign_game_config.user_sign_in.remedy_sign_in_max_num)}
                                 
                                 {renderTextField('补签需人民币', 
                                     ['act_config', 'sign_game_config', 'user_sign_in', 'remedy_sign_in_need_rmb'], 
-                                    config.act_config.sign_game_config.user_sign_in.remedy_sign_in_need_rmb)}
+                                    MainConfig.act_config.sign_game_config.user_sign_in.remedy_sign_in_need_rmb)}
                                 
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">累计签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config.act_config.sign_game_config.user_sign_in.total_sign_in_prize).map(([key, prize]) => (
+                                        {Object.entries(MainConfig.act_config.sign_game_config.user_sign_in.total_sign_in_prize).map(([key, prize]) => (
                                             <div key={key} className="border p-3 rounded-md">
                                                 <div className="flex justify-between items-center mb-2">
                                                     <h6 className="font-medium">累计{prize.need_num}天奖励</h6>
@@ -545,7 +545,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">每日签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config.act_config.sign_game_config.user_sign_in.prize_list).slice(0, 6).map(([day, gifts]) => (
+                                        {Object.entries(MainConfig.act_config.sign_game_config.user_sign_in.prize_list).slice(0, 6).map(([day, gifts]) => (
                                             <div key={day} className="border p-3 rounded-md">
                                                 <div className="flex justify-between items-center mb-2">
                                                     <h6 className="font-medium">第{day}天奖励</h6>
@@ -577,26 +577,26 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderDateTimeField('开始时间', 
                                     ['act_config', 'draw_game_config', 'start_time'], 
-                                    config.act_config.draw_game_config.start_time)}
+                                    MainConfig.act_config.draw_game_config.start_time)}
                                 
                                 {renderDateTimeField('结束时间', 
                                     ['act_config', 'draw_game_config', 'end_time'], 
-                                    config.act_config.draw_game_config.end_time)}
+                                    MainConfig.act_config.draw_game_config.end_time)}
                                 
                                 {renderTextAreaField('游戏说明', 
                                     ['act_config', 'draw_game_config', 'game_msg'], 
-                                    config.act_config.draw_game_config.game_msg)}
+                                    MainConfig.act_config.draw_game_config.game_msg)}
                                 
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">切换奖池时间</label>
                                     <div className="space-y-2">
-                                        {config.act_config.draw_game_config.change_pool_time.map((time, index) => (
+                                        {MainConfig.act_config.draw_game_config.change_pool_time.map((time, index) => (
                                             <div key={index} className="flex items-center space-x-2">
                                                 <input
                                                     type="text"
                                                     value={time}
                                                     onChange={(e) => {
-                                                        const newTimes = [...config.act_config.draw_game_config.change_pool_time];
+                                                        const newTimes = [...MainConfig.act_config.draw_game_config.change_pool_time];
                                                         newTimes[index] = e.target.value;
                                                         handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
                                                     }}
@@ -606,7 +606,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                                 <button
                                                     className="px-2 py-1 bg-red-500 text-white rounded"
                                                     onClick={() => {
-                                                        const newTimes = [...config.act_config.draw_game_config.change_pool_time];
+                                                        const newTimes = [...MainConfig.act_config.draw_game_config.change_pool_time];
                                                         newTimes.splice(index, 1);
                                                         handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
                                                     }}
@@ -618,7 +618,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                         <button
                                             className="px-3 py-1 bg-blue-500 text-white rounded"
                                             onClick={() => {
-                                                const newTimes = [...config.act_config.draw_game_config.change_pool_time, ''];
+                                                const newTimes = [...MainConfig.act_config.draw_game_config.change_pool_time, ''];
                                                 handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
                                             }}
                                         >
@@ -631,7 +631,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">购买道具礼物配置</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {Object.entries(config.act_config.draw_game_config.pay_prop_gift).map(([key, gift]) => (
+                                    {Object.entries(MainConfig.act_config.draw_game_config.pay_prop_gift).map(([key, gift]) => (
                                         <div key={key} className="border p-3 rounded-md">
                                             <div className="flex justify-between items-center mb-2">
                                                 <h6 className="font-medium">道具{key}</h6>
@@ -717,27 +717,27 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderDateTimeField('开始时间', 
                                     ['act_config', 'fight_game_config', 'start_time'], 
-                                    config.act_config.fight_game_config.start_time)}
+                                    MainConfig.act_config.fight_game_config.start_time)}
                                 
                                 {renderDateTimeField('结束时间', 
                                     ['act_config', 'fight_game_config', 'end_time'], 
-                                    config.act_config.fight_game_config.end_time)}
+                                    MainConfig.act_config.fight_game_config.end_time)}
                                 
                                 {renderTextField('PK玩法开启时间', 
                                     ['act_config', 'fight_game_config', 'pk_game_start'], 
-                                    config.act_config.fight_game_config.pk_game_start)}
+                                    MainConfig.act_config.fight_game_config.pk_game_start)}
                                 
                                 {renderTextField('PK玩法结束时间', 
                                     ['act_config', 'fight_game_config', 'pk_game_end'], 
-                                    config.act_config.fight_game_config.pk_game_end)}
+                                    MainConfig.act_config.fight_game_config.pk_game_end)}
                                 
                                 {renderTextAreaField('抽奖区域文案', 
                                     ['act_config', 'fight_game_config', 'game_msg_draw'], 
-                                    config.act_config.fight_game_config.game_msg_draw)}
+                                    MainConfig.act_config.fight_game_config.game_msg_draw)}
                                 
                                 {renderTextAreaField('掐架区域文案', 
                                     ['act_config', 'fight_game_config', 'game_msg_fight'], 
-                                    config.act_config.fight_game_config.game_msg_fight)}
+                                    MainConfig.act_config.fight_game_config.game_msg_fight)}
                             </div>
 
                             <div className="border p-4 rounded-md">
@@ -745,7 +745,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderTextField('最大回合数', 
                                     ['act_config', 'fight_game_config', 'fight_config', 'max_round'], 
-                                    config.act_config.fight_game_config.fight_config.max_round)}
+                                    MainConfig.act_config.fight_game_config.fight_config.max_round)}
                                 
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">消息配置</h5>
@@ -753,13 +753,13 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                     <div className="mb-4">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">开始消息</label>
                                         <div className="space-y-2">
-                                            {config.act_config.fight_game_config.fight_config.msg_config.start_msg.map((msg, index) => (
+                                            {MainConfig.act_config.fight_game_config.fight_config.msg_config.start_msg.map((msg, index) => (
                                                 <div key={index} className="flex items-center space-x-2">
                                                     <input
                                                         type="text"
                                                         value={msg}
                                                         onChange={(e) => {
-                                                            const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.start_msg];
+                                                            const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.start_msg];
                                                             newMsgs[index] = e.target.value;
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
                                                         }}
@@ -768,7 +768,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.start_msg];
+                                                            const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.start_msg];
                                                             newMsgs.splice(index, 1);
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
                                                         }}
@@ -780,7 +780,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.start_msg, ''];
+                                                    const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.start_msg, ''];
                                                     handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
                                                 }}
                                             >
@@ -792,13 +792,13 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                     <div className="mb-4">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">攻击消息</label>
                                         <div className="space-y-2">
-                                            {config.act_config.fight_game_config.fight_config.msg_config.attack_msg.map((msg, index) => (
+                                            {MainConfig.act_config.fight_game_config.fight_config.msg_config.attack_msg.map((msg, index) => (
                                                 <div key={index} className="flex items-center space-x-2">
                                                     <input
                                                         type="text"
                                                         value={msg}
                                                         onChange={(e) => {
-                                                            const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.attack_msg];
+                                                            const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.attack_msg];
                                                             newMsgs[index] = e.target.value;
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
                                                         }}
@@ -807,7 +807,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.attack_msg];
+                                                            const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.attack_msg];
                                                             newMsgs.splice(index, 1);
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
                                                         }}
@@ -819,7 +819,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newMsgs = [...config.act_config.fight_game_config.fight_config.msg_config.attack_msg, ''];
+                                                    const newMsgs = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.attack_msg, ''];
                                                     handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
                                                 }}
                                             >
@@ -831,13 +831,13 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                     <div className="mb-4">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">功夫列表</label>
                                         <div className="space-y-2">
-                                            {config.act_config.fight_game_config.fight_config.msg_config.kungfu_list.map((kungfu, index) => (
+                                            {MainConfig.act_config.fight_game_config.fight_config.msg_config.kungfu_list.map((kungfu, index) => (
                                                 <div key={index} className="flex items-center space-x-2">
                                                     <input
                                                         type="text"
                                                         value={kungfu}
                                                         onChange={(e) => {
-                                                            const newKungfus = [...config.act_config.fight_game_config.fight_config.msg_config.kungfu_list];
+                                                            const newKungfus = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.kungfu_list];
                                                             newKungfus[index] = e.target.value;
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
                                                         }}
@@ -846,7 +846,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newKungfus = [...config.act_config.fight_game_config.fight_config.msg_config.kungfu_list];
+                                                            const newKungfus = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.kungfu_list];
                                                             newKungfus.splice(index, 1);
                                                             handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
                                                         }}
@@ -858,7 +858,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newKungfus = [...config.act_config.fight_game_config.fight_config.msg_config.kungfu_list, ''];
+                                                    const newKungfus = [...MainConfig.act_config.fight_game_config.fight_config.msg_config.kungfu_list, ''];
                                                     handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
                                                 }}
                                             >
@@ -874,15 +874,15 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                 
                                 {renderGiftField('下注所需礼物', 
                                     ['act_config', 'fight_game_config', 'join_need_prize'], 
-                                    config.act_config.fight_game_config.join_need_prize)}
+                                    MainConfig.act_config.fight_game_config.join_need_prize)}
                                 
                                 {renderGiftField('下注成功奖励', 
                                     ['act_config', 'fight_game_config', 'success_prize'], 
-                                    config.act_config.fight_game_config.success_prize)}
+                                    MainConfig.act_config.fight_game_config.success_prize)}
                                 
                                 {renderGiftField('抽奖额外获得礼物', 
                                     ['act_config', 'fight_game_config', 'extra_gift'], 
-                                    config.act_config.fight_game_config.extra_gift)}
+                                    MainConfig.act_config.fight_game_config.extra_gift)}
                             </div>
                         </div>
                     </div>
