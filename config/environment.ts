@@ -11,7 +11,7 @@ export const ENV_CONFIG = {
             getConfig: '/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261&newH=1',
             saveConfig: '/index.php?r=activity/gemstone/save-config&debug=1&password=!!!!&uid=100056&auth=1&actId=261',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&debug=1&password=!!!!&uid=100056&auth=1&actId=261',
-            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&newH=1',
         },
         // 生产环境配置
         production: {
@@ -19,7 +19,7 @@ export const ENV_CONFIG = {
             getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261',
             saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261',
-            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&newH=1',
         }
     }
 };

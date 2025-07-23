@@ -42,6 +42,15 @@ export interface SendWarningConfig {
     give_gift_num: string;
 }
 
+// 通用配置的简化版本
+export interface UniversalSendMsgConfig {
+    send_msg: number;
+}
+
+export interface UniversalSendWarningConfig {
+    send_warning: number;
+}
+
 // 任务配置类型
 export interface TaskConfig {
     desc: string;
@@ -187,6 +196,16 @@ export interface MainConfig {
     send_msg_config: SendMsgConfig;
     '活动告警配置↓↓↓': string;
     send_warning_config: SendWarningConfig;
+    '活动配置 ↓↓↓': string;
+    act_config: ActConfig;
+    red_packet_config?: RedPacketConfig;
+}
+
+// 通用活动配置类型（简化版本）
+export interface UniversalConfig {
+    send_msg_config: UniversalSendMsgConfig;
+    '活动告警配置↓↓↓': string;
+    send_warning_config: UniversalSendWarningConfig;
     '活动配置 ↓↓↓': string;
     act_config: ActConfig;
     red_packet_config?: RedPacketConfig;
