@@ -6,9 +6,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true
   },
-  experimental: {
-    allowedHosts: ['*']
-  },
   async headers() {
     return [
       {

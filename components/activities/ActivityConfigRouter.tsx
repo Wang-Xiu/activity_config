@@ -5,7 +5,7 @@ import GemActivityConfig from './GemActivityConfig';
 import RedPacketActivityConfig from './RedPacketActivityConfig';
 import MidYearActivityConfig from './MidYearActivityConfig';
 // 导入通用活动配置组件
-import UniversalActivityConfig from '@/components/activities/UniversalActivityConfig';
+import UniversalActivityConfig from './UniversalActivityConfig';
 
 interface ActivityConfigRouterProps {
     activity: Activity;

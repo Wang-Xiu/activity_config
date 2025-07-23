@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Activity } from '../../types/activity';
-import ActivityConfigPage from '../ActivityConfigPage';
+import useActivityConfig from '../../utils/useActivityConfig';
 import { MainConfig } from '../../types/config';
 
 interface RedPacketActivityConfigProps {
@@ -12,7 +12,7 @@ interface RedPacketActivityConfigProps {
 
 export default function RedPacketActivityConfig({ activity, onStatusChange }: RedPacketActivityConfigProps) {
     const [activeConfigTab, setActiveConfigTab] = useState('send_msg');
-    const { config, setConfig, apiStatus, fetchConfig, submitConfig } = ActivityConfigPage({
+    const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<MainConfig>({
         activity,
         onStatusChange,
     });
