@@ -12,6 +12,8 @@ export const ENV_CONFIG = {
             saveConfig: '/index.php?r=activity/gemstone/save-config&debug=1&password=!!!!&uid=100056&auth=1&actId=261',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&debug=1&password=!!!!&uid=100056&auth=1&actId=261',
             getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&newH=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&debug=1&password=!!!!&uid=100056&auth=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&debug=1&password=!!!!&uid=100056&auth=1',
         },
         // 生产环境配置
         production: {
@@ -20,6 +22,8 @@ export const ENV_CONFIG = {
             saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261',
             getConfigByMidyear: '/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&newH=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1',
         }
     }
 };
@@ -30,7 +34,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getConfigByMidyear') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };

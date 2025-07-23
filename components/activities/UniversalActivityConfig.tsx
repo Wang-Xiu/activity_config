@@ -4,6 +4,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { Activity } from '../../types/activity';
 import { UniversalConfig } from '../../types/config';
 import useActivityConfig from '../../utils/useActivityConfig';
+import { fieldNameMapping, isPureEnglish, getDisplayFieldName } from '../../config/fieldNameMapping';
+import { buildApiUrl } from '../../config/environment';
 
 interface UniversalActivityConfigProps {
     activity: Activity;
@@ -452,53 +454,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<Array<{key: string, path: string[], label: string}>>([]);
     const [activityId, setActivityId] = useState('');
+    const [hasLoadedConfig, setHasLoadedConfig] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    
-    // 字段名称映射配置 - 内部配置
-    const fieldNameMapping: {[key: string]: string} = {
-        'mission_pool': '任务池配置',
-        'new_user': '新用户任务',
-        'old_user': '老用户任务',
-        'open_box_config': '开宝箱配置',
-        'free_box_time_1': '免费宝箱时间1',
-        'free_box_time_2': '免费宝箱时间2',
-        'send_gift_get_box': '送礼得宝箱',
-        'get_gift_send_hat': '收礼送尾巴',
-        'happy_birthday_config': '生日配置',
-        'origin_price': '原价',
-        'now_price': '现价',
-        'mission_list': '任务列表',
-        'get_flower_prize': '鲜花奖励',
-        'all_stone': '宝石配置',
-        'wash_hands_config': '洗手池配置',
-        'day_chance': '每日次数',
-        'prop_img': '道具图片',
-        'quarter_prize': '季度奖励',
-        'gift_id': '礼物ID',
-        'gift_type': '礼物类型',
-        'gift_num': '礼物数量',
-        'real_probability': '真实概率',
-        'gift_name': '礼物名称',
-        'gift_img': '礼物图片',
-        'get_prop_num': '获得道具数量',
-        'hat_gift_info': '尾巴礼物信息',
-        'need_flower': '所需鲜花',
-        'format_price': '格式化价格',
-        'remark': '备注',
-        'desc': '描述',
-        'need': '需要',
-        'get': '获得',
-        'type': '类型',
-        'sort': '排序',
-        'need_gift_ids': '需要的礼物ID',
-        'msg_list': '消息列表',
-        'name': '名称',
-        'value': '数值',
-        'probability': '概率',
-        'pool': '奖池',
-        'start': '开始时间',
-        'end': '结束时间'
-    };
     
     const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<UniversalConfig>({
         activity,
@@ -531,6 +488,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             const data = await response.json();
             if (data.success) {
                 setConfig(data.data);
+                setHasLoadedConfig(true);
                 onStatusChange?.('loaded');
                 alert(`活动ID ${activityId} 的配置获取成功`);
             } else {
@@ -545,13 +503,43 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
     // 更新缓存
     const handleUpdateCache = async () => {
+        if (!activityId.trim()) {
+            alert('请先输入活动ID');
+            return;
+        }
+
         try {
-            // TODO: 调用更新缓存API
-            console.log('更新缓存API调用待实现');
-            alert('更新缓存功能待实现');
+            onStatusChange?.('loading');
+            
+            // 构建API URL并添加活动ID参数
+            const apiUrl = buildApiUrl('reloadCache') + `&act_id=${encodeURIComponent(activityId)}`;
+            console.log('正在调用更新缓存API:', apiUrl);
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success !== false) {
+                onStatusChange?.('loaded');
+                alert(`活动ID ${activityId} 的缓存更新成功`);
+            } else {
+                throw new Error(result.message || '更新缓存失败');
+            }
         } catch (error) {
             console.error('更新缓存失败:', error);
-            alert('更新缓存失败');
+            alert(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            onStatusChange?.('error');
         }
     };
 
@@ -565,6 +553,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             onStatusChange?.('loading');
             // 先清空当前配置
             setConfig(null);
+            setHasLoadedConfig(false);
             
             // 重新获取默认配置
             const response = await fetch('/api/universal/config', {
@@ -581,6 +570,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             const data = await response.json();
             if (data.success) {
                 setConfig(data.data);
+                setHasLoadedConfig(true);
                 onStatusChange?.('loaded');
                 // 清空活动ID和搜索
                 setActivityId('');
@@ -599,24 +589,44 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
     // 更新物料缓存
     const handleUpdateMaterialCache = async () => {
+        if (!activityId.trim()) {
+            alert('请先输入活动ID');
+            return;
+        }
+
         try {
-            // TODO: 调用更新物料缓存API
-            console.log('更新物料缓存API调用待实现');
-            alert('更新物料缓存功能待实现');
+            onStatusChange?.('loading');
+            
+            // 构建API URL并添加活动ID参数
+            const apiUrl = buildApiUrl('updateMaterialCache') + `&act_id=${encodeURIComponent(activityId)}`;
+            console.log('正在调用更新物料缓存API:', apiUrl);
+
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success !== false) {
+                onStatusChange?.('loaded');
+                alert(`活动ID ${activityId} 的物料缓存更新成功`);
+            } else {
+                throw new Error(result.message || '更新物料缓存失败');
+            }
         } catch (error) {
             console.error('更新物料缓存失败:', error);
-            alert('更新物料缓存失败');
+            alert(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            onStatusChange?.('error');
         }
-    };
-
-    // 获取字段显示名称（支持映射替换）
-    const getDisplayFieldName = (fieldName: string): string => {
-        return fieldNameMapping[fieldName] || fieldName;
-    };
-
-    // 判断字符串是否为纯英文（包含字母、数字、下划线）
-    const isPureEnglish = (str: string): boolean => {
-        return /^[a-zA-Z0-9_]+$/.test(str);
     };
 
     // 更新配置字段的处理函数 - 只处理act_config
@@ -686,7 +696,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         } else {
             setSearchResults([]);
         }
-    }, [searchTerm, config, fieldNameMapping]);
+    }, [searchTerm, config]);
 
     // 跳转到搜索结果 - 使用状态提升来管理展开状态
     const jumpToResult = (result: {path: string[]}) => {
@@ -706,8 +716,50 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         console.log('需要展开的节点:', Array.from(pathsToExpand));
     };
 
-    if (!config) {
-        return <div className="flex items-center justify-center h-full">加载中...</div>;
+    if (!hasLoadedConfig) {
+        return (
+            <div className="flex flex-col h-full">
+                {/* 活动ID输入区域 */}
+                <div className="mb-4 bg-white p-4 rounded-lg shadow">
+                    <div className="flex items-end space-x-4">
+                        <div className="flex-1">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                活动ID
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="请输入活动ID（留空则使用默认配置）..."
+                                value={activityId}
+                                onChange={(e) => setActivityId(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        fetchConfigById();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <button
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+                                onClick={fetchConfigById}
+                            >
+                                获取配置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 提示信息 */}
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center bg-gray-50 p-8 rounded-lg shadow">
+                        <div className="text-6xl text-gray-300 mb-4">📋</div>
+                        <h3 className="text-lg font-medium text-gray-700 mb-2">请先输入活动ID</h3>
+                        <p className="text-gray-500">先输入要编辑配置的活动ID，然后点击&#34;获取配置&#34;按钮</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -757,6 +809,23 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 >
                     JSON预览
                 </button>
+            </div>
+
+            {/* 重要提示文案 */}
+            <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                        <svg className="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <div className="ml-3">
+                        <h3 className="text-sm font-medium text-yellow-800">重要提示</h3>
+                        <p className="mt-1 text-sm text-yellow-700">
+                            只能修改 JSON 配置，不能修改物料信息。请谨慎操作，确保数据格式正确。
+                        </p>
+                    </div>
+                </div>
             </div>
 
             {/* 搜索栏 */}
