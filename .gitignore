@@ -27,6 +27,9 @@ yarn-error.log*
 
 # local env files
 .env*.local
+# 但保留环境配置文件以便部署
+# .env.test
+# .env.prod
 
 # vercel
 .vercel
@@ -40,3 +43,7 @@ next-env.d.ts
 .next-prod
 
 .idea/
+
+# logs
+/logs/
+*.log

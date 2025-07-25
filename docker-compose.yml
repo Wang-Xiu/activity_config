@@ -1,0 +1,31 @@
+# 默认Docker Compose配置 (测试环境)
+# 使用指定环境请执行:
+# 测试环境: docker-compose -f docker-compose.test.yml up -d
+# 生产环境: docker-compose -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  activity-config:
+    build: 
+      context: .
+      args:
+        - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DEPLOY_ENV=test
+    env_file:
+      - .env.test
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - .:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
