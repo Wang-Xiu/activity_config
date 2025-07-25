@@ -6,6 +6,9 @@ export const ENV_CONFIG = {
     // 判断部署环境
     deployEnv: process.env.DEPLOY_ENV || 'test', // test | prod
     
+    // 判断是否为构建时（避免构建时调用外部API）
+    isBuildTime: process.env.BUILD_TIME === 'true' || process.env.NEXT_PHASE === 'phase-production-build',
+    
     // API 基础配置
     api: {
         // 测试环境配置
@@ -57,6 +60,7 @@ export const getEnvironmentInfo = () => {
         nodeEnv: process.env.NODE_ENV,
         deployEnv: ENV_CONFIG.deployEnv,
         isProduction: ENV_CONFIG.isProduction,
+        isBuildTime: ENV_CONFIG.isBuildTime,
         apiBaseUrl: getCurrentApiConfig().baseUrl,
         debugMode: process.env.DEBUG_MODE === 'true',
     };

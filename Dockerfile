@@ -16,6 +16,7 @@ COPY . .
 # 设置环境变量（可以在构建时覆盖）
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
+ENV BUILD_TIME=true
 
 # 构建应用
 RUN npm run build

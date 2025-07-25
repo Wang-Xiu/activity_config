@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { defaultConfig } from '../../../../config/defaultConfig';
 import { buildApiUrl } from '../../../../config/environment';
+import { fetchWithFallback } from '../../../../utils/apiProxy';
+
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
     try {
@@ -8,22 +12,18 @@ export async function GET(request: NextRequest) {
         const apiUrl = buildApiUrl('getConfig');
         console.log('正在调用API:', apiUrl);
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await fetchWithFallback(apiUrl, {
             method: 'GET',
             mode: 'cors',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
+        }, defaultConfig);
 
-        // 这里可以调用你的后端API获取配置
-        // const backendUrl = 'https://testmqgitfrontend.meequ.cn/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261';
-        // const backendResponse = await fetch(backendUrl, {
-        //     method: 'GET',
-        //     // PHP接口一般不需要 application/json 头部，除非后端要求
-        // });
-        const configData = await backendResponse.json();
+        if (!backendResponse.ok) {
+            throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);
+        }
 
         const result = await backendResponse.json();
         
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         if (!result.success) {
             throw new Error(result.message || '后端返回错误');
         }
-console.log(result.data)
+
         // 返回配置数据
         return NextResponse.json({
             success: true,

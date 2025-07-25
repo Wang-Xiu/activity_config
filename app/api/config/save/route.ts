@@ -3,6 +3,9 @@ import { MainConfig } from '../../../../types/config';
 import { validateConfig, sanitizeConfig } from '../../../../utils/configValidator';
 import { buildApiUrl } from '../../../../config/environment';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
     try {
         const rawConfig = await request.json();

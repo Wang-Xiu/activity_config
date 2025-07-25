@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { universalDefaultConfig } from '../../../../config/universalDefaultConfig';
 import { buildApiUrl } from '../../../../config/environment';
 
+// 强制动态渲染
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     try {
         // 从URL参数中获取活动ID
