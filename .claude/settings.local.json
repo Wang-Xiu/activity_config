@@ -6,7 +6,9 @@
       "Bash(rm:*)",
       "Bash(npm run dev)",
       "Bash(pkill -f \"next dev\")",
-      "Bash(lsof:*)"
+      "Bash(lsof:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }
