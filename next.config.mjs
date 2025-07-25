@@ -1,6 +1,9 @@
 import path from 'path';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: [
+    'http://172.18.26.11:3000'
+  ],
   output: "standalone",
   distDir: process.env.NODE_ENV === "production" ? ".next-prod" : ".next",
   typescript: {
