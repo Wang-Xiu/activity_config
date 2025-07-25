@@ -13,6 +13,9 @@ services:
       - DEPLOY_ENV=prod
     env_file:
       - .env.prod
+    extra_hosts:
+      - "proactivity.meequ.cn:172.18.26.11"
+      - "testmqgitapp.meequ.cn:172.18.26.11"
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs

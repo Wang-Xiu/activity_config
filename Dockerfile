@@ -17,6 +17,10 @@ COPY . .
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
+# 添加hosts映射以解决构建时域名解析问题
+RUN echo "172.18.26.11 proactivity.meequ.cn" >> /etc/hosts && \
+    echo "172.18.26.11 testmqgitapp.meequ.cn" >> /etc/hosts
+
 # 构建应用
 RUN npm run build
 
