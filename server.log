@@ -1,0 +1,400 @@
+> @onlook/next-template@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.30
+  - Local:        http://localhost:12000
+
+ ✓ Starting...
+ ⚠ Invalid next.config.mjs options detected:
+ ⚠     Unrecognized key(s) in object: 'allowedHosts' at "experimental"
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ✓ Ready in 1473ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s (503 modules)
+ GET / 200 in 2477ms
+ ✓ Compiled in 219ms (245 modules)
+ ⚠ Cross origin request detected from work-1-zixyjndbkamljeri.prod-runtime.all-hands.dev to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled /api/midyear/config in 358ms (287 modules)
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1
+从后端获取的原始配置: {
+  act_config: {
+    '发通知礼物(背包id) ↓↓↓': ' ',
+    import_gifts: [
+       224,  109,  208, 4316,
+      2849, 2888, 4317, 2853,
+      3315, 2939, 4318, 2259,
+      3239, 2174, 4319, 3961,
+      2050, 2329, 1518, 4320
+    ],
+    '四榜单玩法-家族榜风云榜展示10名，技能榜名人榜30名 ↓↓↓': ' ',
+    rank_game_config: {
+      family_rank_config: [Object],
+      user_rank_config: [Object],
+      skill_rank_config: [Object],
+      star_user_rank_config: [Object]
+    },
+    '两个签到玩法 remedy_sign_in_max_num最大补签数 remedy_sign_in_need_rmb补签需人民币 ↓↓↓': ' ',
+    sign_game_config: { rich_sign_in: [Object], user_sign_in: [Object] },
+    '抽奖玩法玩法 ↓↓↓': ' ',
+    draw_game_config: {
+      start_time: '2025-07-05 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      game_msg: '啊啊啊啊啊啊啊啊啊啊啊文案',
+      '切换奖池时间（持续4个钟） ↓↓↓': ' ',
+      change_pool_time: [Array],
+      pay_prop_gift: [Object]
+    },
+    '掐架玩法 ↓↓↓': ' ',
+    fight_game_config: {
+      start_time: '2025-07-09 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      'PK玩法开启结束时间(开始结束时间不能跨天) ↓↓↓': ' ',
+      pk_game_start: '09:30:00',
+      pk_game_end: '20:00:00',
+      game_msg_draw: '抽奖区域文案',
+      game_msg_fight: '掐架区域文案',
+      '奖池额外获得道具配置 ↓↓↓': ' ',
+      extra_prop_config: [Object],
+      '藏经阁固定开放时间 ↓↓↓': ' ',
+      pool_8_open_time: [Object],
+      '武林打架配置 max_round为最大回合数（1秒1回合，打1次就1回合） ↓↓↓': ' ',
+      fight_config: [Object],
+      pay_prop_gift: [Object],
+      comment_prize: [Object],
+      rich_day_prize: [Object],
+      join_need_prize: [Object],
+      success_prize: [Object],
+      extra_gift: [Object]
+    }
+  },
+  send_msg_config: {
+    '是否开启发送通知(1开启。0关闭)↓↓↓': ' ',
+    send_msg: 1,
+    '通知发送内容 ↓↓↓': ' ',
+    send_msg_info: {
+      draw_msg: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      draw_msg_third_game: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      family_rank_promoted_all_room: '恭喜{familyName}家族成功晋级{stageName}赛！',
+      family_rank_promoted_act_msg: '恭喜你所在的家族成功晋级到{stageName}赛。',
+      family_rank_winner_act_msg: '恭喜{familyName}家族成功夺得年中盛典第{rank}名！',
+      family_rank_winner_all_room: '恭喜【{familyName}家族】在【{ownerName}】的带领下，勇夺年中盛典荣耀家族{rankName}军！',
+      user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典风云人物榜单{rankName}军！',
+      user_rank_winner_act_msg: '恭喜你，勇夺年中盛典风云人物声{rankName}军！',
+      skill_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典天选之声榜单{rankName}军！',
+      skill_rank_winner_act_msg: '恭喜你，勇夺年中盛典天选之声{rankName}军！',
+      star_user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典名人堂{rankName}军！',
+      star_user_rank_winner_act_msg: '恭喜你，勇夺年中名人堂{rankName}军！',
+      pool_change_begin: '神笔绘梦入梦开启，<ml>点我</ml>参与~',
+      pool_8_begion: '少林藏经阁开启，<ml>点我</ml>一探究竟~。',
+      fight_game_begion: '各位少侠，竞技场擂台赛开启，<ml>点我</ml>参与，分个高下~'
+    }
+  },
+  send_warning_config: {
+    '是否开启告警邮件发送(1开启。0关闭)↓↓↓': ' ',
+    send_warning: 1,
+    '告警产生的活动名 ↓↓↓': ' ',
+    send_warning_act_name: '李强年度',
+    '告警邮件发送间隔↓↓↓': ' ',
+    send_warning_interval: '300',
+    '告警礼物时间间隔配置 ↓↓↓': ' ',
+    interval_warning_time: { '111': '10' },
+    '告警礼物数量阈值配置 ↓↓↓': ' ',
+    interval_warning_prize: { '111': '4' },
+    '接口访问次数风控告警-指定时间内(秒) ↓↓↓': ' ',
+    report_time: '60',
+    '接口访问次数风控告警-访问次数阈值 ↓↓↓': ' ',
+    report_num: '20',
+    msg_1: '李强年度---{uid}在{seconds}秒内发放礼物数量大于阈值：{setCount}！',
+    give_gift_num: '500'
+  }
+}
+ GET /api/midyear/config 200 in 2002ms
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1
+从后端获取的原始配置: {
+  act_config: {
+    '发通知礼物(背包id) ↓↓↓': ' ',
+    import_gifts: [
+       224,  109,  208, 4316,
+      2849, 2888, 4317, 2853,
+      3315, 2939, 4318, 2259,
+      3239, 2174, 4319, 3961,
+      2050, 2329, 1518, 4320
+    ],
+    '四榜单玩法-家族榜风云榜展示10名，技能榜名人榜30名 ↓↓↓': ' ',
+    rank_game_config: {
+      family_rank_config: [Object],
+      user_rank_config: [Object],
+      skill_rank_config: [Object],
+      star_user_rank_config: [Object]
+    },
+    '两个签到玩法 remedy_sign_in_max_num最大补签数 remedy_sign_in_need_rmb补签需人民币 ↓↓↓': ' ',
+    sign_game_config: { rich_sign_in: [Object], user_sign_in: [Object] },
+    '抽奖玩法玩法 ↓↓↓': ' ',
+    draw_game_config: {
+      start_time: '2025-07-05 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      game_msg: '啊啊啊啊啊啊啊啊啊啊啊文案',
+      '切换奖池时间（持续4个钟） ↓↓↓': ' ',
+      change_pool_time: [Array],
+      pay_prop_gift: [Object]
+    },
+    '掐架玩法 ↓↓↓': ' ',
+    fight_game_config: {
+      start_time: '2025-07-09 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      'PK玩法开启结束时间(开始结束时间不能跨天) ↓↓↓': ' ',
+      pk_game_start: '09:30:00',
+      pk_game_end: '20:00:00',
+      game_msg_draw: '抽奖区域文案',
+      game_msg_fight: '掐架区域文案',
+      '奖池额外获得道具配置 ↓↓↓': ' ',
+      extra_prop_config: [Object],
+      '藏经阁固定开放时间 ↓↓↓': ' ',
+      pool_8_open_time: [Object],
+      '武林打架配置 max_round为最大回合数（1秒1回合，打1次就1回合） ↓↓↓': ' ',
+      fight_config: [Object],
+      pay_prop_gift: [Object],
+      comment_prize: [Object],
+      rich_day_prize: [Object],
+      join_need_prize: [Object],
+      success_prize: [Object],
+      extra_gift: [Object]
+    }
+  },
+  send_msg_config: {
+    '是否开启发送通知(1开启。0关闭)↓↓↓': ' ',
+    send_msg: 1,
+    '通知发送内容 ↓↓↓': ' ',
+    send_msg_info: {
+      draw_msg: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      draw_msg_third_game: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      family_rank_promoted_all_room: '恭喜{familyName}家族成功晋级{stageName}赛！',
+      family_rank_promoted_act_msg: '恭喜你所在的家族成功晋级到{stageName}赛。',
+      family_rank_winner_act_msg: '恭喜{familyName}家族成功夺得年中盛典第{rank}名！',
+      family_rank_winner_all_room: '恭喜【{familyName}家族】在【{ownerName}】的带领下，勇夺年中盛典荣耀家族{rankName}军！',
+      user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典风云人物榜单{rankName}军！',
+      user_rank_winner_act_msg: '恭喜你，勇夺年中盛典风云人物声{rankName}军！',
+      skill_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典天选之声榜单{rankName}军！',
+      skill_rank_winner_act_msg: '恭喜你，勇夺年中盛典天选之声{rankName}军！',
+      star_user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典名人堂{rankName}军！',
+      star_user_rank_winner_act_msg: '恭喜你，勇夺年中名人堂{rankName}军！',
+      pool_change_begin: '神笔绘梦入梦开启，<ml>点我</ml>参与~',
+      pool_8_begion: '少林藏经阁开启，<ml>点我</ml>一探究竟~。',
+      fight_game_begion: '各位少侠，竞技场擂台赛开启，<ml>点我</ml>参与，分个高下~'
+    }
+  },
+  send_warning_config: {
+    '是否开启告警邮件发送(1开启。0关闭)↓↓↓': ' ',
+    send_warning: 1,
+    '告警产生的活动名 ↓↓↓': ' ',
+    send_warning_act_name: '李强年度',
+    '告警邮件发送间隔↓↓↓': ' ',
+    send_warning_interval: '300',
+    '告警礼物时间间隔配置 ↓↓↓': ' ',
+    interval_warning_time: { '111': '10' },
+    '告警礼物数量阈值配置 ↓↓↓': ' ',
+    interval_warning_prize: { '111': '4' },
+    '接口访问次数风控告警-指定时间内(秒) ↓↓↓': ' ',
+    report_time: '60',
+    '接口访问次数风控告警-访问次数阈值 ↓↓↓': ' ',
+    report_num: '20',
+    msg_1: '李强年度---{uid}在{seconds}秒内发放礼物数量大于阈值：{setCount}！',
+    give_gift_num: '500'
+  }
+}
+ GET /api/midyear/config 200 in 10ms
+ ✓ Compiled /api/gemstone/config in 175ms (288 modules)
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261&newH=1
+ GET /api/gemstone/config 200 in 1906ms
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/gemstone/setting&debug=1&password=!!!!&uid=100056&auth=1&actId=261&newH=1
+ GET /api/gemstone/config 200 in 10ms
+ ✓ Compiled /api/midyear/config in 51ms (290 modules)
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1
+从后端获取的原始配置: {
+  act_config: {
+    '发通知礼物(背包id) ↓↓↓': ' ',
+    import_gifts: [
+       224,  109,  208, 4316,
+      2849, 2888, 4317, 2853,
+      3315, 2939, 4318, 2259,
+      3239, 2174, 4319, 3961,
+      2050, 2329, 1518, 4320
+    ],
+    '四榜单玩法-家族榜风云榜展示10名，技能榜名人榜30名 ↓↓↓': ' ',
+    rank_game_config: {
+      family_rank_config: [Object],
+      user_rank_config: [Object],
+      skill_rank_config: [Object],
+      star_user_rank_config: [Object]
+    },
+    '两个签到玩法 remedy_sign_in_max_num最大补签数 remedy_sign_in_need_rmb补签需人民币 ↓↓↓': ' ',
+    sign_game_config: { rich_sign_in: [Object], user_sign_in: [Object] },
+    '抽奖玩法玩法 ↓↓↓': ' ',
+    draw_game_config: {
+      start_time: '2025-07-05 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      game_msg: '啊啊啊啊啊啊啊啊啊啊啊文案',
+      '切换奖池时间（持续4个钟） ↓↓↓': ' ',
+      change_pool_time: [Array],
+      pay_prop_gift: [Object]
+    },
+    '掐架玩法 ↓↓↓': ' ',
+    fight_game_config: {
+      start_time: '2025-07-09 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      'PK玩法开启结束时间(开始结束时间不能跨天) ↓↓↓': ' ',
+      pk_game_start: '09:30:00',
+      pk_game_end: '20:00:00',
+      game_msg_draw: '抽奖区域文案',
+      game_msg_fight: '掐架区域文案',
+      '奖池额外获得道具配置 ↓↓↓': ' ',
+      extra_prop_config: [Object],
+      '藏经阁固定开放时间 ↓↓↓': ' ',
+      pool_8_open_time: [Object],
+      '武林打架配置 max_round为最大回合数（1秒1回合，打1次就1回合） ↓↓↓': ' ',
+      fight_config: [Object],
+      pay_prop_gift: [Object],
+      comment_prize: [Object],
+      rich_day_prize: [Object],
+      join_need_prize: [Object],
+      success_prize: [Object],
+      extra_gift: [Object]
+    }
+  },
+  send_msg_config: {
+    '是否开启发送通知(1开启。0关闭)↓↓↓': ' ',
+    send_msg: 1,
+    '通知发送内容 ↓↓↓': ' ',
+    send_msg_info: {
+      draw_msg: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      draw_msg_third_game: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      family_rank_promoted_all_room: '恭喜{familyName}家族成功晋级{stageName}赛！',
+      family_rank_promoted_act_msg: '恭喜你所在的家族成功晋级到{stageName}赛。',
+      family_rank_winner_act_msg: '恭喜{familyName}家族成功夺得年中盛典第{rank}名！',
+      family_rank_winner_all_room: '恭喜【{familyName}家族】在【{ownerName}】的带领下，勇夺年中盛典荣耀家族{rankName}军！',
+      user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典风云人物榜单{rankName}军！',
+      user_rank_winner_act_msg: '恭喜你，勇夺年中盛典风云人物声{rankName}军！',
+      skill_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典天选之声榜单{rankName}军！',
+      skill_rank_winner_act_msg: '恭喜你，勇夺年中盛典天选之声{rankName}军！',
+      star_user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典名人堂{rankName}军！',
+      star_user_rank_winner_act_msg: '恭喜你，勇夺年中名人堂{rankName}军！',
+      pool_change_begin: '神笔绘梦入梦开启，<ml>点我</ml>参与~',
+      pool_8_begion: '少林藏经阁开启，<ml>点我</ml>一探究竟~。',
+      fight_game_begion: '各位少侠，竞技场擂台赛开启，<ml>点我</ml>参与，分个高下~'
+    }
+  },
+  send_warning_config: {
+    '是否开启告警邮件发送(1开启。0关闭)↓↓↓': ' ',
+    send_warning: 1,
+    '告警产生的活动名 ↓↓↓': ' ',
+    send_warning_act_name: '李强年度',
+    '告警邮件发送间隔↓↓↓': ' ',
+    send_warning_interval: '300',
+    '告警礼物时间间隔配置 ↓↓↓': ' ',
+    interval_warning_time: { '111': '10' },
+    '告警礼物数量阈值配置 ↓↓↓': ' ',
+    interval_warning_prize: { '111': '4' },
+    '接口访问次数风控告警-指定时间内(秒) ↓↓↓': ' ',
+    report_time: '60',
+    '接口访问次数风控告警-访问次数阈值 ↓↓↓': ' ',
+    report_num: '20',
+    msg_1: '李强年度---{uid}在{seconds}秒内发放礼物数量大于阈值：{setCount}！',
+    give_gift_num: '500'
+  }
+}
+ GET /api/midyear/config 200 in 74ms
+正在调用API: https://testmqgitfrontend.meequ.cn/index.php?r=activity/act-common/get-config&debug=1&password=!!!!&uid=100056&auth=1&act_id=264&newH=1
+从后端获取的原始配置: {
+  act_config: {
+    '发通知礼物(背包id) ↓↓↓': ' ',
+    import_gifts: [
+       224,  109,  208, 4316,
+      2849, 2888, 4317, 2853,
+      3315, 2939, 4318, 2259,
+      3239, 2174, 4319, 3961,
+      2050, 2329, 1518, 4320
+    ],
+    '四榜单玩法-家族榜风云榜展示10名，技能榜名人榜30名 ↓↓↓': ' ',
+    rank_game_config: {
+      family_rank_config: [Object],
+      user_rank_config: [Object],
+      skill_rank_config: [Object],
+      star_user_rank_config: [Object]
+    },
+    '两个签到玩法 remedy_sign_in_max_num最大补签数 remedy_sign_in_need_rmb补签需人民币 ↓↓↓': ' ',
+    sign_game_config: { rich_sign_in: [Object], user_sign_in: [Object] },
+    '抽奖玩法玩法 ↓↓↓': ' ',
+    draw_game_config: {
+      start_time: '2025-07-05 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      game_msg: '啊啊啊啊啊啊啊啊啊啊啊文案',
+      '切换奖池时间（持续4个钟） ↓↓↓': ' ',
+      change_pool_time: [Array],
+      pay_prop_gift: [Object]
+    },
+    '掐架玩法 ↓↓↓': ' ',
+    fight_game_config: {
+      start_time: '2025-07-09 00:00:00',
+      end_time: '2025-07-20 00:00:00',
+      'PK玩法开启结束时间(开始结束时间不能跨天) ↓↓↓': ' ',
+      pk_game_start: '09:30:00',
+      pk_game_end: '20:00:00',
+      game_msg_draw: '抽奖区域文案',
+      game_msg_fight: '掐架区域文案',
+      '奖池额外获得道具配置 ↓↓↓': ' ',
+      extra_prop_config: [Object],
+      '藏经阁固定开放时间 ↓↓↓': ' ',
+      pool_8_open_time: [Object],
+      '武林打架配置 max_round为最大回合数（1秒1回合，打1次就1回合） ↓↓↓': ' ',
+      fight_config: [Object],
+      pay_prop_gift: [Object],
+      comment_prize: [Object],
+      rich_day_prize: [Object],
+      join_need_prize: [Object],
+      success_prize: [Object],
+      extra_gift: [Object]
+    }
+  },
+  send_msg_config: {
+    '是否开启发送通知(1开启。0关闭)↓↓↓': ' ',
+    send_msg: 1,
+    '通知发送内容 ↓↓↓': ' ',
+    send_msg_info: {
+      draw_msg: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      draw_msg_third_game: '<mu>{uid}</mu>在{poolName}获得了{giftName}（价值{giftPrice}）*{giftNum}',
+      family_rank_promoted_all_room: '恭喜{familyName}家族成功晋级{stageName}赛！',
+      family_rank_promoted_act_msg: '恭喜你所在的家族成功晋级到{stageName}赛。',
+      family_rank_winner_act_msg: '恭喜{familyName}家族成功夺得年中盛典第{rank}名！',
+      family_rank_winner_all_room: '恭喜【{familyName}家族】在【{ownerName}】的带领下，勇夺年中盛典荣耀家族{rankName}军！',
+      user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典风云人物榜单{rankName}军！',
+      user_rank_winner_act_msg: '恭喜你，勇夺年中盛典风云人物声{rankName}军！',
+      skill_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典天选之声榜单{rankName}军！',
+      skill_rank_winner_act_msg: '恭喜你，勇夺年中盛典天选之声{rankName}军！',
+      star_user_rank_winner_all_room: '恭喜【{userName}】，勇夺年中盛典名人堂{rankName}军！',
+      star_user_rank_winner_act_msg: '恭喜你，勇夺年中名人堂{rankName}军！',
+      pool_change_begin: '神笔绘梦入梦开启，<ml>点我</ml>参与~',
+      pool_8_begion: '少林藏经阁开启，<ml>点我</ml>一探究竟~。',
+      fight_game_begion: '各位少侠，竞技场擂台赛开启，<ml>点我</ml>参与，分个高下~'
+    }
+  },
+  send_warning_config: {
+    '是否开启告警邮件发送(1开启。0关闭)↓↓↓': ' ',
+    send_warning: 1,
+    '告警产生的活动名 ↓↓↓': ' ',
+    send_warning_act_name: '李强年度',
+    '告警邮件发送间隔↓↓↓': ' ',
+    send_warning_interval: '300',
+    '告警礼物时间间隔配置 ↓↓↓': ' ',
+    interval_warning_time: { '111': '10' },
+    '告警礼物数量阈值配置 ↓↓↓': ' ',
+    interval_warning_prize: { '111': '4' },
+    '接口访问次数风控告警-指定时间内(秒) ↓↓↓': ' ',
+    report_time: '60',
+    '接口访问次数风控告警-访问次数阈值 ↓↓↓': ' ',
+    report_num: '20',
+    msg_1: '李强年度---{uid}在{seconds}秒内发放礼物数量大于阈值：{setCount}！',
+    give_gift_num: '500'
+  }
+}
+ GET /api/midyear/config 200 in 11ms`

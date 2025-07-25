@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'red_packet' | 'lottery' | 'signin' | 'recharge' | 'midyear';
+    type: 'gem' | 'midyear' | 'universal';
 }
 
 // 活动配置
@@ -36,37 +36,15 @@ export const ACTIVITIES: Activity[] = [
         type: 'midyear',
     },
     {
-        id: 'lottery',
-        name: '抽奖活动',
-        description: '幸运抽奖活动配置管理',
-        icon: '🎰',
-        color: 'purple',
+        id: 'universal',
+        name: '通用配置',
+        description: '通用活动配置管理（自动适配）',
+        icon: '⚙️',
+        color: 'indigo',
         status: 'active',
-        configUrl: '/api/lottery/config',
-        monitorUrl: '/api/lottery/monitor',
-        type: 'lottery',
-    },
-    {
-        id: 'signin',
-        name: '签到活动',
-        description: '每日签到活动配置管理',
-        icon: '📅',
-        color: 'green',
-        status: 'active',
-        configUrl: '/api/signin/config',
-        monitorUrl: '/api/signin/monitor',
-        type: 'signin',
-    },
-    {
-        id: 'recharge',
-        name: '充值活动',
-        description: '充值返利活动配置管理',
-        icon: '💰',
-        color: 'yellow',
-        type: 'recharge',
-        status: 'active',
-        configUrl: '/api/recharge/config',
-        monitorUrl: '/api/recharge/monitor',
+        configUrl: '/api/midyear/config',
+        monitorUrl: '/api/midyear/monitor',
+        type: 'universal',
     },
 ];
 
