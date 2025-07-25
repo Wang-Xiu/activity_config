@@ -629,6 +629,59 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         }
     };
 
+    // 自定义保存配置函数 - 专门用于通用配置
+    const handleSaveConfig = async () => {
+        console.log('=== 点击了保存配置按钮 ===');
+        console.log('当前活动ID:', activityId);
+        console.log('当前配置:', config);
+        
+        if (!activityId.trim()) {
+            alert('请先输入活动ID');
+            return;
+        }
+
+        if (!config || !config.act_config) {
+            alert('没有配置可保存');
+            return;
+        }
+
+        try {
+            onStatusChange?.('loading');
+
+            const response = await fetch('/api/universal/save-config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    activityId: activityId,
+                    actConfig: config.act_config
+                })
+            });
+
+            console.log('API响应状态:', response.status, response.statusText);
+            console.log('API响应Headers:', response.headers);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('API返回的完整响应:', result);
+            
+            if (result.success) {
+                onStatusChange?.('saved');
+                alert(result.message || `活动ID ${activityId} 的配置保存成功`);
+            } else {
+                throw new Error(result.message || '保存配置失败');
+            }
+        } catch (error) {
+            console.error('保存配置失败:', error);
+            alert(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            onStatusChange?.('error');
+        }
+    };
+
     // 更新配置字段的处理函数 - 只处理act_config
     const handleConfigChange = (path: string[], value: any) => {
         if (!config) return;
@@ -909,7 +962,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 <div className="space-x-4">
                     <button
                         className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        onClick={submitConfig}
+                        onClick={handleSaveConfig}
                     >
                         保存配置
                     </button>
