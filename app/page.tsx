@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+
+export const dynamic = 'force-dynamic';
 import { MonitorData } from '../types/monitor';
 import { Activity, ACTIVITIES } from '../types/activity';
 import ActivitySelector from '../components/ActivitySelector';

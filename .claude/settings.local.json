@@ -9,7 +9,10 @@
       "Bash(lsof:*)",
       "Bash(chmod:*)",
       "Bash(mkdir:*)",
-      "Bash(BUILD_TIME=true npm run build)"
+      "Bash(BUILD_TIME=true npm run build)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
