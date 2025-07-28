@@ -3,9 +3,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Activity } from '../../types/activity';
 import { UniversalConfig } from '../../types/config';
-import useActivityConfig from '../../utils/useActivityConfig';
 import { fieldNameMapping, isPureEnglish, getDisplayFieldName } from '../../config/fieldNameMapping';
-import { buildApiUrl } from '../../config/environment';
+import { useToast, ToastContainer } from '../Toast';
 
 interface UniversalActivityConfigProps {
     activity: Activity;
@@ -450,36 +449,40 @@ function ConfigRenderer({
 }
 
 export default function UniversalActivityConfig({ activity, onStatusChange }: UniversalActivityConfigProps) {
+    const [config, setConfig] = useState<UniversalConfig | null>(null);
     const [activeTab, setActiveTab] = useState('config');
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<Array<{key: string, path: string[], label: string}>>([]);
     const [activityId, setActivityId] = useState('');
     const [hasLoadedConfig, setHasLoadedConfig] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [apiStatus, setApiStatus] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
     
-    const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<UniversalConfig>({
-        activity,
-        onStatusChange,
-    });
+    // Toast提示
+    const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast();
 
     // 获取指定活动ID的配置
     const fetchConfigById = useCallback(async () => {
         if (!activityId.trim()) {
-            alert('请先输入活动ID');
+            showWarning('请先输入活动ID');
             return;
         }
         
         try {
+            setApiStatus('正在获取配置...');
             onStatusChange?.('loading');
-            const url = `/api/universal/config?activityId=${encodeURIComponent(activityId)}`;
-            console.log('正在调用API:', url);
+            console.log('正在调用API: /api/universal/config');
+            console.log('POST参数:', { activityId });
             
-            const response = await fetch(url, {
-                method: 'GET',
+            const response = await fetch('/api/universal/config', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    activityId: activityId
+                })
             });
 
             if (!response.ok) {
@@ -490,14 +493,16 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             if (data.success) {
                 setConfig(data.data);
                 setHasLoadedConfig(true);
+                setApiStatus('配置获取成功');
                 onStatusChange?.('loaded');
-                alert(`活动ID ${activityId} 的配置获取成功`);
+                showSuccess(`活动ID ${activityId} 的配置获取成功`);
             } else {
                 throw new Error(data.message || '获取配置失败');
             }
         } catch (error) {
-            console.error('获取配置错误:', error);
-            alert(`获取配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            console.error('获取配置失败:', error);
+            setApiStatus(`获取配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            showError('获取配置失败: ' + (error instanceof Error ? error.message : '未知错误'));
             onStatusChange?.('error');
         }
     }, [activityId]);
@@ -505,24 +510,25 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     // 更新缓存
     const handleUpdateCache = async () => {
         if (!activityId.trim()) {
-            alert('请先输入活动ID');
+            showWarning('请先输入活动ID');
             return;
         }
 
         try {
+            setApiStatus('正在更新缓存...');
             onStatusChange?.('loading');
             
-            // 构建API URL并添加活动ID参数
-            const apiUrl = buildApiUrl('reloadCache') + `&act_id=${encodeURIComponent(activityId)}`;
-            console.log('正在调用更新缓存API:', apiUrl);
+            console.log('正在调用更新缓存API: /api/universal/reload-cache');
+            console.log('POST参数:', { activityId });
 
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include',
+            const response = await fetch('/api/universal/reload-cache', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    activityId: activityId
+                })
             });
 
             if (!response.ok) {
@@ -530,85 +536,63 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             }
 
             const result = await response.json();
+            console.log('缓存更新API响应:', result);
             
-            if (result.success !== false) {
+            if (result.success) {
+                setApiStatus('缓存更新成功');
                 onStatusChange?.('loaded');
-                alert(`活动ID ${activityId} 的缓存更新成功`);
+                showSuccess(result.message || `活动ID ${activityId} 的缓存更新成功`);
             } else {
-                throw new Error(result.message || '更新缓存失败');
+                throw new Error(result.message || '缓存更新失败');
             }
         } catch (error) {
             console.error('更新缓存失败:', error);
-            alert(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            setApiStatus(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            showError(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         }
     };
 
     // 重置配置功能
     const handleResetConfig = async () => {
-        if (!confirm('确定要重置配置吗？这将清空当前所有修改并重新获取默认配置。')) {
+        if (!confirm('确定要重置吗？这将清空当前所有配置数据并回到初始状态。')) {
             return;
         }
         
-        try {
-            onStatusChange?.('loading');
-            // 先清空当前配置
-            setConfig(null);
-            setHasLoadedConfig(false);
-            
-            // 重新获取默认配置
-            const response = await fetch('/api/universal/config', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            if (data.success) {
-                setConfig(data.data);
-                setHasLoadedConfig(true);
-                onStatusChange?.('loaded');
-                // 清空活动ID和搜索
-                setActivityId('');
-                setSearchTerm('');
-                setSearchResults([]);
-                alert('配置重置成功');
-            } else {
-                throw new Error(data.message || '获取默认配置失败');
-            }
-        } catch (error) {
-            console.error('重置配置错误:', error);
-            alert(`重置配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
-            onStatusChange?.('error');
-        }
+        // 清空所有状态，回到初始状态
+        setConfig(null);
+        setHasLoadedConfig(false);
+        setActivityId('');
+        setSearchTerm('');
+        setSearchResults([]);
+        setApiStatus('');
+        onStatusChange?.('');
+        
+        showInfo('已重置，请重新输入活动ID并获取配置');
     };
 
     // 更新物料缓存
     const handleUpdateMaterialCache = async () => {
         if (!activityId.trim()) {
-            alert('请先输入活动ID');
+            showWarning('请先输入活动ID');
             return;
         }
 
         try {
+            setApiStatus('正在更新物料缓存...');
             onStatusChange?.('loading');
             
-            // 构建API URL并添加活动ID参数
-            const apiUrl = buildApiUrl('updateMaterialCache') + `&act_id=${encodeURIComponent(activityId)}`;
-            console.log('正在调用更新物料缓存API:', apiUrl);
+            console.log('正在调用更新物料缓存API: /api/universal/update-material-cache');
+            console.log('POST参数:', { activityId });
 
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'include',
+            const response = await fetch('/api/universal/update-material-cache', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    activityId: activityId
+                })
             });
 
             if (!response.ok) {
@@ -616,16 +600,19 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             }
 
             const result = await response.json();
+            console.log('物料缓存更新API响应:', result);
             
-            if (result.success !== false) {
+            if (result.success) {
+                setApiStatus('物料缓存更新成功');
                 onStatusChange?.('loaded');
-                alert(`活动ID ${activityId} 的物料缓存更新成功`);
+                showSuccess(result.message || `活动ID ${activityId} 的物料缓存更新成功`);
             } else {
-                throw new Error(result.message || '更新物料缓存失败');
+                throw new Error(result.message || '物料缓存更新失败');
             }
         } catch (error) {
             console.error('更新物料缓存失败:', error);
-            alert(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            setApiStatus(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            showError(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         }
     };
@@ -637,16 +624,17 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         console.log('当前配置:', config);
         
         if (!activityId.trim()) {
-            alert('请先输入活动ID');
+            showWarning('请先输入活动ID');
             return;
         }
 
         if (!config || !config.act_config) {
-            alert('没有配置可保存');
+            showWarning('没有配置可保存');
             return;
         }
 
         try {
+            setApiStatus('正在保存配置...');
             onStatusChange?.('loading');
 
             const response = await fetch('/api/universal/save-config', {
@@ -671,14 +659,16 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             console.log('API返回的完整响应:', result);
             
             if (result.success) {
+                setApiStatus('配置保存成功');
                 onStatusChange?.('saved');
-                alert(result.message || `活动ID ${activityId} 的配置保存成功`);
+                showSuccess(result.message || `活动ID ${activityId} 的配置保存成功`);
             } else {
                 throw new Error(result.message || '保存配置失败');
             }
         } catch (error) {
             console.error('保存配置失败:', error);
-            alert(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            setApiStatus(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            showError(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         }
     };
@@ -797,7 +787,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             </label>
                             <input
                                 type="text"
-                                placeholder="请输入活动ID（留空则使用默认配置）..."
+                                placeholder="请先输入活动ID，不输入不会调用接口..."
                                 value={activityId}
                                 onChange={(e) => setActivityId(e.target.value)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -821,10 +811,14 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
                 {/* 提示信息 */}
                 <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center bg-gray-50 p-8 rounded-lg shadow">
-                        <div className="text-6xl text-gray-300 mb-4">📋</div>
-                        <h3 className="text-lg font-medium text-gray-700 mb-2">请先输入活动ID</h3>
-                        <p className="text-gray-500">先输入要编辑配置的活动ID，然后点击&#34;获取配置&#34;按钮</p>
+                    <div className="text-center bg-gray-50 p-8 rounded-lg shadow max-w-md">
+                        <div className="text-6xl text-gray-300 mb-4">🔍</div>
+                        <h3 className="text-lg font-medium text-gray-700 mb-3">请先输入活动ID</h3>
+                        <div className="text-gray-500 text-sm space-y-2">
+                            <p>⚠️ 未输入活动ID前不会调用任何接口</p>
+                            <p>📝 请输入要配置的活动ID，然后点击"获取配置"</p>
+                            <p>💡 这样可以避免无效的请求调用</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -842,7 +836,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         </label>
                         <input
                             type="text"
-                            placeholder="请输入活动ID（留空则使用默认配置）..."
+                            placeholder={`当前活动ID: ${activityId || '未设置'}`}
                             value={activityId}
                             onChange={(e) => setActivityId(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1005,6 +999,9 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     <div className="text-sm text-gray-600">{apiStatus}</div>
                 )}
             </div>
+            
+            {/* Toast 提示容器 */}
+            <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>
     );
 }

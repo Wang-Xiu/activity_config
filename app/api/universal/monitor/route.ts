@@ -3,26 +3,32 @@ import { buildApiUrl } from '../../../../config/environment';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
     try {
-        // 获取查询参数
-        const { searchParams } = new URL(request.url);
-        const dateType = searchParams.get('dateType') || 'daily'; // daily 或 total
-        const date = searchParams.get('date') || new Date().toISOString().split('T')[0];
+        // 从请求体中获取查询参数
+        const body = await request.json();
+        const { dateType = 'daily', date = new Date().toISOString().split('T')[0] } = body;
 
         // 调用后端API获取监控数据
         const apiUrl = buildApiUrl('getMonitorData');
-        const fullUrl = `${apiUrl}&dateType=${dateType}&date=${date}`;
         
-        console.log('正在调用监控数据API:', fullUrl);
+        // 准备POST数据
+        const postData = {
+            dateType,
+            date
+        };
+        
+        console.log('正在调用监控数据API:', apiUrl);
+        console.log('POST参数:', postData);
 
-        const backendResponse = await fetch(fullUrl, {
-            method: 'GET',
+        const backendResponse = await fetch(apiUrl, {
+            method: 'POST',
             mode: 'cors',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
+            body: JSON.stringify(postData),
         });
 
         if (!backendResponse.ok) {
@@ -41,9 +47,15 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // 检查后端返回的数据格式
-        if (!result.success) {
-            throw new Error(result.message || '后端返回错误');
+        // 检查后端返回的数据格式 - PHP后端使用code字段，0表示成功
+        if (result.code !== 0) {
+            // 后端业务错误，返回具体错误信息，但HTTP状态码为200
+            return NextResponse.json({
+                success: false,
+                message: result.msg || result.message || `获取监控数据失败，错误代码: ${result.code}`,
+                error: result.msg || result.message || `错误代码: ${result.code}`,
+                data: getMockMonitorData('daily'), // 失败时返回模拟数据
+            });
         }
 
         return NextResponse.json({
@@ -56,8 +68,8 @@ export async function GET(request: NextRequest) {
         console.error('获取监控数据时出错:', error);
         
         // 返回模拟数据作为fallback
-        const { searchParams } = new URL(request.url);
-        const dateType = searchParams.get('dateType') || 'daily';
+        const body = await request.json().catch(() => ({}));
+        const dateType = body.dateType || 'daily';
         
         return NextResponse.json({
             success: true,

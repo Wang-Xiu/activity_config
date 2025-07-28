@@ -43,25 +43,25 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // 构建API URL并添加活动ID参数
-        const apiUrl = buildApiUrl('saveUniversalConfig') + `&act_id=${activityId}`;
+        // 构建API URL
+        const apiUrl = buildApiUrl('saveUniversalConfig');
         console.log('正在调用保存配置API:', apiUrl);
         console.log('保存的配置数据:', actConfig);
 
-        // 使用FormData格式发送数据
-        const formData = new FormData();
-        formData.append('act_config', encodeURIComponent(JSON.stringify(actConfig)));
-        
-        console.log('使用FormData格式发送数据，参数名: actConfig');
+        // 准备POST数据，将活动ID和配置数据都放在POST body中
+        const postData = {
+            act_id: activityId,
+            act_config: actConfig
+        };
 
         const backendResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
             mode: 'cors',
             credentials: 'include',
-            body: formData,
+            body: JSON.stringify(postData),
         } as RequestInit);
 
         if (!backendResponse.ok) {
@@ -70,9 +70,14 @@ export async function POST(request: NextRequest) {
 
         const result = await backendResponse.json();
         
-        // 检查后端返回的数据格式
-        if (result.success === false) {
-            throw new Error(result.message || '后端返回错误');
+        // 检查后端返回的数据格式 - PHP后端使用code字段，0表示成功
+        if (result.code !== 0) {
+            // 后端业务错误，返回具体错误信息，但HTTP状态码为200
+            return NextResponse.json({
+                success: false,
+                message: result.msg || result.message || `保存失败，错误代码: ${result.code}`,
+                error: result.msg || result.message || `错误代码: ${result.code}`,
+            });
         }
 
         console.log('配置保存成功:', result);

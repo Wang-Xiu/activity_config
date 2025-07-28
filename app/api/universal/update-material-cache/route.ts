@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { universalDefaultConfig } from '../../../../config/universalDefaultConfig';
 import { buildApiUrl } from '../../../../config/environment';
 
 // 强制动态渲染
@@ -11,15 +10,25 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { activityId } = body;
         
-        // 构建API URL，将活动ID作为POST参数传递
-        const apiUrl = buildApiUrl('getConfigByMidyear');
+        if (!activityId) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: '活动ID不能为空',
+                },
+                { status: 400 }
+            );
+        }
+
+        // 构建API URL
+        const apiUrl = buildApiUrl('updateMaterialCache');
         
         // 准备POST数据
         const postData = {
-            act_id: activityId || '264'
+            act_id: activityId
         };
         
-        console.log('正在调用API:', apiUrl);
+        console.log('正在调用更新物料缓存API:', apiUrl);
         console.log('POST参数:', postData);
 
         const backendResponse = await fetch(apiUrl, {
@@ -43,28 +52,27 @@ export async function POST(request: NextRequest) {
             // 后端业务错误，返回具体错误信息，但HTTP状态码为200
             return NextResponse.json({
                 success: false,
-                message: result.msg || result.message || `请求失败，错误代码: ${result.code}`,
+                message: result.msg || result.message || `更新物料缓存失败，错误代码: ${result.code}`,
                 error: result.msg || result.message || `错误代码: ${result.code}`,
-                data: universalDefaultConfig, // 失败时返回默认配置
             });
         }
-        console.log('从后端获取的原始配置:', result.data);
-        // 返回配置数据
+
+        console.log('物料缓存更新成功:', result);
+        
+        // 返回成功响应
         return NextResponse.json({
             success: true,
-            message: activityId ? `活动ID ${activityId} 的配置获取成功` : '配置获取成功',
-            data: result.data || universalDefaultConfig,
-            activityId: activityId,
+            message: `活动ID ${activityId} 的物料缓存更新成功`,
+            data: result,
             timestamp: new Date().toISOString(),
         });
     } catch (error) {
-        console.error('获取配置时出错:', error);
+        console.error('更新物料缓存时出错:', error);
         return NextResponse.json(
             {
                 success: false,
-                message: '获取配置失败',
+                message: '更新物料缓存失败',
                 error: error instanceof Error ? error.message : '未知错误',
-                data: universalDefaultConfig, // 失败时返回默认配置
             },
             { status: 500 },
         );

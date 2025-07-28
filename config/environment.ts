@@ -13,25 +13,25 @@ export const ENV_CONFIG = {
     api: {
         // 测试环境配置
         test: {
-            baseUrl: process.env.API_BASE_URL || 'http://testactivity.meequ.cn',
-            getConfig: '/index.php?r=gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261',
-            saveConfig: '/index.php?r=gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261',
-            getMonitorData: '/index.php?r=gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261',
-            getConfigByMidyear: '/index.php?r=act-common/get-config&password=!!!!&uid=100056&auth=1',
-            reloadCache: '/index.php?r=act-common/reload-act&password=!!!!&uid=100056&auth=1',
-            updateMaterialCache: '/index.php?r=act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1',
-            saveUniversalConfig: '/index.php?r=act-common/save-config&password=!!!!&uid=100056&auth=1',
+            baseUrl: process.env.API_BASE_URL || 'http://testmqgitfrontend.meequ.cn',
+            getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
+            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&password=!!!!&uid=100056&auth=1&debug=1',
         },
         // 生产环境配置
         production: {
-            baseUrl: process.env.API_BASE_URL || 'http://proactivity.meequ.cn',
-            getConfig: '/index.php?r=gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261',
-            saveConfig: '/index.php?r=gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261',
-            getMonitorData: '/index.php?r=gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261',
-            getConfigByMidyear: '/index.php?r=act-common/get-config&password=!!!!&uid=100056&auth=1',
-            reloadCache: '/index.php?r=act-common/reload-act&password=!!!!&uid=100056&auth=1',
-            updateMaterialCache: '/index.php?r=act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1',
-            saveUniversalConfig: '/index.php?r=act-common/save-config&password=!!!!&uid=100056&auth=1',
+            baseUrl: process.env.API_BASE_URL || 'https://mqfrontend.mizhuanbao.cn',
+            getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
+            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&password=!!!!&uid=100056&auth=1&debug=1',
         }
     }
 };
