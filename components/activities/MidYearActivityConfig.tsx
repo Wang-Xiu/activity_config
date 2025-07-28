@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Activity } from '../../types/activity';
 import { GiftInfo } from '../../types/config';
 import { MidYearConfig } from '../../types/midyear';
@@ -20,10 +20,25 @@ interface MidYearActivityConfigProps {
 
 export default function MidYearActivityConfig({ activity, onStatusChange }: MidYearActivityConfigProps) {
     const [activeConfigTab, setActiveConfigTab] = useState('send_msg');
+    const [mounted, setMounted] = useState(false);
     const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<MidYearConfig>({
         activity,
         onStatusChange,
     });
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // 服务器端渲染时显示加载状态
+    if (!mounted) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-gray-600">加载年中活动配置...</span>
+            </div>
+        );
+    }
 
     if (!config) {
         return <div className="flex items-center justify-center h-full">加载中...</div>;

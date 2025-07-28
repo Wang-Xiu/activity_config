@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Activity } from '../../types/activity';
 import GemActivityConfig from './GemActivityConfig';
 import MidYearActivityConfig from './MidYearActivityConfig';
@@ -12,6 +13,22 @@ interface ActivityConfigRouterProps {
 }
 
 export default function ActivityConfigRouter({ activity, onStatusChange }: ActivityConfigRouterProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // 服务器端渲染时显示加载状态
+    if (!mounted) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-gray-600">加载活动配置...</span>
+            </div>
+        );
+    }
+
     // 根据活动类型返回对应的配置组件
     switch (activity.type) {
         case 'gem':

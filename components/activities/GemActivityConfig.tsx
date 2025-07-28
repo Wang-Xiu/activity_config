@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Activity } from '../../types/activity';
 import useActivityConfig from '../../utils/useActivityConfig';
 import { MainConfig, TaskConfig } from '../../types/config';
@@ -12,10 +12,25 @@ interface GemActivityConfigProps {
 
 export default function GemActivityConfig({ activity, onStatusChange }: GemActivityConfigProps) {
     const [activeConfigTab, setActiveConfigTab] = useState('send_msg');
+    const [mounted, setMounted] = useState(false);
     const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<MainConfig>({
         activity,
         onStatusChange,
     });
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // 服务器端渲染时显示加载状态
+    if (!mounted) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-gray-600">加载宝石活动配置...</span>
+            </div>
+        );
+    }
 
     // 类型断言，确保config是MainConfig类型
     const mainConfig = config as MainConfig;

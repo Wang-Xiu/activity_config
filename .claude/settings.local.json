@@ -8,7 +8,8 @@
       "Bash(pkill -f \"next dev\")",
       "Bash(lsof:*)",
       "Bash(chmod:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(BUILD_TIME=true npm run build)"
     ],
     "deny": []
   }

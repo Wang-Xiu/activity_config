@@ -455,6 +455,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     const [searchResults, setSearchResults] = useState<Array<{key: string, path: string[], label: string}>>([]);
     const [activityId, setActivityId] = useState('');
     const [hasLoadedConfig, setHasLoadedConfig] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
     
     const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<UniversalConfig>({
@@ -463,7 +464,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     });
 
     // 获取指定活动ID的配置
-    const fetchConfigById = async () => {
+    const fetchConfigById = useCallback(async () => {
         if (!activityId.trim()) {
             alert('请先输入活动ID');
             return;
@@ -499,7 +500,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             alert(`获取配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         }
-    };
+    }, [activityId]);
 
     // 更新缓存
     const handleUpdateCache = async () => {
@@ -750,6 +751,21 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setSearchResults([]);
         }
     }, [searchTerm, config]);
+
+    // 确保组件已挂载
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // 服务器端渲染时显示加载状态
+    if (!mounted) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-gray-600">加载通用活动配置...</span>
+            </div>
+        );
+    }
 
     // 跳转到搜索结果 - 使用状态提升来管理展开状态
     const jumpToResult = (result: {path: string[]}) => {
