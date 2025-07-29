@@ -14,6 +14,9 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true
   },
+  // 禁用静态优化，强制所有页面使用服务器端渲染
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
   async headers() {
     return [
       {

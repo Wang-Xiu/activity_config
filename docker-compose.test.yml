@@ -5,12 +5,12 @@ services:
     build: 
       context: .
       args:
-        - NODE_ENV=development
+        - NODE_ENV=production  # 即使是测试环境也用生产构建避免之前的错误
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - DEPLOY_ENV=test
+      - NODE_ENV=production    # 使用生产构建
+      - DEPLOY_ENV=test        # 但连接测试后端
     env_file:
       - .env.test
     extra_hosts:
@@ -19,9 +19,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./logs:/app/logs
-      # 开发模式下挂载源代码以支持热重载
-      - .:/app
-      - /app/node_modules
     networks:
       - app-network
 

@@ -16,8 +16,10 @@ interface ToastProps {
 
 function Toast({ toast, onRemove }: ToastProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     // 延迟一点显示动画
     setTimeout(() => setIsVisible(true), 10);
 
@@ -28,6 +30,11 @@ function Toast({ toast, onRemove }: ToastProps) {
 
     return () => clearTimeout(timer);
   }, [toast.id, toast.duration, onRemove]);
+
+  // 服务器端渲染时不显示
+  if (!isMounted) {
+    return null;
+  }
 
   const getToastStyles = () => {
     const baseStyles = `
@@ -105,6 +112,17 @@ interface ToastContainerProps {
 }
 
 export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 服务器端渲染时不显示
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="fixed top-6 left-1/2 transform -translate-x-1/2 space-y-3 z-50 pointer-events-none">
       {toasts.map((toast) => (
