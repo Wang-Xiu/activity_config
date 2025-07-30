@@ -12,7 +12,12 @@
       "Bash(BUILD_TIME=true npm run build)",
       "Bash(cat:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(true)",
+      "Bash(curl -X POST http://localhost:3000/api/universal/monitor-data )",
+      "Bash(-H \"Content-Type: application/json\" )",
+      "Bash(-d '{\"\"act_id\"\":\"\"267\"\",\"\"date_range\"\":\"\"2024-01-01,2024-01-07\"\"}' )",
+      "Bash(--max-time 10)"
     ],
     "deny": []
   }

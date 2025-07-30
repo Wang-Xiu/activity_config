@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Activity } from '../../types/activity';
 import { UniversalConfig } from '../../types/config';
 import { fieldNameMapping, isPureEnglish, getDisplayFieldName } from '../../config/fieldNameMapping';
@@ -458,9 +459,20 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     const [mounted, setMounted] = useState(false);
     const [apiStatus, setApiStatus] = useState('');
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
     
     // Toast提示
     const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast();
+
+    // 跳转到监控数据页面
+    const handleViewMonitorData = () => {
+        if (!activityId.trim()) {
+            showWarning('请先输入活动ID');
+            return;
+        }
+        
+        router.push(`/monitor/${activityId}`);
+    };
 
     // 获取指定活动ID的配置
     const fetchConfigById = useCallback(async () => {
@@ -816,7 +828,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         <h3 className="text-lg font-medium text-gray-700 mb-3">请先输入活动ID</h3>
                         <div className="text-gray-500 text-sm space-y-2">
                             <p>⚠️ 未输入活动ID前不会调用任何接口</p>
-                            <p>📝 请输入要配置的活动ID，然后点击"获取配置"</p>
+                            <p>📝 请输入要配置的活动ID，然后点击&quot;获取配置&quot;</p>
                             <p>💡 这样可以避免无效的请求调用</p>
                         </div>
                     </div>
@@ -987,6 +999,12 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         onClick={handleUpdateMaterialCache}
                     >
                         更新物料缓存
+                    </button>
+                    <button
+                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        onClick={handleViewMonitorData}
+                    >
+                        查看监控数据
                     </button>
                     <button
                         className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"

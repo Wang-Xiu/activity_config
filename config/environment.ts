@@ -17,6 +17,7 @@ export const ENV_CONFIG = {
             getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
             saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&password=!!!!&uid=100056&auth=1&debug=1',
             getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
             reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
             updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
@@ -28,6 +29,7 @@ export const ENV_CONFIG = {
             getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
             saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
             getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
+            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&password=!!!!&uid=100056&auth=1&debug=1',
             getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
             reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
             updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
@@ -49,7 +51,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };
