@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '../components/auth/AuthProvider';
+import AuthGuard from '../components/auth/AuthGuard';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,9 +28,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="en" data-oid="xdzh8s8">
+        <html lang="zh-CN" data-oid="xdzh8s8">
             <body className="" data-oid="t2ln..8">
-                {children}
+                <AuthProvider>
+                    <AuthGuard>
+                        {children}
+                    </AuthGuard>
+                </AuthProvider>
             </body>
         </html>
     );

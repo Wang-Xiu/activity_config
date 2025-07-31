@@ -5,8 +5,8 @@
 export const fieldNameMapping: { [key: string]: string } = {
     // 任务相关配置
     'mission_pool': '任务池配置',
-    'new_user': '新用户任务',
-    'old_user': '老用户任务',
+    'new_user': '新用户',
+    'old_user': '老用户',
     'mission_list': '任务列表',
     'desc': '描述',
     'need': '需要',
@@ -20,8 +20,8 @@ export const fieldNameMapping: { [key: string]: string } = {
     'free_box_time_1': '免费宝箱时间1',
     'free_box_time_2': '免费宝箱时间2',
     'send_gift_get_box': '送礼得宝箱',
-    'start': '开始时间',
-    'end': '结束时间',
+    'start': '开始',
+    'end': '结束',
 
     // 礼物相关配置
     'get_gift_send_hat': '收礼送尾巴',

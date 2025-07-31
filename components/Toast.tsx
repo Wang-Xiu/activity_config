@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export interface ToastType {
   id: string;
@@ -141,8 +141,12 @@ export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
 export function useToast() {
   const [toasts, setToasts] = useState<ToastType[]>([]);
 
+  // 使用ref确保ID唯一性
+  const counterRef = useRef(0);
+
   const addToast = (message: string, type: ToastType['type'] = 'info', duration?: number) => {
-    const id = Date.now().toString();
+    // 使用时间戳 + 计数器确保唯一性
+    const id = `${Date.now()}-${++counterRef.current}`;
     const toast: ToastType = { id, message, type, duration };
     
     setToasts(prev => [...prev, toast]);

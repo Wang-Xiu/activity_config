@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     try {
         // 从请求体中获取配置数据和活动ID
         const body = await request.json();
-        const { activityId, actConfig } = body;
+        const { activityId, actConfig, version, operator } = body;
         
         if (!activityId) {
             // return NextResponse.json(
@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
         // 准备POST数据，将活动ID和配置数据都放在POST body中
         const postData = {
             act_id: activityId,
-            act_config: actConfig
+            act_config: actConfig,
+            version: version || '',
+            operator: operator || 'unknown'
         };
 
         const backendResponse = await fetch(apiUrl, {
@@ -82,11 +84,12 @@ export async function POST(request: NextRequest) {
 
         console.log('配置保存成功:', result);
         
-        // 返回成功响应
+        // 返回成功响应，使用后端返回的消息
         return NextResponse.json({
             success: true,
-            message: `活动ID ${activityId} 的配置保存成功`,
-            data: result,
+            message: result.msg || result.message || `活动ID ${activityId} 的配置保存成功`,
+            msg: result.msg, // 保留原始的msg字段
+            data: result.data || result,
             timestamp: new Date().toISOString(),
         });
     } catch (error) {

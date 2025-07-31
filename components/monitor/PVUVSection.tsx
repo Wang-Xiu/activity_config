@@ -5,26 +5,18 @@ import { PVUVData, DailyPVUVData, TableRowData, ChartDataPoint } from '../../typ
 import MetricCard from './shared/MetricCard';
 import DataTable from './shared/DataTable';
 import BarChart from './shared/BarChart';
+import LineChart from './shared/LineChart';
 
 interface PVUVSectionProps {
     data: PVUVData;
 }
 
 export default function PVUVSection({ data }: PVUVSectionProps) {
-    // 数据安全检查
-    if (!data || !data.total || !data.daily_data || !Array.isArray(data.daily_data)) {
-        return (
-            <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center justify-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    <span className="ml-3 text-gray-600">加载PV/UV数据...</span>
-                </div>
-            </div>
-        );
-    }
-
     // 准备表格数据
     const tableData: TableRowData[] = useMemo(() => {
+        if (!data || !data.daily_data || !Array.isArray(data.daily_data)) {
+            return [];
+        }
         return data.daily_data.map((item, index) => {
             const totalPV = item.entrance_breakdown 
                 ? Object.values(item.entrance_breakdown).reduce((sum, entry) => sum + entry.pv, 0)
@@ -44,17 +36,20 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
                 breakdownData: item.entrance_breakdown
             };
         });
-    }, [data.daily_data]);
+    }, [data]);
 
     // 准备图表数据
     const chartData: ChartDataPoint[] = useMemo(() => {
+        if (!data || !data.daily_data || !Array.isArray(data.daily_data)) {
+            return [];
+        }
         return data.daily_data.map((item) => ({
             name: item.date,
             PV: item.pv,
             UV: item.uv,
             value: item.pv
         }));
-    }, [data.daily_data]);
+    }, [data]);
 
     // 表格列定义
     const columns = useMemo(() => [
@@ -133,6 +128,18 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
         },
     ], []);
 
+    // 数据安全检查
+    if (!data || !data.total || !data.daily_data || !Array.isArray(data.daily_data)) {
+        return (
+            <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center justify-center h-32">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <span className="ml-3 text-gray-600">加载PV/UV数据...</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* 标题和总览指标 */}
@@ -200,7 +207,7 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
             {/* 趋势图表 */}
             <div className="bg-white p-6 rounded-lg shadow">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">PV/UV 趋势图</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">PV/UV 趋势分析</h3>
                     <div className="flex items-center space-x-4 text-sm">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -213,27 +220,71 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
                     </div>
                 </div>
                 
-                <BarChart
-                    data={chartData}
-                    xAxisKey="name"
-                    bars={[
-                        {
-                            dataKey: 'PV',
-                            name: 'PV',
-                            color: '#3B82F6'
-                        },
-                        {
-                            dataKey: 'UV',
-                            name: 'UV',
-                            color: '#10B981'
-                        }
-                    ]}
-                    height={350}
-                    showLegend={true}
-                    showGrid={true}
-                    xAxisLabel="日期"
-                    yAxisLabel="访问量"
-                />
+                {/* 折线图 - 趋势展示 */}
+                <div className="mb-8">
+                    <div className="flex items-center space-x-2 mb-4">
+                        <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <h4 className="text-base font-medium text-gray-900">趋势变化图</h4>
+                        <span className="text-sm text-gray-500">（更清晰地展示变化趋势）</span>
+                    </div>
+                    <LineChart
+                        data={chartData}
+                        xAxisKey="name"
+                        lines={[
+                            {
+                                dataKey: 'PV',
+                                name: 'PV',
+                                color: '#3B82F6',
+                                strokeWidth: 3
+                            },
+                            {
+                                dataKey: 'UV',
+                                name: 'UV',
+                                color: '#10B981',
+                                strokeWidth: 3
+                            }
+                        ]}
+                        height={300}
+                        showLegend={true}
+                        showGrid={true}
+                        xAxisLabel="日期"
+                        yAxisLabel="访问量"
+                    />
+                </div>
+
+                {/* 柱状图 - 数量对比 */}
+                <div>
+                    <div className="flex items-center space-x-2 mb-4">
+                        <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <h4 className="text-base font-medium text-gray-900">数量对比图</h4>
+                        <span className="text-sm text-gray-500">（便于比较每日具体数量）</span>
+                    </div>
+                    <BarChart
+                        data={chartData}
+                        xAxisKey="name"
+                        bars={[
+                            {
+                                dataKey: 'PV',
+                                name: 'PV',
+                                color: '#3B82F6'
+                            },
+                            {
+                                dataKey: 'UV',
+                                name: 'UV',
+                                color: '#10B981'
+                            }
+                        ]}
+                        height={320}
+                        showLegend={true}
+                        showGrid={true}
+                        xAxisLabel="日期"
+                        yAxisLabel="访问量"
+                    />
+                </div>
             </div>
 
             {/* 详细数据表格 */}

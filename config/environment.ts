@@ -14,26 +14,34 @@ export const ENV_CONFIG = {
         // 测试环境配置
         test: {
             baseUrl: process.env.API_BASE_URL || 'http://testmqgitfrontend.meequ.cn',
-            getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&password=!!!!&uid=100056&auth=1&debug=1',
-            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
-            reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
-            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
-            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&password=!!!!&uid=100056&auth=1&debug=1',
+            getConfig: '/index.php?r=activity/gemstone/setting&uid=100056&auth=1&actId=261&debug=1',
+            saveConfig: '/index.php?r=activity/gemstone/save-config&uid=100056&auth=1&actId=261&debug=1',
+            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&uid=100056&auth=1&actId=261&debug=1',
+            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&uid=100056&auth=1&debug=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&uid=100056&auth=1&debug=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&uid=100056&auth=1&debug=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&uid=100056&auth=1&debug=1',
+            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&uid=100056&auth=1&debug=1',
+            delRedisData: '/index.php?r=activity/act-common/del-redis-data&uid=100056&auth=1&debug=1',
+            // 认证相关接口
+            login: '/index.php?r=activity/act-common/login&debug=1&uid=100056&auth=1',
+            verifyToken: '/index.php?r=activity/act-common/verify&debug=1&uid=100056&auth=1',
         },
         // 生产环境配置
         production: {
             baseUrl: process.env.API_BASE_URL || 'https://mqfrontend.mizhuanbao.cn',
-            getConfig: '/index.php?r=activity/gemstone/setting&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            saveConfig: '/index.php?r=activity/gemstone/save-config&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&password=!!!!&uid=100056&auth=1&actId=261&debug=1',
-            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&password=!!!!&uid=100056&auth=1&debug=1',
-            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&password=!!!!&uid=100056&auth=1&debug=1',
-            reloadCache: '/index.php?r=activity/act-common/reload-act&password=!!!!&uid=100056&auth=1&debug=1',
-            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&password=!!!!&uid=100056&auth=1&debug=1',
-            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&password=!!!!&uid=100056&auth=1&debug=1',
+            getConfig: '/index.php?r=activity/gemstone/setting&uid=100056&auth=1&actId=261&debug=1',
+            saveConfig: '/index.php?r=activity/gemstone/save-config&uid=100056&auth=1&actId=261&debug=1',
+            getMonitorData: '/index.php?r=activity/gemstone/monitor-data&uid=100056&auth=1&actId=261&debug=1',
+            getUniversalMonitorData: '/index.php?r=activity/act-common/monitor-data&uid=100056&auth=1&debug=1',
+            getConfigByMidyear: '/index.php?r=activity/act-common/get-config&uid=100056&auth=1&debug=1',
+            reloadCache: '/index.php?r=activity/act-common/reload-act&uid=100056&auth=1&debug=1',
+            updateMaterialCache: '/index.php?r=activity/act-common/set-cattle-gift&uid=100056&auth=1&debug=1',
+            saveUniversalConfig: '/index.php?r=activity/act-common/save-config&uid=100056&auth=1&debug=1',
+            delRedisData: '/index.php?r=activity/act-common/del-redis-data&uid=100056&auth=1&debug=1',
+            // 认证相关接口
+            login: '/index.php?r=activity/act-common/login&debug=1&uid=100056&auth=1',
+            verifyToken: '/index.php?r=activity/act-common/verify&debug=1&uid=100056&auth=1',
         }
     }
 };
@@ -51,7 +59,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };

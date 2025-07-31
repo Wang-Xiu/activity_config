@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { MonitorDashboardData, MonitorDataRequest } from '../../types/monitor-dashboard';
 import { useToast } from '../Toast';
+import { LoadingButton, LoadingSkeleton } from '../ui/loading';
 import PVUVSection from './PVUVSection';
 import PoolDataSection from './PoolDataSection';
 import SummarySection from './SummarySection';
@@ -82,10 +83,13 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                 {/* 顶部控制栏骨架屏 */}
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex items-center justify-between">
-                        <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+                        <div>
+                            <LoadingSkeleton width="200px" height="32px" />
+                            <LoadingSkeleton width="300px" height="20px" className="mt-2" />
+                        </div>
                         <div className="flex items-center space-x-4">
-                            <div className="h-10 bg-gray-200 rounded w-48 animate-pulse"></div>
-                            <div className="h-10 bg-gray-200 rounded w-24 animate-pulse"></div>
+                            <LoadingSkeleton width="200px" height="40px" />
+                            <LoadingSkeleton width="100px" height="40px" />
                         </div>
                     </div>
                 </div>
@@ -94,11 +98,27 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                 <div className="grid grid-cols-1 gap-8">
                     {[1, 2, 3].map((index) => (
                         <div key={index} className="bg-white p-6 rounded-lg shadow">
-                            <div className="h-6 bg-gray-200 rounded w-40 mb-4 animate-pulse"></div>
+                            <LoadingSkeleton width="250px" height="24px" className="mb-6" />
+                            
+                            {/* 模拟指标卡片 */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                                {[1, 2, 3, 4].map((cardIndex) => (
+                                    <div key={cardIndex} className="p-4 border rounded-lg">
+                                        <LoadingSkeleton width="80px" height="16px" className="mb-2" />
+                                        <LoadingSkeleton width="60px" height="32px" />
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            {/* 模拟图表区域 */}
+                            <LoadingSkeleton height="300px" className="mb-4" />
+                            
+                            {/* 模拟表格 */}
                             <div className="space-y-3">
-                                <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                                <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-                                <div className="h-32 bg-gray-200 rounded animate-pulse"></div>
+                                <LoadingSkeleton height="20px" />
+                                <LoadingSkeleton height="20px" />
+                                <LoadingSkeleton height="20px" />
+                                <LoadingSkeleton height="20px" />
                             </div>
                         </div>
                     ))}
@@ -115,12 +135,15 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                 <p className="text-gray-500 mb-6">
                     无法获取活动 #{activityId} 的监控数据
                 </p>
-                <button
+                <LoadingButton
+                    variant="primary"
+                    loading={refreshing}
+                    loadingText="重新加载中..."
                     onClick={handleRefresh}
-                    className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    size="lg"
                 >
                     重新加载
-                </button>
+                </LoadingButton>
             </div>
         );
     }
@@ -146,21 +169,23 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                             defaultStartDate={data.activity_info.start_date}
                             defaultEndDate={data.activity_info.end_date}
                         />
-                        <button
+                        <LoadingButton
+                            variant="secondary"
+                            loading={refreshing}
+                            loadingText="刷新中..."
                             onClick={handleRefresh}
-                            disabled={refreshing}
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            size="sm"
                         >
                             <svg 
-                                className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} 
+                                className="w-4 h-4 mr-2" 
                                 fill="none" 
                                 stroke="currentColor" 
                                 viewBox="0 0 24 24"
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            {refreshing ? '刷新中...' : '刷新数据'}
-                        </button>
+                            刷新数据
+                        </LoadingButton>
                     </div>
                 </div>
             </div>

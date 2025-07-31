@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Activity } from '../../types/activity';
 import useActivityConfig from '../../utils/useActivityConfig';
 import { MainConfig, TaskConfig } from '../../types/config';
+import { LoadingButton, LoadingSkeleton } from '../ui/loading';
 
 interface GemActivityConfigProps {
     activity: Activity;
@@ -13,7 +14,7 @@ interface GemActivityConfigProps {
 export default function GemActivityConfig({ activity, onStatusChange }: GemActivityConfigProps) {
     const [activeConfigTab, setActiveConfigTab] = useState('send_msg');
     const [mounted, setMounted] = useState(false);
-    const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<MainConfig>({
+    const { config, setConfig, apiStatus, fetchConfig, submitConfig, isLoading, isSaving } = useActivityConfig<MainConfig>({
         activity,
         onStatusChange,
     });
@@ -28,6 +29,39 @@ export default function GemActivityConfig({ activity, onStatusChange }: GemActiv
             <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="ml-2 text-gray-600">加载宝石活动配置...</span>
+            </div>
+        );
+    }
+
+    // 数据加载状态
+    if (isLoading) {
+        return (
+            <div className="space-y-6">
+                {/* 标签页导航骨架屏 */}
+                <div className="flex space-x-4 border-b">
+                    {[1, 2, 3, 4].map((index) => (
+                        <LoadingSkeleton key={index} width="100px" height="40px" />
+                    ))}
+                </div>
+                
+                {/* 内容区域骨架屏 */}
+                <div className="bg-white p-6 rounded-lg shadow">
+                    <LoadingSkeleton width="200px" height="24px" className="mb-6" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((index) => (
+                            <div key={index}>
+                                <LoadingSkeleton width="120px" height="20px" className="mb-2" />
+                                <LoadingSkeleton height="40px" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                {/* 按钮区域骨架屏 */}
+                <div className="flex justify-end space-x-4">
+                    <LoadingSkeleton width="100px" height="40px" />
+                    <LoadingSkeleton width="120px" height="40px" />
+                </div>
             </div>
         );
     }
@@ -458,24 +492,28 @@ export default function GemActivityConfig({ activity, onStatusChange }: GemActiv
             {/* API操作按钮和状态 */}
             <div className="mt-4 flex items-center justify-between">
                 <div className="space-x-4">
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    <LoadingButton
+                        variant="primary"
+                        loading={isLoading}
+                        loadingText="获取中..."
                         onClick={fetchConfig}
                     >
                         获取配置
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    </LoadingButton>
+                    <LoadingButton
+                        variant="success"
+                        loading={isSaving}
+                        loadingText="保存中..."
                         onClick={submitConfig}
                     >
                         保存配置
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    </LoadingButton>
+                    <LoadingButton
+                        variant="secondary"
                         onClick={() => setConfig(null)}
                     >
                         重置配置
-                    </button>
+                    </LoadingButton>
                 </div>
                 {apiStatus && (
                     <div className="text-sm text-gray-600">{apiStatus}</div>

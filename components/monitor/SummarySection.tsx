@@ -10,21 +10,9 @@ interface SummarySectionProps {
 }
 
 export default function SummarySection({ data }: SummarySectionProps) {
-    // 数据安全检查
-    if (!data || !data.period_total) {
-        return (
-            <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center justify-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                    <span className="ml-3 text-gray-600">加载活动总体数据...</span>
-                </div>
-            </div>
-        );
-    }
-
     // 准备额外指标表格数据
     const additionalMetricsTableData: TableRowData[] = useMemo(() => {
-        if (!data.additional_metrics || !Array.isArray(data.additional_metrics)) {
+        if (!data || !data.additional_metrics || !Array.isArray(data.additional_metrics)) {
             return [];
         }
         return data.additional_metrics.map((metric, index) => ({
@@ -34,92 +22,88 @@ export default function SummarySection({ data }: SummarySectionProps) {
             metric_unit: metric.metric_unit,
             formatted_value: `${metric.metric_value.toLocaleString()} ${metric.metric_unit}`
         }));
-    }, [data.additional_metrics]);
+    }, [data]);
 
     // 核心指标数据
-    const coreMetrics = useMemo(() => [
-        {
-            title: '总消耗',
-            value: data.period_total.total_consumption,
-            color: 'red' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                </svg>
-            )
-        },
-        {
-            title: '总产出',
-            value: data.period_total.total_production,
-            color: 'green' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-            )
-        },
-        {
-            title: '总体投入产出比',
-            value: (data.period_total.overall_ratio * 100).toFixed(1),
-            unit: '%',
-            color: 'purple' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            )
-        },
-        {
-            title: '总参与人数',
-            value: data.period_total.total_participants,
-            color: 'blue' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                </svg>
-            )
-        },
-        {
-            title: '总参与次数',
-            value: data.period_total.total_participation_times,
-            color: 'orange' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                </svg>
-            )
-        },
-        {
-            title: '日均参与人数',
-            value: data.period_total.avg_daily_participants,
-            color: 'green' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            )
-        },
-        {
-            title: '日均参与次数',
-            value: data.period_total.avg_daily_times,
-            color: 'purple' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-            )
-        },
-        {
-            title: '净盈亏',
-            value: data.period_total.total_production - data.period_total.total_consumption,
-            color: (data.period_total.total_production - data.period_total.total_consumption) >= 0 ? 'green' as const : 'red' as const,
-            icon: (
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
-            )
+    const coreMetrics = useMemo(() => {
+        if (!data || !data.period_total) {
+            return [];
         }
-    ], [data.period_total]);
+        
+        return [
+            {
+                title: '总消耗',
+                value: data.period_total.total_consumption,
+                color: 'red' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    </svg>
+                )
+            },
+            {
+                title: '总产出',
+                value: data.period_total.total_production,
+                color: 'green' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                )
+            },
+            {
+                title: '总体投入产出比',
+                value: (data.period_total.overall_ratio * 100).toFixed(1),
+                unit: '%',
+                color: 'purple' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                )
+            },
+            {
+                title: '总参与人数',
+                value: data.period_total.total_participants,
+                color: 'blue' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                )
+            },
+            {
+                title: '总参与次数',
+                value: data.period_total.total_participation_times,
+                color: 'orange' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                    </svg>
+                )
+            },
+            {
+                title: '日均参与人数',
+                value: data.period_total.avg_daily_participants,
+                color: 'green' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                )
+            },
+            {
+                title: '日均参与次数',
+                value: data.period_total.avg_daily_times,
+                color: 'purple' as const,
+                icon: (
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                )
+            }
+        ];
+    }, [data]);
 
     // 额外指标表格列定义
     const additionalMetricsColumns = useMemo(() => [
@@ -176,6 +160,18 @@ export default function SummarySection({ data }: SummarySectionProps) {
         },
     ], []);
 
+    // 数据安全检查
+    if (!data || !data.period_total) {
+        return (
+            <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center justify-center h-32">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                    <span className="ml-3 text-gray-600">加载活动总体数据...</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* 标题 */}
@@ -217,24 +213,30 @@ export default function SummarySection({ data }: SummarySectionProps) {
                     关键数据亮点
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* 投入产出效率 */}
                     <div className="bg-white p-4 rounded-lg shadow-sm">
                         <div className="flex items-center justify-between mb-3">
                             <h4 className="font-medium text-gray-900">投入产出效率</h4>
                             <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                data.period_total.overall_ratio >= 1 
+                                data.period_total.overall_ratio >= 1.3 && data.period_total.overall_ratio <= 1.7
                                     ? 'bg-green-100 text-green-800' 
+                                    : data.period_total.overall_ratio < 1.3
+                                    ? 'bg-red-100 text-red-800'
                                     : 'bg-orange-100 text-orange-800'
                             }`}>
-                                {data.period_total.overall_ratio >= 1 ? '盈利' : '亏损'}
+                                {data.period_total.overall_ratio >= 1.3 && data.period_total.overall_ratio <= 1.7 
+                                    ? '产出良好' 
+                                    : data.period_total.overall_ratio < 1.3
+                                    ? '产出偏低'
+                                    : '产出较高'}
                             </div>
                         </div>
                         <div className="text-2xl font-bold text-gray-900 mb-1">
-                            {(data.period_total.overall_ratio * 100).toFixed(1)}%
+                            {data.period_total.overall_ratio.toFixed(2)}
                         </div>
                         <p className="text-sm text-gray-600">
-                            每投入1元产出 {data.period_total.overall_ratio.toFixed(2)} 元
+                            投入产出比（建议区间：1.3-1.7）
                         </p>
                     </div>
 
@@ -253,36 +255,11 @@ export default function SummarySection({ data }: SummarySectionProps) {
                             平均每用户参与次数
                         </p>
                     </div>
-
-                    {/* 净收益 */}
-                    <div className="bg-white p-4 rounded-lg shadow-sm">
-                        <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-medium text-gray-900">净收益</h4>
-                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                (data.period_total.total_production - data.period_total.total_consumption) >= 0
-                                    ? 'bg-green-100 text-green-800' 
-                                    : 'bg-red-100 text-red-800'
-                            }`}>
-                                {(data.period_total.total_production - data.period_total.total_consumption) >= 0 ? '正收益' : '负收益'}
-                            </div>
-                        </div>
-                        <div className={`text-2xl font-bold mb-1 ${
-                            (data.period_total.total_production - data.period_total.total_consumption) >= 0
-                                ? 'text-green-600' 
-                                : 'text-red-600'
-                        }`}>
-                            {(data.period_total.total_production - data.period_total.total_consumption) >= 0 ? '+' : ''}
-                            {(data.period_total.total_production - data.period_total.total_consumption).toLocaleString()}
-                        </div>
-                        <p className="text-sm text-gray-600">
-                            总产出减去总消耗
-                        </p>
-                    </div>
                 </div>
             </div>
 
             {/* 其他关键指标表格 */}
-            {data.additional_metrics.length > 0 && (
+            {data.additional_metrics && data.additional_metrics.length > 0 && (
                 <div className="bg-white p-6 rounded-lg shadow">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-semibold text-gray-900">其他关键指标</h3>

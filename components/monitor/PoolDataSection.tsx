@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { PoolData, PoolInfo, TableRowData, ChartDataPoint } from '../../types/monitor-dashboard';
 import MetricCard from './shared/MetricCard';
 import DataTable from './shared/DataTable';
@@ -11,21 +11,20 @@ interface PoolDataSectionProps {
 }
 
 export default function PoolDataSection({ data }: PoolDataSectionProps) {
-    // 数据安全检查
-    if (!data || !data.pools || !data.total_daily || !Array.isArray(data.pools) || !Array.isArray(data.total_daily)) {
-        return (
-            <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center justify-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
-                    <span className="ml-3 text-gray-600">加载奖池数据...</span>
-                </div>
-            </div>
-        );
-    }
+    // 投入产出比状态判断函数
+    const getRatioStatus = useCallback((ratio: number) => {
+        if (ratio < 1.3) {
+            return { status: 'low', color: 'text-red-600', bgColor: 'bg-red-500', label: '产出偏低' };
+        } else if (ratio > 1.7) {
+            return { status: 'high', color: 'text-orange-600', bgColor: 'bg-orange-500', label: '产出较高' };
+        } else {
+            return { status: 'optimal', color: 'text-green-600', bgColor: 'bg-green-500', label: '产出良好' };
+        }
+    }, []);
 
     // 计算总体统计数据
     const totalStats = useMemo(() => {
-        if (!data.total_daily || data.total_daily.length === 0) {
+        if (!data || !data.total_daily || data.total_daily.length === 0) {
             return {
                 totalInput: 0,
                 totalOutput: 0,
@@ -44,10 +43,14 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
             avgRatio,
             profit: totalOutput - totalInput
         };
-    }, [data.total_daily]);
+    }, [data]);
 
     // 准备奖池表格数据
     const poolTableData: TableRowData[] = useMemo(() => {
+        if (!data || !data.pools || !Array.isArray(data.pools)) {
+            return [];
+        }
+        
         const result: TableRowData[] = [];
         
         data.pools.forEach((pool) => {
@@ -67,10 +70,13 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
         });
         
         return result.sort((a, b) => (a.date as string).localeCompare(b.date as string));
-    }, [data.pools]);
+    }, [data]);
 
     // 准备日总计表格数据
     const dailyTotalTableData: TableRowData[] = useMemo(() => {
+        if (!data || !data.total_daily || !Array.isArray(data.total_daily)) {
+            return [];
+        }
         return data.total_daily.map((item) => ({
             key: item.date,
             date: item.date,
@@ -79,17 +85,20 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
             total_ratio: item.total_ratio,
             profit: item.total_output - item.total_input
         }));
-    }, [data.total_daily]);
+    }, [data]);
 
     // 准备图表数据 - 投入产出对比
     const chartData: ChartDataPoint[] = useMemo(() => {
+        if (!data || !data.total_daily || !Array.isArray(data.total_daily)) {
+            return [];
+        }
         return data.total_daily.map((item) => ({
             name: item.date,
             投入: item.total_input,
             产出: item.total_output,
             value: item.total_input
         }));
-    }, [data.total_daily]);
+    }, [data]);
 
     // 奖池明细表格列定义
     const poolColumns = useMemo(() => [
@@ -135,36 +144,32 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
             ),
         },
         {
-            key: 'profit',
-            title: '盈亏',
-            dataIndex: 'profit',
-            sortable: true,
-            align: 'right' as const,
-            render: (value: number) => (
-                <span className={`font-medium ${value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {value >= 0 ? '+' : ''}{value.toLocaleString()}
-                </span>
-            ),
-        },
-        {
             key: 'ratio',
             title: '投入产出比',
             dataIndex: 'ratio',
             sortable: true,
             align: 'center' as const,
-            render: (value: number) => (
-                <div className="flex items-center justify-center">
-                    <div className="w-16 bg-gray-200 rounded-full h-2 mr-2">
-                        <div 
-                            className={`h-2 rounded-full ${value >= 1 ? 'bg-green-500' : 'bg-orange-500'}`}
-                            style={{ width: `${Math.min(value * 100, 100)}%` }}
-                        ></div>
+            render: (value: number) => {
+                const status = getRatioStatus(value);
+                return (
+                    <div className="flex items-center justify-center">
+                        <div className="w-20 bg-gray-200 rounded-full h-2 mr-3">
+                            <div 
+                                className={`h-2 rounded-full ${status.bgColor}`}
+                                style={{ width: `${Math.min((value / 2) * 100, 100)}%` }}
+                            ></div>
+                        </div>
+                        <div className="text-center">
+                            <div className={`text-sm font-bold ${status.color}`}>
+                                {value.toFixed(2)}
+                            </div>
+                            <div className={`text-xs ${status.color}`}>
+                                {status.label}
+                            </div>
+                        </div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">
-                        {(value * 100).toFixed(1)}%
-                    </span>
-                </div>
-            ),
+                );
+            },
         },
         {
             key: 'participants',
@@ -186,7 +191,7 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
                 <span className="text-gray-700">{value.toLocaleString()}</span>
             ),
         },
-    ], []);
+    ], [getRatioStatus]);
 
     // 日总计表格列定义
     const dailyTotalColumns = useMemo(() => [
@@ -222,38 +227,46 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
             ),
         },
         {
-            key: 'profit',
-            title: '净盈亏',
-            dataIndex: 'profit',
-            sortable: true,
-            align: 'right' as const,
-            render: (value: number) => (
-                <span className={`font-bold text-lg ${value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {value >= 0 ? '+' : ''}{value.toLocaleString()}
-                </span>
-            ),
-        },
-        {
             key: 'total_ratio',
             title: '投入产出比',
             dataIndex: 'total_ratio',
             sortable: true,
             align: 'center' as const,
-            render: (value: number) => (
-                <div className="flex items-center justify-center">
-                    <div className="w-20 bg-gray-200 rounded-full h-3 mr-3">
-                        <div 
-                            className={`h-3 rounded-full ${value >= 1 ? 'bg-green-500' : 'bg-orange-500'}`}
-                            style={{ width: `${Math.min(value * 100, 100)}%` }}
-                        ></div>
+            render: (value: number) => {
+                const status = getRatioStatus(value);
+                return (
+                    <div className="flex items-center justify-center">
+                        <div className="w-24 bg-gray-200 rounded-full h-3 mr-3">
+                            <div 
+                                className={`h-3 rounded-full ${status.bgColor}`}
+                                style={{ width: `${Math.min((value / 2) * 100, 100)}%` }}
+                            ></div>
+                        </div>
+                        <div className="text-center">
+                            <div className={`text-base font-bold ${status.color}`}>
+                                {value.toFixed(2)}
+                            </div>
+                            <div className={`text-xs ${status.color}`}>
+                                {status.label}
+                            </div>
+                        </div>
                     </div>
-                    <span className="text-base font-bold text-gray-900">
-                        {(value * 100).toFixed(1)}%
-                    </span>
-                </div>
-            ),
+                );
+            },
         },
-    ], []);
+    ], [getRatioStatus]);
+
+    // 数据安全检查
+    if (!data || !data.pools || !data.total_daily || !Array.isArray(data.pools) || !Array.isArray(data.total_daily)) {
+        return (
+            <div className="bg-white p-6 rounded-lg shadow">
+                <div className="flex items-center justify-center h-32">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                    <span className="ml-3 text-gray-600">加载奖池数据...</span>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -274,7 +287,7 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
                 </div>
 
                 {/* 总览指标卡片 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <MetricCard
                         title="总投入"
                         value={totalStats.totalInput}
@@ -296,20 +309,10 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
                         }
                     />
                     <MetricCard
-                        title="净盈亏"
-                        value={totalStats.profit}
-                        color={totalStats.profit >= 0 ? 'green' : 'red'}
-                        icon={
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                        }
-                    />
-                    <MetricCard
                         title="平均投入产出比"
-                        value={(totalStats.avgRatio * 100).toFixed(1)}
-                        unit="%"
-                        color="purple"
+                        value={totalStats.avgRatio.toFixed(2)}
+                        color={getRatioStatus(totalStats.avgRatio).status === 'optimal' ? 'green' : 
+                               getRatioStatus(totalStats.avgRatio).status === 'low' ? 'red' : 'orange'}
                         icon={
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />

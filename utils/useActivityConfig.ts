@@ -14,16 +14,22 @@ interface UseActivityConfigReturn<T> {
     apiStatus: string;
     fetchConfig: () => void;
     submitConfig: () => void;
+    isLoading: boolean;
+    isSaving: boolean;
 }
 
 export default function useActivityConfig<T>({ activity, onStatusChange }: UseActivityConfigProps): UseActivityConfigReturn<T> {
     const [config, setConfig] = useState<T | null>(null);
     const [apiStatus, setApiStatus] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     const fetchConfig = async () => {
         try {
+            setIsLoading(true);
             setApiStatus('正在获取配置...');
-            const response = await fetch(`/api/${activity.type}/config?activity_id=${activity.id}`, {
+            // 使用activity中定义的configUrl而不是动态构建
+            const response = await fetch(`${activity.configUrl}?activity_id=${activity.id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,6 +52,8 @@ export default function useActivityConfig<T>({ activity, onStatusChange }: UseAc
             console.error('获取配置错误:', error);
             setApiStatus(`获取配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -56,6 +64,7 @@ export default function useActivityConfig<T>({ activity, onStatusChange }: UseAc
         }
 
         try {
+            setIsSaving(true);
             setApiStatus('正在保存配置...');
             const response = await fetch(`/api/config/save`, {
                 method: 'POST',
@@ -84,6 +93,8 @@ export default function useActivityConfig<T>({ activity, onStatusChange }: UseAc
             console.error('保存配置错误:', error);
             setApiStatus(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -99,5 +110,7 @@ export default function useActivityConfig<T>({ activity, onStatusChange }: UseAc
         apiStatus,
         fetchConfig,
         submitConfig,
+        isLoading,
+        isSaving,
     };
 }

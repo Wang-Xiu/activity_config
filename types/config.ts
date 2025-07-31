@@ -209,4 +209,24 @@ export interface UniversalConfig {
     '活动配置 ↓↓↓': string;
     act_config: ActConfig;
     red_packet_config?: RedPacketConfig;
+    // 版本管理相关字段
+    version?: string;
+    update_time?: string;
+    operator?: string;
+}
+
+// 配置版本信息类型
+export interface ConfigVersionInfo {
+    version: string;
+    update_time: string;
+    operator: string;
+    created_at?: string;
+}
+
+// 扩展的配置保存请求类型
+export interface SaveConfigRequest {
+    act_id: string;
+    act_config: ActConfig;
+    version?: string;
+    operator?: string;
 }

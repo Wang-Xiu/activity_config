@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../components/auth/AuthProvider';
 
 export const dynamic = 'force-dynamic';
 import { MonitorData } from '../types/monitor';
@@ -12,6 +13,7 @@ export default function Page() {
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
     const [apiStatus, setApiStatus] = useState('');
     const [mounted, setMounted] = useState(false);
+    const { user, logout } = useAuth();
 
     // 确保组件已挂载
     useEffect(() => {
@@ -26,6 +28,13 @@ export default function Page() {
     // 处理API状态变更
     const handleStatusChange = (status: string) => {
         setApiStatus(status);
+    };
+
+    // 处理登出
+    const handleLogout = () => {
+        if (confirm('确定要退出登录吗？')) {
+            logout();
+        }
     };
 
     // 服务器端渲染时显示加载状态
@@ -53,12 +62,38 @@ export default function Page() {
                 {/* 页面头部 */}
                 <div className="bg-white rounded-lg shadow p-6 mb-6">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">活动配置管理</h1>
-                        <ActivitySelector 
-                            activities={ACTIVITIES}
-                            selectedActivity={selectedActivity}
-                            onActivitySelect={handleActivitySelect}
-                        />
+                        <div className="flex items-center space-x-4">
+                            <h1 className="text-2xl font-bold">活动配置管理</h1>
+                            <ActivitySelector 
+                                activities={ACTIVITIES}
+                                selectedActivity={selectedActivity}
+                                onActivitySelect={handleActivitySelect}
+                            />
+                        </div>
+                        
+                        {/* 用户信息和操作 */}
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-3 px-4 py-2 bg-gray-50 rounded-lg">
+                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span className="text-white text-sm font-medium">
+                                        {user?.username?.charAt(0).toUpperCase()}
+                                    </span>
+                                </div>
+                                <div className="text-sm">
+                                    <div className="font-medium text-gray-900">{user?.username}</div>
+                                    <div className="text-gray-500">管理员</div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                            >
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                退出登录
+                            </button>
+                        </div>
                     </div>
                     {selectedActivity && (
                         <p className="mt-2 text-gray-600">当前活动：{selectedActivity.name}</p>

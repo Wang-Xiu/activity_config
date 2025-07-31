@@ -3,9 +3,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity } from '../../types/activity';
-import { UniversalConfig } from '../../types/config';
+import { UniversalConfig, ConfigVersionInfo } from '../../types/config';
 import { fieldNameMapping, isPureEnglish, getDisplayFieldName } from '../../config/fieldNameMapping';
+import { ENV_CONFIG } from '../../config/environment';
 import { useToast, ToastContainer } from '../Toast';
+import { LoadingButton, LoadingSkeleton } from '../ui/loading';
+import VersionInfo from '../ui/VersionInfo';
+import { useAuth } from '../auth/AuthProvider';
 
 interface UniversalActivityConfigProps {
     activity: Activity;
@@ -458,20 +462,120 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     const [hasLoadedConfig, setHasLoadedConfig] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [apiStatus, setApiStatus] = useState('');
+    const [lastDeleteTime, setLastDeleteTime] = useState<number>(0);
+    
+    // 版本管理相关状态
+    const [versionInfo, setVersionInfo] = useState<ConfigVersionInfo | null>(null);
+    
+    // 分别跟踪不同操作的加载状态
+    const [isLoadingConfig, setIsLoadingConfig] = useState(false);
+    const [isSavingConfig, setIsSavingConfig] = useState(false);
+    const [isUpdatingCache, setIsUpdatingCache] = useState(false);
+    const [isUpdatingMaterialCache, setIsUpdatingMaterialCache] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isNavigatingToMonitor, setIsNavigatingToMonitor] = useState(false);
+    
     const searchInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     
     // Toast提示
     const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast();
+    
+    // 获取当前用户信息
+    const { user } = useAuth();
 
     // 跳转到监控数据页面
-    const handleViewMonitorData = () => {
+    const handleViewMonitorData = async () => {
         if (!activityId.trim()) {
             showWarning('请先输入活动ID');
             return;
         }
         
-        router.push(`/monitor/${activityId}`);
+        try {
+            setIsNavigatingToMonitor(true);
+            setApiStatus('正在跳转到监控页面...');
+            
+            // 显示用户反馈
+            showInfo('正在加载监控数据，请稍候...');
+            
+            // 小延迟确保用户能看到加载状态
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // 执行路由跳转
+            router.push(`/monitor/${activityId}`);
+            
+        } catch (error) {
+            console.error('跳转监控页面失败:', error);
+            showError('跳转监控页面失败');
+            setApiStatus('跳转监控页面失败');
+        } finally {
+            // 延迟重置状态，确保页面跳转完成
+            setTimeout(() => {
+                setIsNavigatingToMonitor(false);
+                setApiStatus('');
+            }, 1000);
+        }
+    };
+
+    // 删除Redis缓存数据
+    const handleDeleteRedisData = async () => {
+        if (!activityId.trim()) {
+            showWarning('请先输入活动ID');
+            return;
+        }
+
+        // 冷却时间检查（60秒）
+        const now = Date.now();
+        const cooldownPeriod = 60000; // 60秒
+        if (now - lastDeleteTime < cooldownPeriod) {
+            const remainingTime = Math.ceil((cooldownPeriod - (now - lastDeleteTime)) / 1000);
+            showWarning(`操作过于频繁，请等待${remainingTime}秒后再试`);
+            return;
+        }
+
+        // 确认对话框
+        if (!confirm('确认要删除Redis缓存数据吗？此操作不可撤销。')) {
+            return;
+        }
+
+        try {
+            setIsDeleting(true);
+            setApiStatus('正在删除Redis缓存...');
+            onStatusChange?.('loading');
+
+            const response = await fetch('/api/universal/del-redis-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    act_id: activityId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('删除Redis缓存API响应:', result);
+            
+            if (result.success) {
+                setApiStatus('Redis缓存删除成功');
+                setLastDeleteTime(now);
+                onStatusChange?.('loaded');
+                showSuccess('已清空redis数据');
+            } else {
+                throw new Error(result.message || '删除Redis缓存失败');
+            }
+        } catch (error) {
+            console.error('删除Redis缓存失败:', error);
+            setApiStatus(`删除Redis缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            showError(`删除Redis缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            onStatusChange?.('error');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     // 获取指定活动ID的配置
@@ -482,6 +586,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         }
         
         try {
+            setIsLoadingConfig(true);
             setApiStatus('正在获取配置...');
             onStatusChange?.('loading');
             console.log('正在调用API: /api/universal/config');
@@ -507,6 +612,18 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 setHasLoadedConfig(true);
                 setApiStatus('配置获取成功');
                 onStatusChange?.('loaded');
+                
+                // 提取并设置版本信息
+                if (data.data.version || data.data.update_time || data.data.operator) {
+                    setVersionInfo({
+                        version: data.data.version || '',
+                        update_time: data.data.update_time || '',
+                        operator: data.data.operator || ''
+                    });
+                } else {
+                    setVersionInfo(null);
+                }
+                
                 showSuccess(`活动ID ${activityId} 的配置获取成功`);
             } else {
                 throw new Error(data.message || '获取配置失败');
@@ -516,8 +633,10 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setApiStatus(`获取配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             showError('获取配置失败: ' + (error instanceof Error ? error.message : '未知错误'));
             onStatusChange?.('error');
+        } finally {
+            setIsLoadingConfig(false);
         }
-    }, [activityId]);
+    }, [activityId, showWarning, showSuccess, showError, onStatusChange]);
 
     // 更新缓存
     const handleUpdateCache = async () => {
@@ -527,6 +646,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         }
 
         try {
+            setIsUpdatingCache(true);
             setApiStatus('正在更新缓存...');
             onStatusChange?.('loading');
             
@@ -562,6 +682,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setApiStatus(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             showError(`更新缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
+        } finally {
+            setIsUpdatingCache(false);
         }
     };
 
@@ -591,6 +713,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         }
 
         try {
+            setIsUpdatingMaterialCache(true);
             setApiStatus('正在更新物料缓存...');
             onStatusChange?.('loading');
             
@@ -626,6 +749,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setApiStatus(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             showError(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
+        } finally {
+            setIsUpdatingMaterialCache(false);
         }
     };
 
@@ -634,6 +759,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         console.log('=== 点击了保存配置按钮 ===');
         console.log('当前活动ID:', activityId);
         console.log('当前配置:', config);
+        console.log('当前版本信息:', versionInfo);
+        console.log('当前用户:', user?.username);
         
         if (!activityId.trim()) {
             showWarning('请先输入活动ID');
@@ -645,7 +772,13 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             return;
         }
 
+        if (!user?.username) {
+            showError('用户信息丢失，请重新登录');
+            return;
+        }
+
         try {
+            setIsSavingConfig(true);
             setApiStatus('正在保存配置...');
             onStatusChange?.('loading');
 
@@ -656,7 +789,9 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 },
                 body: JSON.stringify({
                     activityId: activityId,
-                    actConfig: config.act_config
+                    actConfig: config.act_config,
+                    version: versionInfo?.version || '',
+                    operator: user.username
                 })
             });
 
@@ -673,15 +808,38 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             if (result.success) {
                 setApiStatus('配置保存成功');
                 onStatusChange?.('saved');
-                showSuccess(result.message || `活动ID ${activityId} 的配置保存成功`);
+                
+                // 显示后端返回的msg字段内容
+                const backendMessage = result.message || result.msg || `活动ID ${activityId} 的配置保存成功`;
+                showSuccess(backendMessage);
+                
+                // 保存成功后重新获取配置以更新版本信息
+                console.log('配置保存成功，重新获取最新配置以更新版本信息...');
+                setTimeout(() => {
+                    fetchConfigById();
+                }, 500); // 短暂延迟后获取最新配置
+                
             } else {
-                throw new Error(result.message || '保存配置失败');
+                // 检查是否是版本冲突错误
+                if (result.error && result.error.includes('版本冲突')) {
+                    showError('配置已被其他人修改，请重新获取最新配置后再保存');
+                    // 建议重新获取配置
+                    setTimeout(() => {
+                        if (confirm('检测到配置版本冲突，是否重新获取最新配置？')) {
+                            fetchConfigById();
+                        }
+                    }, 1000);
+                } else {
+                    throw new Error(result.message || '保存配置失败');
+                }
             }
         } catch (error) {
             console.error('保存配置失败:', error);
             setApiStatus(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             showError(`保存配置失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
+        } finally {
+            setIsSavingConfig(false);
         }
     };
 
@@ -811,12 +969,14 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             />
                         </div>
                         <div>
-                            <button
-                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+                            <LoadingButton
+                                variant="primary"
+                                loading={isLoadingConfig}
+                                loadingText="获取中..."
                                 onClick={fetchConfigById}
                             >
                                 获取配置
-                            </button>
+                            </LoadingButton>
                         </div>
                     </div>
                 </div>
@@ -860,12 +1020,14 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         />
                     </div>
                     <div>
-                        <button
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+                        <LoadingButton
+                            variant="primary"
+                            loading={isLoadingConfig}
+                            loadingText="获取中..."
                             onClick={fetchConfigById}
                         >
                             获取配置
-                        </button>
+                        </LoadingButton>
                     </div>
                 </div>
             </div>
@@ -902,6 +1064,13 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     </div>
                 </div>
             </div>
+
+            {/* 版本信息显示 */}
+            <VersionInfo 
+                versionInfo={versionInfo}
+                isLoading={isLoadingConfig}
+                className="mb-4"
+            />
 
             {/* 搜索栏 */}
             {activeTab === 'config' && (
@@ -956,7 +1125,16 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 {activeTab === 'config' ? (
                     <div className="bg-white p-4 rounded-lg shadow">
                         <h3 className="text-lg font-semibold mb-4">活动配置编辑器 (act_config)</h3>
-                        {config && config.act_config ? (
+                        {isLoadingConfig ? (
+                            <div className="space-y-4">
+                                <LoadingSkeleton height="2rem" />
+                                <LoadingSkeleton height="1.5rem" lines={3} />
+                                <LoadingSkeleton height="2rem" />
+                                <LoadingSkeleton height="1.5rem" lines={2} />
+                                <LoadingSkeleton height="2rem" />
+                                <LoadingSkeleton height="1.5rem" lines={4} />
+                            </div>
+                        ) : config && config.act_config ? (
                             <ConfigRenderer
                                 data={config.act_config}
                                 path={[]}
@@ -972,9 +1150,15 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 ) : (
                     <div className="bg-white p-4 rounded-lg shadow">
                         <h3 className="text-lg font-semibold mb-4">活动配置预览 (act_config)</h3>
-                        <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm">
-                            {config && config.act_config ? JSON.stringify(config.act_config, null, 2) : '暂无数据'}
-                        </pre>
+                        {isLoadingConfig ? (
+                            <div className="bg-gray-100 p-4 rounded">
+                                <LoadingSkeleton height="1rem" lines={10} />
+                            </div>
+                        ) : (
+                            <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm">
+                                {config && config.act_config ? JSON.stringify(config.act_config, null, 2) : '暂无数据'}
+                            </pre>
+                        )}
                     </div>
                 )}
             </div>
@@ -982,36 +1166,61 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             {/* API操作按钮和状态 */}
             <div className="mt-4 flex items-center justify-between bg-white p-4 rounded-lg shadow">
                 <div className="space-x-4">
-                    <button
-                        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                    <LoadingButton
+                        variant="success"
+                        loading={isSavingConfig}
+                        loadingText="保存中..."
                         onClick={handleSaveConfig}
                     >
                         保存配置
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                    </LoadingButton>
+                    
+                    <LoadingButton
+                        variant="warning"
+                        loading={isUpdatingCache}
+                        loadingText="更新中..."
                         onClick={handleUpdateCache}
                     >
                         更新缓存
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                    </LoadingButton>
+                    
+                    <LoadingButton
+                        variant="info"
+                        loading={isUpdatingMaterialCache}
+                        loadingText="更新中..."
                         onClick={handleUpdateMaterialCache}
                     >
                         更新物料缓存
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    </LoadingButton>
+                    
+                    <LoadingButton
+                        variant="primary"
+                        loading={isNavigatingToMonitor}
+                        loadingText="跳转中..."
                         onClick={handleViewMonitorData}
                     >
                         查看监控数据
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                    </LoadingButton>
+                    
+                    {/* 删除Redis缓存按钮 - 仅测试环境显示 */}
+                    {ENV_CONFIG.deployEnv !== 'prod' && (
+                        <LoadingButton
+                            variant="danger"
+                            loading={isDeleting}
+                            loadingText="删除中..."
+                            onClick={handleDeleteRedisData}
+                            title="仅在测试环境可用"
+                        >
+                            删除缓存
+                        </LoadingButton>
+                    )}
+                    
+                    <LoadingButton
+                        variant="secondary"
                         onClick={handleResetConfig}
                     >
                         重置配置
-                    </button>
+                    </LoadingButton>
                 </div>
                 {apiStatus && (
                     <div className="text-sm text-gray-600">{apiStatus}</div>

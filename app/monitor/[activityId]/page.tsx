@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MonitorDashboard from '../../../components/monitor/MonitorDashboard';
 import { useToast, ToastContainer } from '../../../components/Toast';
+import { LoadingSpinner } from '../../../components/ui/loading';
 
 interface MonitorPageProps {
     params: {
@@ -25,8 +26,24 @@ export default function MonitorPage({ params }: MonitorPageProps) {
 
     if (!mounted) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+                <div className="bg-white p-8 rounded-lg shadow-lg max-w-md mx-4">
+                    <div className="text-center">
+                        <LoadingSpinner size="xl" color="blue" className="mx-auto mb-4" />
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            正在加载监控数据
+                        </h2>
+                        <p className="text-gray-600 mb-4">
+                            活动ID: <span className="font-medium text-blue-600">{activityId}</span>
+                        </p>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="bg-blue-500 h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                            正在获取数据，请稍候...
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
