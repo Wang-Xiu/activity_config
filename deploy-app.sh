@@ -19,15 +19,20 @@ if [ "$ENVIRONMENT" = "prod" ]; then
     COMPOSE_FILE="docker-compose.prod.yml"
     ENV_FILE=".env.prod"
     ENV_NAME="生产环境"
+    APP_PORT="3020"
+    CONTAINER_NAME="activity-config-prod"
 else
     COMPOSE_FILE="docker-compose.test.yml"
     ENV_FILE=".env.test"
     ENV_NAME="测试环境"
+    APP_PORT="3010"
+    CONTAINER_NAME="activity-config-test"
 fi
 
 echo "部署目标: $ENV_NAME"
 echo "使用配置文件: $COMPOSE_FILE"
 echo "环境变量文件: $ENV_FILE"
+echo "应用端口: $APP_PORT"
 
 # 检查Docker是否安装
 if ! command -v docker &> /dev/null; then
@@ -102,13 +107,13 @@ docker-compose -f $COMPOSE_FILE ps
 
 # 6. 测试应用是否可访问
 echo "测试应用连接..."
-if curl -f -s http://localhost:3000 > /dev/null; then
+if curl -f -s http://localhost:$APP_PORT > /dev/null; then
     echo "✅ 应用启动成功！"
-    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):3000"
+    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):$APP_PORT"
     echo "📊 环境: $ENV_NAME"
 else
     echo "⚠️  应用可能还在启动中，请稍等片刻后访问"
-    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):3000"
+    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):$APP_PORT"
     echo "📊 环境: $ENV_NAME"
 fi
 
@@ -122,6 +127,8 @@ echo "=== 部署完成！==="
 echo ""
 echo "环境信息："
 echo "  部署环境: $ENV_NAME"
+echo "  应用端口: $APP_PORT"
+echo "  容器名称: $CONTAINER_NAME"
 echo "  配置文件: $COMPOSE_FILE"
 echo "  环境变量: $ENV_FILE"
 echo ""
@@ -130,7 +137,11 @@ echo "  查看状态: docker-compose -f $COMPOSE_FILE ps"
 echo "  查看日志: docker-compose -f $COMPOSE_FILE logs -f"
 echo "  重启应用: docker-compose -f $COMPOSE_FILE restart"
 echo "  停止应用: docker-compose -f $COMPOSE_FILE down"
-echo "  进入容器: docker-compose -f $COMPOSE_FILE exec activity-config sh"
+echo "  进入容器: docker-compose -f $COMPOSE_FILE exec ${CONTAINER_NAME##*-} sh"
+echo ""
+echo "端口信息："
+echo "  测试环境: http://服务器IP:3010"
+echo "  正式环境: http://服务器IP:3020"
 echo ""
 echo "环境切换："
 echo "  切换到测试环境: ./deploy-app.sh test"

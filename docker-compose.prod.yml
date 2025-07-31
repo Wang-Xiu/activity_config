@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-  activity-config:
+  activity-config-prod:
     build: 
       context: .
       args:
         - NODE_ENV=production
     ports:
-      - "3000:3000"
+      - "3020:3000"  # 正式环境使用3020端口
     environment:
       - NODE_ENV=production
       - DEPLOY_ENV=prod
+      - PORT=3000              # 容器内部端口保持3000
     env_file:
       - .env.prod
     extra_hosts:
@@ -20,8 +21,9 @@ services:
     volumes:
       - ./logs:/app/logs
     networks:
-      - app-network
+      - app-network-prod
+    container_name: activity-config-prod
 
 networks:
-  app-network:
+  app-network-prod:
     driver: bridge

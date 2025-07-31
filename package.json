@@ -4,8 +4,12 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
+        "dev:test": "next dev -p 3010",
+        "dev:prod": "next dev -p 3020",
         "build": "next build",
         "start": "next start",
+        "start:test": "next start -p 3010",
+        "start:prod": "next start -p 3020",
         "lint": "next lint",
         "format": "prettier --write ."
     },

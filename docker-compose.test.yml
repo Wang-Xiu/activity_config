@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-  activity-config:
+  activity-config-test:
     build: 
       context: .
       args:
         - NODE_ENV=production  # 即使是测试环境也用生产构建避免之前的错误
     ports:
-      - "3000:3000"
+      - "3010:3000"  # 测试环境使用3010端口
     environment:
       - NODE_ENV=production    # 使用生产构建
       - DEPLOY_ENV=test        # 但连接测试后端
+      - PORT=3000              # 容器内部端口保持3000
     env_file:
       - .env.test
     extra_hosts:
@@ -20,8 +21,9 @@ services:
     volumes:
       - ./logs:/app/logs
     networks:
-      - app-network
+      - app-network-test
+    container_name: activity-config-test
 
 networks:
-  app-network:
+  app-network-test:
     driver: bridge
