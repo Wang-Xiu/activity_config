@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { MonitorDashboardData, MonitorDataRequest } from '../../types/monitor-dashboard';
 import { useToast } from '../Toast';
 import { LoadingButton, LoadingSkeleton } from '../ui/loading';
@@ -18,16 +18,25 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
     const [loading, setLoading] = useState(true);
     const [dateRange, setDateRange] = useState<string>('');
     const [refreshing, setRefreshing] = useState(false);
-    const { showSuccess, showError, showWarning } = useToast();
+    const toastFunctions = useToast();
     
-    // 获取监控数据
-    const fetchMonitorData = async (customDateRange?: string) => {
+    // 使用 ref 存储 toast 函数，避免依赖变化
+    const toastRef = useRef(toastFunctions);
+    toastRef.current = toastFunctions;
+    
+    // 使用 ref 记录是否已经初始化加载过
+    const hasInitialized = useRef(false);
+    
+    // 获取监控数据 - 移除所有可能变化的依赖
+    const fetchMonitorData = useCallback(async (targetDateRange?: string) => {
         try {
             setRefreshing(true);
             const requestData: MonitorDataRequest = {
                 act_id: activityId,
-                date_range: customDateRange || dateRange || undefined
+                date_range: targetDateRange || undefined
             };
+
+            console.log('正在调用监控数据API:', requestData);
 
             const response = await fetch('/api/universal/monitor-data', {
                 method: 'POST',
@@ -45,36 +54,57 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
             
             if (result.success) {
                 setData(result.data);
-                showSuccess('监控数据加载成功');
+                toastRef.current.showSuccess('监控数据加载成功');
             } else {
                 throw new Error(result.message || '获取监控数据失败');
             }
         } catch (error) {
             console.error('获取监控数据失败:', error);
-            showError('获取监控数据失败: ' + (error instanceof Error ? error.message : '未知错误'));
+            toastRef.current.showError('获取监控数据失败: ' + (error instanceof Error ? error.message : '未知错误'));
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    };
+    }, [activityId]); // 只依赖 activityId
 
-    // 初始化加载数据
+    // 当 activityId 变化时，重置状态并初始化加载
     useEffect(() => {
-        if (activityId) {
-            fetchMonitorData();
-        }
-    }, [activityId]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (!activityId) return;
+        
+        console.log('MonitorDashboard: activityId 变化，重置并初始化，activityId =', activityId);
+        
+        // 重置所有状态
+        setLoading(true);
+        setData(null);
+        setDateRange('');
+        setRefreshing(false);
+        
+        // 重置初始化标记并开始加载
+        hasInitialized.current = false;
+        
+        // 短暂延迟确保状态重置完成
+        const timer = setTimeout(() => {
+            if (!hasInitialized.current) {
+                hasInitialized.current = true;
+                fetchMonitorData();
+            }
+        }, 0);
+        
+        return () => clearTimeout(timer);
+    }, [activityId, fetchMonitorData]);
 
     // 处理日期范围变更
-    const handleDateRangeChange = (newDateRange: string) => {
+    const handleDateRangeChange = useCallback((newDateRange: string) => {
+        console.log('MonitorDashboard: 日期范围变更，newDateRange =', newDateRange);
         setDateRange(newDateRange);
         fetchMonitorData(newDateRange);
-    };
+    }, [fetchMonitorData]);
 
-    // 手动刷新
-    const handleRefresh = () => {
-        fetchMonitorData();
-    };
+    // 手动刷新 - 使用当前的日期范围
+    const handleRefresh = useCallback(() => {
+        console.log('MonitorDashboard: 手动刷新，dateRange =', dateRange);
+        fetchMonitorData(dateRange || undefined);
+    }, [fetchMonitorData, dateRange]);
 
     // 加载状态
     if (loading) {

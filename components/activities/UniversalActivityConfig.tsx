@@ -4,7 +4,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity } from '../../types/activity';
 import { UniversalConfig, ConfigVersionInfo } from '../../types/config';
-import { fieldNameMapping, isPureEnglish, getDisplayFieldName } from '../../config/fieldNameMapping';
+import { fieldNameMapping } from '../../config/fieldNameMapping';
+import useFieldNameMapping from '../../utils/useFieldNameMapping';
 import { ENV_CONFIG } from '../../config/environment';
 import { useToast, ToastContainer } from '../Toast';
 import { LoadingButton, LoadingSkeleton } from '../ui/loading';
@@ -484,6 +485,17 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     // 获取当前用户信息
     const { user } = useAuth();
 
+    // 使用动态字段名映射Hook
+    const { 
+        fieldNameMapping: dynamicFieldNameMapping, 
+        getDisplayFieldName: dynamicGetDisplayFieldName, 
+        isPureEnglish: dynamicIsPureEnglish,
+        isLoading: isMappingLoading,
+        error: mappingError,
+        isFallback: isMappingFallback,
+        refetch: refetchMapping
+    } = useFieldNameMapping();
+
     // 跳转到监控数据页面
     const handleViewMonitorData = async () => {
         if (!activityId.trim()) {
@@ -876,12 +888,12 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 if (typeof obj === 'object' && obj !== null) {
                     Object.entries(obj).forEach(([key, value]) => {
                         // 跳过非纯英文键的字段
-                        if (!isPureEnglish(key)) {
+                        if (!dynamicIsPureEnglish(key)) {
                             return;
                         }
                         
                         const newPath = [...currentPath, key];
-                        const displayKey = getDisplayFieldName(key);
+                        const displayKey = dynamicGetDisplayFieldName(key);
                         const newLabel = label ? `${label} > ${displayKey}` : displayKey;
                         
                         // 支持原字段名和显示名搜索
@@ -910,7 +922,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         } else {
             setSearchResults([]);
         }
-    }, [searchTerm, config]);
+    }, [searchTerm, config, dynamicGetDisplayFieldName, dynamicIsPureEnglish]);
 
     // 确保组件已挂载
     useEffect(() => {
@@ -1056,11 +1068,32 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    <div className="ml-3">
+                    <div className="ml-3 flex-1">
                         <h3 className="text-sm font-medium text-yellow-800">重要提示</h3>
                         <p className="mt-1 text-sm text-yellow-700">
                             只能修改 JSON 配置，不能修改物料信息。请谨慎操作，确保数据格式正确。
                         </p>
+                        
+                        {/* 字段名映射状态 */}
+                        <div className="mt-2 text-xs text-yellow-600">
+                            <span className="font-medium">字段名映射：</span>
+                            {isMappingLoading ? (
+                                <span className="text-blue-600">正在获取...</span>
+                            ) : isMappingFallback ? (
+                                <span className="text-orange-600">使用本地配置{mappingError && ` (${mappingError})`}</span>
+                            ) : (
+                                <span className="text-green-600">已从服务器获取</span>
+                            )}
+                            {mappingError && !isMappingLoading && (
+                                <button
+                                    onClick={refetchMapping}
+                                    className="ml-2 text-blue-600 hover:text-blue-800 underline"
+                                    title="重新获取字段名映射"
+                                >
+                                    重试
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1140,8 +1173,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                                 path={[]}
                                 onChange={handleConfigChange}
                                 searchTerm={searchTerm}
-                                getDisplayFieldName={getDisplayFieldName}
-                                isPureEnglish={isPureEnglish}
+                                getDisplayFieldName={dynamicGetDisplayFieldName}
+                                isPureEnglish={dynamicIsPureEnglish}
                             />
                         ) : (
                             <div className="text-gray-500">暂无活动配置数据</div>
