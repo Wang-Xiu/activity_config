@@ -12,7 +12,10 @@ interface ActivityConfigRouterProps {
     onStatusChange?: (status: string) => void;
 }
 
-export default function ActivityConfigRouter({ activity, onStatusChange }: ActivityConfigRouterProps) {
+export default function ActivityConfigRouter({
+    activity,
+    onStatusChange,
+}: ActivityConfigRouterProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

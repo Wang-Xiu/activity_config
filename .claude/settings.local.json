@@ -18,7 +18,8 @@
       "Bash(-H \"Content-Type: application/json\" )",
       "Bash(-d '{\"\"act_id\"\":\"\"267\"\",\"\"date_range\"\":\"\"2024-01-01,2024-01-07\"\"}' )",
       "Bash(--max-time 10)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx:*)"
     ],
     "deny": []
   }

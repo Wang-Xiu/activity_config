@@ -3,6 +3,14 @@
  * 用于将英文字段名映射为中文显示名称
  */
 export const fieldNameMapping: { [key: string]: string } = {
+    // 通用活动字段
+    'import_gifts': '导入礼物',
+    'draw_game_config': '抽奖游戏配置',
+    'game_msg': '游戏消息',
+    'change_pool_time': '切换奖池时间',
+    'pay_prop_gift': '付费道具礼物',
+    'need_price': '需要价格',
+    
     // 任务相关配置
     'mission_pool': '任务池配置',
     'new_user': '新用户',

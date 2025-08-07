@@ -114,7 +114,9 @@ export default function ActivitySelector({
                             >
                                 <span className="text-2xl mr-3">{activity.icon}</span>
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-gray-900">{activity.name}</p>
+                                    <p className="text-sm font-medium text-gray-900">
+                                        {activity.name}
+                                    </p>
                                     <p className="text-xs text-gray-500">{activity.description}</p>
                                 </div>
                                 {activity.status === 'active' && (

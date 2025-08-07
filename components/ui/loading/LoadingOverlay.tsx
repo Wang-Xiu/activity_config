@@ -13,50 +13,49 @@ interface LoadingOverlayProps {
     blur?: boolean;
 }
 
-const LoadingOverlay = forwardRef<HTMLDivElement, LoadingOverlayProps>(({
-    visible,
-    children,
-    text = '加载中...',
-    className = '',
-    overlayClassName = '',
-    spinnerSize = 'lg',
-    blur = true
-}, ref) => {
-    if (!visible) {
-        return children ? <>{children}</> : null;
-    }
+const LoadingOverlay = forwardRef<HTMLDivElement, LoadingOverlayProps>(
+    (
+        {
+            visible,
+            children,
+            text = '加载中...',
+            className = '',
+            overlayClassName = '',
+            spinnerSize = 'lg',
+            blur = true,
+        },
+        ref,
+    ) => {
+        if (!visible) {
+            return children ? <>{children}</> : null;
+        }
 
-    const overlayClasses = `
+        const overlayClasses = `
         fixed inset-0 z-50 flex items-center justify-center
         bg-black bg-opacity-50
         ${blur ? 'backdrop-blur-sm' : ''}
         ${overlayClassName}
     `.trim();
 
-    const contentClasses = `
+        const contentClasses = `
         bg-white rounded-lg shadow-xl p-6
         flex flex-col items-center space-y-4
         max-w-sm mx-4
         ${className}
     `.trim();
 
-    return (
-        <div ref={ref} className={overlayClasses}>
-            <div className={contentClasses}>
-                <LoadingSpinner 
-                    size={spinnerSize} 
-                    color="blue"
-                />
-                {text && (
-                    <p className="text-gray-600 text-center font-medium">
-                        {text}
-                    </p>
-                )}
+        return (
+            <div ref={ref} className={overlayClasses}>
+                <div className={contentClasses}>
+                    <LoadingSpinner size={spinnerSize} color="blue" />
+
+                    {text && <p className="text-gray-600 text-center font-medium">{text}</p>}
+                </div>
+                {children}
             </div>
-            {children}
-        </div>
-    );
-});
+        );
+    },
+);
 
 LoadingOverlay.displayName = 'LoadingOverlay';
 

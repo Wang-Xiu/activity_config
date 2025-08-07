@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity } from '../../types/activity';
 import { UniversalConfig, ConfigVersionInfo } from '../../types/config';
@@ -29,16 +29,25 @@ interface ConfigRendererProps {
     isPureEnglish?: (str: string) => boolean;
 }
 
-function ConfigRenderer({ 
-    data, 
-    path, 
-    onChange, 
-    level = 0, 
+function ConfigRenderer({
+    data,
+    path,
+    onChange,
+    level = 0,
     searchTerm = '',
     onFoundItem,
-    getDisplayFieldName = (name) => name,
-    isPureEnglish = (str) => /^[a-zA-Z0-9_]+$/.test(str)
+    getDisplayFieldName,
+    isPureEnglish,
 }: ConfigRendererProps) {
+    // 使用传入的函数，如果没有传入则使用默认函数
+    const displayFieldName = useMemo(
+        () => getDisplayFieldName || ((name) => name),
+        [getDisplayFieldName],
+    );
+    const pureEnglishCheck = useMemo(
+        () => isPureEnglish || ((str) => /^[a-zA-Z0-9_]+$/.test(str)),
+        [isPureEnglish],
+    );
     const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
 
     // 切换展开/折叠状态
@@ -84,58 +93,70 @@ function ConfigRenderer({
     };
 
     // 检查是否匹配搜索词 - 支持原名称和映射名称
-    const isMatchSearch = useCallback((key: string, value: any): boolean => {
-        if (!searchTerm) return false;
-        
-        const searchLower = searchTerm.toLowerCase();
-        const originalKey = key.toLowerCase();
-        const displayKey = getDisplayFieldName(key).toLowerCase();
-        const valueStr = String(value).toLowerCase();
-        
-        // 同时搜索原字段名、显示名和值
-        return originalKey.includes(searchLower) || 
-               displayKey.includes(searchLower) || 
-               valueStr.includes(searchLower);
-    }, [searchTerm, getDisplayFieldName]);
+    const isMatchSearch = useCallback(
+        (key: string, value: any): boolean => {
+            if (!searchTerm) return false;
+
+            const searchLower = searchTerm.toLowerCase();
+            const originalKey = key.toLowerCase();
+            const displayKey = displayFieldName(key).toLowerCase();
+            const valueStr = String(value).toLowerCase();
+
+            // 同时搜索原字段名、显示名和值
+            return (
+                originalKey.includes(searchLower) ||
+                displayKey.includes(searchLower) ||
+                valueStr.includes(searchLower)
+            );
+        },
+        [searchTerm, displayFieldName],
+    );
 
     // 递归检查对象或数组是否包含匹配项
-    const checkHasMatchingChildren = useCallback((data: any, currentPath: string[]): boolean => {
-        if (!searchTerm) return false;
-        
-        if (typeof data === 'object' && data !== null) {
-            if (Array.isArray(data)) {
-                return data.some((item, index) => 
-                    checkHasMatchingChildren(item, [...currentPath, index.toString()])
-                );
-            } else {
-                return Object.entries(data).some(([key, value]) => {
-                    // 跳过非纯英文键的字段
-                    if (!isPureEnglish(key)) {
-                        return false;
-                    }
-                    
-                    const itemPath = [...currentPath, key];
-                    return isMatchSearch(key, value) || checkHasMatchingChildren(value, itemPath);
-                });
+    const checkHasMatchingChildren = useCallback(
+        (data: any, currentPath: string[]): boolean => {
+            if (!searchTerm) return false;
+
+            if (typeof data === 'object' && data !== null) {
+                if (Array.isArray(data)) {
+                    return data.some((item, index) =>
+                        checkHasMatchingChildren(item, [...currentPath, index.toString()]),
+                    );
+                } else {
+                    return Object.entries(data).some(([key, value]) => {
+                        // 跳过非纯英文键的字段
+                        if (!pureEnglishCheck(key)) {
+                            return false;
+                        }
+
+                        const itemPath = [...currentPath, key];
+                        return (
+                            isMatchSearch(key, value) || checkHasMatchingChildren(value, itemPath)
+                        );
+                    });
+                }
             }
-        }
-        return false;
-    }, [searchTerm, isMatchSearch, isPureEnglish]);
+            return false;
+        },
+        [searchTerm, isMatchSearch, pureEnglishCheck],
+    );
 
     // 高亮显示匹配文本
     const highlightMatch = (text: string): React.ReactNode => {
         if (!searchTerm) return text;
-        
+
         const searchLower = searchTerm.toLowerCase();
         const textLower = text.toLowerCase();
         const index = textLower.indexOf(searchLower);
-        
+
         if (index === -1) return text;
-        
+
         return (
             <>
                 {text.substring(0, index)}
-                <span className="bg-yellow-200 font-bold">{text.substring(index, index + searchTerm.length)}</span>
+                <span className="bg-yellow-200 font-bold">
+                    {text.substring(index, index + searchTerm.length)}
+                </span>
                 {text.substring(index + searchTerm.length)}
             </>
         );
@@ -145,7 +166,7 @@ function ConfigRenderer({
     useEffect(() => {
         if (searchTerm && data) {
             const newExpanded = new Set<string>();
-            
+
             const expandMatchingNodes = (currentData: any, currentPath: string[]) => {
                 if (typeof currentData === 'object' && currentData !== null) {
                     if (Array.isArray(currentData)) {
@@ -160,12 +181,15 @@ function ConfigRenderer({
                     } else {
                         Object.entries(currentData).forEach(([key, value]) => {
                             // 跳过非纯英文键的字段
-                            if (!isPureEnglish(key)) {
+                            if (!pureEnglishCheck(key)) {
                                 return;
                             }
-                            
+
                             const itemPath = [...currentPath, key];
-                            if (isMatchSearch(key, value) || checkHasMatchingChildren(value, itemPath)) {
+                            if (
+                                isMatchSearch(key, value) ||
+                                checkHasMatchingChildren(value, itemPath)
+                            ) {
                                 newExpanded.add(key);
                             }
                             expandMatchingNodes(value, itemPath);
@@ -173,11 +197,11 @@ function ConfigRenderer({
                     }
                 }
             };
-            
+
             expandMatchingNodes(data, path);
             setExpandedKeys(newExpanded);
         }
-    }, [searchTerm, data, path, checkHasMatchingChildren, isMatchSearch, isPureEnglish]); // 注意：移除了expandedKeys依赖以避免循环
+    }, [searchTerm, data, path, checkHasMatchingChildren, isMatchSearch, pureEnglishCheck]); // 注意：移除了expandedKeys依赖以避免循环
 
     // 渲染数组项
     const renderArrayItem = (item: any, index: number, arrayPath: string[]) => {
@@ -197,8 +221,8 @@ function ConfigRenderer({
                                 level={level + 1}
                                 searchTerm={searchTerm}
                                 onFoundItem={onFoundItem}
-                                getDisplayFieldName={getDisplayFieldName}
-                                isPureEnglish={isPureEnglish}
+                                getDisplayFieldName={displayFieldName}
+                                isPureEnglish={pureEnglishCheck}
                             />
                         </div>
                     ) : (
@@ -318,17 +342,19 @@ function ConfigRenderer({
         const valueType = getValueType(value);
         const isExpanded = expandedKeys.has(key);
         const isMatch = isMatchSearch(key, value);
-        const displayKey = getDisplayFieldName(key);
-        
+        const displayKey = displayFieldName(key);
+
         // 使用局部变量避免函数名冲突
         let hasChildrenMatch = false;
         if (searchTerm) {
-            hasChildrenMatch = typeof value === 'object' && value !== null && 
-                   (isMatchSearch(key, value) || checkHasMatchingChildren(value, propertyPath));
+            hasChildrenMatch =
+                typeof value === 'object' &&
+                value !== null &&
+                (isMatchSearch(key, value) || checkHasMatchingChildren(value, propertyPath));
         }
 
         // 跳过非纯英文键的字段
-        if (!isPureEnglish(key)) {
+        if (!pureEnglishCheck(key)) {
             return null;
         }
 
@@ -343,7 +369,10 @@ function ConfigRenderer({
         }
 
         return (
-            <div key={key} className={`mb-4 ${isMatch ? 'bg-yellow-50 p-2 rounded border border-yellow-300' : ''}`}>
+            <div
+                key={key}
+                className={`mb-4 ${isMatch ? 'bg-yellow-50 p-2 rounded border border-yellow-300' : ''}`}
+            >
                 <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-medium text-gray-700">
                         {highlightMatch(displayKey)}
@@ -352,20 +381,40 @@ function ConfigRenderer({
                     {(valueType === 'object' || valueType === 'array') && (
                         <button
                             className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-md border transition-all duration-200 ${
-                                isExpanded 
-                                    ? 'bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200' 
+                                isExpanded
+                                    ? 'bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200'
                                     : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
                             }`}
                             onClick={() => toggleExpanded(key)}
                         >
                             <span className="mr-1">
                                 {isExpanded ? (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M19 9l-7 7-7-7"
+                                        />
                                     </svg>
                                 ) : (
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M9 5l7 7-7 7"
+                                        />
                                     </svg>
                                 )}
                             </span>
@@ -404,7 +453,7 @@ function ConfigRenderer({
                                 </button>
                             </div>
                             {(value as any[]).map((item, index) =>
-                                renderArrayItem(item, index, propertyPath)
+                                renderArrayItem(item, index, propertyPath),
                             )}
                         </div>
                     </div>
@@ -417,8 +466,8 @@ function ConfigRenderer({
                                 onChange={onChange}
                                 level={level + 1}
                                 searchTerm={searchTerm}
-                                getDisplayFieldName={getDisplayFieldName}
-                                isPureEnglish={isPureEnglish}
+                                getDisplayFieldName={displayFieldName}
+                                isPureEnglish={pureEnglishCheck}
                             />
                         </div>
                     </div>
@@ -434,19 +483,13 @@ function ConfigRenderer({
     }
 
     if (Array.isArray(data)) {
-        return (
-            <div>
-                {data.map((item, index) => renderArrayItem(item, index, path))}
-            </div>
-        );
+        return <div>{data.map((item, index) => renderArrayItem(item, index, path))}</div>;
     }
 
     if (typeof data === 'object') {
         return (
             <div className={`space-y-4 ${level > 0 ? 'pl-4' : ''}`}>
-                {Object.entries(data).map(([key, value]) =>
-                    renderObjectProperty(key, value)
-                )}
+                {Object.entries(data).map(([key, value]) => renderObjectProperty(key, value))}
             </div>
         );
     }
@@ -454,20 +497,25 @@ function ConfigRenderer({
     return renderInput(data, path, getValueType(data));
 }
 
-export default function UniversalActivityConfig({ activity, onStatusChange }: UniversalActivityConfigProps) {
+export default function UniversalActivityConfig({
+    activity,
+    onStatusChange,
+}: UniversalActivityConfigProps) {
     const [config, setConfig] = useState<UniversalConfig | null>(null);
     const [activeTab, setActiveTab] = useState('config');
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState<Array<{key: string, path: string[], label: string}>>([]);
+    const [searchResults, setSearchResults] = useState<
+        Array<{ key: string; path: string[]; label: string }>
+    >([]);
     const [activityId, setActivityId] = useState('');
     const [hasLoadedConfig, setHasLoadedConfig] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [apiStatus, setApiStatus] = useState('');
     const [lastDeleteTime, setLastDeleteTime] = useState<number>(0);
-    
+
     // 版本管理相关状态
     const [versionInfo, setVersionInfo] = useState<ConfigVersionInfo | null>(null);
-    
+
     // 分别跟踪不同操作的加载状态
     const [isLoadingConfig, setIsLoadingConfig] = useState(false);
     const [isSavingConfig, setIsSavingConfig] = useState(false);
@@ -475,25 +523,25 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     const [isUpdatingMaterialCache, setIsUpdatingMaterialCache] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isNavigatingToMonitor, setIsNavigatingToMonitor] = useState(false);
-    
+
     const searchInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
-    
+
     // Toast提示
     const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast();
-    
+
     // 获取当前用户信息
     const { user } = useAuth();
 
     // 使用动态字段名映射Hook
-    const { 
-        fieldNameMapping: dynamicFieldNameMapping, 
-        getDisplayFieldName: dynamicGetDisplayFieldName, 
+    const {
+        fieldNameMapping: dynamicFieldNameMapping,
+        getDisplayFieldName: dynamicGetDisplayFieldName,
         isPureEnglish: dynamicIsPureEnglish,
         isLoading: isMappingLoading,
         error: mappingError,
         isFallback: isMappingFallback,
-        refetch: refetchMapping
+        refetch: refetchMapping,
     } = useFieldNameMapping();
 
     // 跳转到监控数据页面
@@ -502,20 +550,19 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             showWarning('请先输入活动ID');
             return;
         }
-        
+
         try {
             setIsNavigatingToMonitor(true);
             setApiStatus('正在跳转到监控页面...');
-            
+
             // 显示用户反馈
             showInfo('正在加载监控数据，请稍候...');
-            
+
             // 小延迟确保用户能看到加载状态
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
+            await new Promise((resolve) => setTimeout(resolve, 300));
+
             // 执行路由跳转
             router.push(`/monitor/${activityId}`);
-            
         } catch (error) {
             console.error('跳转监控页面失败:', error);
             showError('跳转监控页面失败');
@@ -561,8 +608,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    act_id: activityId
-                })
+                    act_id: activityId,
+                }),
             });
 
             if (!response.ok) {
@@ -571,7 +618,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
             const result = await response.json();
             console.log('删除Redis缓存API响应:', result);
-            
+
             if (result.success) {
                 setApiStatus('Redis缓存删除成功');
                 setLastDeleteTime(now);
@@ -582,7 +629,9 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             }
         } catch (error) {
             console.error('删除Redis缓存失败:', error);
-            setApiStatus(`删除Redis缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            setApiStatus(
+                `删除Redis缓存失败: ${error instanceof Error ? error.message : '未知错误'}`,
+            );
             showError(`删除Redis缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         } finally {
@@ -596,22 +645,22 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             showWarning('请先输入活动ID');
             return;
         }
-        
+
         try {
             setIsLoadingConfig(true);
             setApiStatus('正在获取配置...');
             onStatusChange?.('loading');
             console.log('正在调用API: /api/universal/config');
             console.log('POST参数:', { activityId });
-            
+
             const response = await fetch('/api/universal/config', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    activityId: activityId
-                })
+                    activityId: activityId,
+                }),
             });
 
             if (!response.ok) {
@@ -624,18 +673,18 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                 setHasLoadedConfig(true);
                 setApiStatus('配置获取成功');
                 onStatusChange?.('loaded');
-                
+
                 // 提取并设置版本信息
                 if (data.data.version || data.data.update_time || data.data.operator) {
                     setVersionInfo({
                         version: data.data.version || '',
                         update_time: data.data.update_time || '',
-                        operator: data.data.operator || ''
+                        operator: data.data.operator || '',
                     });
                 } else {
                     setVersionInfo(null);
                 }
-                
+
                 showSuccess(`活动ID ${activityId} 的配置获取成功`);
             } else {
                 throw new Error(data.message || '获取配置失败');
@@ -661,7 +710,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setIsUpdatingCache(true);
             setApiStatus('正在更新缓存...');
             onStatusChange?.('loading');
-            
+
             console.log('正在调用更新缓存API: /api/universal/reload-cache');
             console.log('POST参数:', { activityId });
 
@@ -671,8 +720,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    activityId: activityId
-                })
+                    activityId: activityId,
+                }),
             });
 
             if (!response.ok) {
@@ -681,7 +730,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
             const result = await response.json();
             console.log('缓存更新API响应:', result);
-            
+
             if (result.success) {
                 setApiStatus('缓存更新成功');
                 onStatusChange?.('loaded');
@@ -704,7 +753,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         if (!confirm('确定要重置吗？这将清空当前所有配置数据并回到初始状态。')) {
             return;
         }
-        
+
         // 清空所有状态，回到初始状态
         setConfig(null);
         setHasLoadedConfig(false);
@@ -713,7 +762,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         setSearchResults([]);
         setApiStatus('');
         onStatusChange?.('');
-        
+
         showInfo('已重置，请重新输入活动ID并获取配置');
     };
 
@@ -728,7 +777,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             setIsUpdatingMaterialCache(true);
             setApiStatus('正在更新物料缓存...');
             onStatusChange?.('loading');
-            
+
             console.log('正在调用更新物料缓存API: /api/universal/update-material-cache');
             console.log('POST参数:', { activityId });
 
@@ -738,8 +787,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    activityId: activityId
-                })
+                    activityId: activityId,
+                }),
             });
 
             if (!response.ok) {
@@ -748,7 +797,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
             const result = await response.json();
             console.log('物料缓存更新API响应:', result);
-            
+
             if (result.success) {
                 setApiStatus('物料缓存更新成功');
                 onStatusChange?.('loaded');
@@ -758,7 +807,9 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             }
         } catch (error) {
             console.error('更新物料缓存失败:', error);
-            setApiStatus(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
+            setApiStatus(
+                `更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`,
+            );
             showError(`更新物料缓存失败: ${error instanceof Error ? error.message : '未知错误'}`);
             onStatusChange?.('error');
         } finally {
@@ -773,7 +824,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
         console.log('当前配置:', config);
         console.log('当前版本信息:', versionInfo);
         console.log('当前用户:', user?.username);
-        
+
         if (!activityId.trim()) {
             showWarning('请先输入活动ID');
             return;
@@ -803,8 +854,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     activityId: activityId,
                     actConfig: config.act_config,
                     version: versionInfo?.version || '',
-                    operator: user.username
-                })
+                    operator: user.username,
+                }),
             });
 
             console.log('API响应状态:', response.status, response.statusText);
@@ -816,21 +867,21 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
 
             const result = await response.json();
             console.log('API返回的完整响应:', result);
-            
+
             if (result.success) {
                 setApiStatus('配置保存成功');
                 onStatusChange?.('saved');
-                
+
                 // 显示后端返回的msg字段内容
-                const backendMessage = result.message || result.msg || `活动ID ${activityId} 的配置保存成功`;
+                const backendMessage =
+                    result.message || result.msg || `活动ID ${activityId} 的配置保存成功`;
                 showSuccess(backendMessage);
-                
+
                 // 保存成功后重新获取配置以更新版本信息
                 console.log('配置保存成功，重新获取最新配置以更新版本信息...');
                 setTimeout(() => {
                     fetchConfigById();
                 }, 500); // 短暂延迟后获取最新配置
-                
             } else {
                 // 检查是否是版本冲突错误
                 if (result.error && result.error.includes('版本冲突')) {
@@ -882,8 +933,8 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     // 使用useEffect计算搜索结果，避免在渲染过程中更新状态 - 只搜索act_config
     useEffect(() => {
         if (searchTerm && config && config.act_config) {
-            const results: Array<{key: string, path: string[], label: string}> = [];
-            
+            const results: Array<{ key: string; path: string[]; label: string }> = [];
+
             const searchInObject = (obj: any, currentPath: string[], label: string) => {
                 if (typeof obj === 'object' && obj !== null) {
                     Object.entries(obj).forEach(([key, value]) => {
@@ -891,32 +942,32 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         if (!dynamicIsPureEnglish(key)) {
                             return;
                         }
-                        
+
                         const newPath = [...currentPath, key];
                         const displayKey = dynamicGetDisplayFieldName(key);
                         const newLabel = label ? `${label} > ${displayKey}` : displayKey;
-                        
+
                         // 支持原字段名和显示名搜索
                         const searchLower = searchTerm.toLowerCase();
                         const originalKeyMatch = key.toLowerCase().includes(searchLower);
                         const displayKeyMatch = displayKey.toLowerCase().includes(searchLower);
                         const valueMatch = String(value).toLowerCase().includes(searchLower);
-                        
+
                         if (originalKeyMatch || displayKeyMatch || valueMatch) {
                             results.push({
                                 key: displayKey,
                                 path: newPath,
-                                label: newLabel
+                                label: newLabel,
                             });
                         }
-                        
+
                         if (typeof value === 'object' && value !== null) {
                             searchInObject(value, newPath, newLabel);
                         }
                     });
                 }
             };
-            
+
             searchInObject(config.act_config, [], '活动配置');
             setSearchResults(results);
         } else {
@@ -940,18 +991,18 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
     }
 
     // 跳转到搜索结果 - 使用状态提升来管理展开状态
-    const jumpToResult = (result: {path: string[]}) => {
+    const jumpToResult = (result: { path: string[] }) => {
         // 构建需要展开的所有父节点路径
         const pathsToExpand = new Set<string>();
         let currentPath: string[] = [];
-        
+
         result.path.forEach((segment, index) => {
             if (index < result.path.length - 1) {
                 currentPath = [...currentPath, segment];
                 pathsToExpand.add(segment);
             }
         });
-        
+
         // 通过URL参数或全局状态传递展开信息
         // 这里简化处理，实际应该通过状态提升或context
         console.log('需要展开的节点:', Array.from(pathsToExpand));
@@ -1064,8 +1115,16 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div className="flex items-start">
                     <div className="flex-shrink-0">
-                        <svg className="w-5 h-5 text-yellow-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        <svg
+                            className="w-5 h-5 text-yellow-600 mt-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                            />
                         </svg>
                     </div>
                     <div className="ml-3 flex-1">
@@ -1073,14 +1132,16 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                         <p className="mt-1 text-sm text-yellow-700">
                             只能修改 JSON 配置，不能修改物料信息。请谨慎操作，确保数据格式正确。
                         </p>
-                        
+
                         {/* 字段名映射状态 */}
                         <div className="mt-2 text-xs text-yellow-600">
                             <span className="font-medium">字段名映射：</span>
                             {isMappingLoading ? (
                                 <span className="text-blue-600">正在获取...</span>
                             ) : isMappingFallback ? (
-                                <span className="text-orange-600">使用本地配置{mappingError && ` (${mappingError})`}</span>
+                                <span className="text-orange-600">
+                                    使用本地配置{mappingError && ` (${mappingError})`}
+                                </span>
                             ) : (
                                 <span className="text-green-600">已从服务器获取</span>
                             )}
@@ -1099,11 +1160,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
             </div>
 
             {/* 版本信息显示 */}
-            <VersionInfo 
-                versionInfo={versionInfo}
-                isLoading={isLoadingConfig}
-                className="mb-4"
-            />
+            <VersionInfo versionInfo={versionInfo} isLoading={isLoadingConfig} className="mb-4" />
 
             {/* 搜索栏 */}
             {activeTab === 'config' && (
@@ -1132,10 +1189,12 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             </button>
                         )}
                     </div>
-                    
+
                     {searchResults.length > 0 && (
                         <div className="mt-4 border-t pt-3">
-                            <div className="text-sm text-gray-600 mb-2">搜索到 {searchResults.length} 个结果：</div>
+                            <div className="text-sm text-gray-600 mb-2">
+                                搜索到 {searchResults.length} 个结果：
+                            </div>
                             <div className="max-h-48 overflow-y-auto space-y-1">
                                 {searchResults.map((result, index) => (
                                     <button
@@ -1189,7 +1248,9 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             </div>
                         ) : (
                             <pre className="bg-gray-100 p-4 rounded overflow-auto text-sm">
-                                {config && config.act_config ? JSON.stringify(config.act_config, null, 2) : '暂无数据'}
+                                {config && config.act_config
+                                    ? JSON.stringify(config.act_config, null, 2)
+                                    : '暂无数据'}
                             </pre>
                         )}
                     </div>
@@ -1207,7 +1268,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     >
                         保存配置
                     </LoadingButton>
-                    
+
                     <LoadingButton
                         variant="warning"
                         loading={isUpdatingCache}
@@ -1216,7 +1277,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     >
                         更新缓存
                     </LoadingButton>
-                    
+
                     <LoadingButton
                         variant="info"
                         loading={isUpdatingMaterialCache}
@@ -1225,7 +1286,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     >
                         更新物料缓存
                     </LoadingButton>
-                    
+
                     <LoadingButton
                         variant="primary"
                         loading={isNavigatingToMonitor}
@@ -1234,7 +1295,7 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                     >
                         查看监控数据
                     </LoadingButton>
-                    
+
                     {/* 删除Redis缓存按钮 - 仅测试环境显示 */}
                     {ENV_CONFIG.deployEnv !== 'prod' && (
                         <LoadingButton
@@ -1247,19 +1308,14 @@ export default function UniversalActivityConfig({ activity, onStatusChange }: Un
                             删除缓存
                         </LoadingButton>
                     )}
-                    
-                    <LoadingButton
-                        variant="secondary"
-                        onClick={handleResetConfig}
-                    >
+
+                    <LoadingButton variant="secondary" onClick={handleResetConfig}>
                         重置配置
                     </LoadingButton>
                 </div>
-                {apiStatus && (
-                    <div className="text-sm text-gray-600">{apiStatus}</div>
-                )}
+                {apiStatus && <div className="text-sm text-gray-600">{apiStatus}</div>}
             </div>
-            
+
             {/* Toast 提示容器 */}
             <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>

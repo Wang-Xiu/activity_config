@@ -34,7 +34,7 @@ export default function DataTable({
     pageSize = 10,
     striped = true,
     hover = true,
-    size = 'md'
+    size = 'md',
 }: DataTableProps) {
     const [sortKey, setSortKey] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<SortOrder>(null);
@@ -44,7 +44,7 @@ export default function DataTable({
     const sizeClasses = {
         sm: 'px-3 py-2 text-sm',
         md: 'px-4 py-3 text-sm',
-        lg: 'px-6 py-4 text-base'
+        lg: 'px-6 py-4 text-base',
     };
 
     // 排序处理
@@ -60,18 +60,18 @@ export default function DataTable({
     // 排序后的数据
     const sortedData = useMemo(() => {
         if (!sortKey || !sortOrder) return data;
-        
+
         return [...data].sort((a, b) => {
             const aVal = a[sortKey];
             const bVal = b[sortKey];
-            
+
             if (typeof aVal === 'number' && typeof bVal === 'number') {
                 return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
             }
-            
+
             const aStr = String(aVal).toLowerCase();
             const bStr = String(bVal).toLowerCase();
-            
+
             if (sortOrder === 'asc') {
                 return aStr.localeCompare(bStr);
             } else {
@@ -83,7 +83,7 @@ export default function DataTable({
     // 分页数据
     const paginatedData = useMemo(() => {
         if (!pagination) return sortedData;
-        
+
         const startIndex = (currentPage - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         return sortedData.slice(startIndex, endIndex);
@@ -107,7 +107,10 @@ export default function DataTable({
                         <div key={index} className="px-4 py-3 border-b border-gray-200">
                             <div className="flex space-x-4">
                                 {columns.map((_, colIndex) => (
-                                    <div key={colIndex} className="h-4 bg-gray-100 rounded flex-1"></div>
+                                    <div
+                                        key={colIndex}
+                                        className="h-4 bg-gray-100 rounded flex-1"
+                                    ></div>
                                 ))}
                             </div>
                         </div>
@@ -128,9 +131,18 @@ export default function DataTable({
                                     key={column.key}
                                     className={`
                                         ${sizeClasses[size]} font-medium text-gray-700 uppercase tracking-wider
-                                        ${column.align === 'center' ? 'text-center' : 
-                                          column.align === 'right' ? 'text-right' : 'text-left'}
-                                        ${column.sortable ? 'cursor-pointer hover:bg-gray-100 transition-colors' : ''}
+                                        ${
+                                            column.align === 'center'
+                                                ? 'text-center'
+                                                : column.align === 'right'
+                                                  ? 'text-right'
+                                                  : 'text-left'
+                                        }
+                                        ${
+                                            column.sortable
+                                                ? 'cursor-pointer hover:bg-gray-100 transition-colors'
+                                                : ''
+                                        }
                                     `}
                                     style={{ width: column.width }}
                                     onClick={() => column.sortable && handleSort(column.dataIndex)}
@@ -139,25 +151,37 @@ export default function DataTable({
                                         <span>{column.title}</span>
                                         {column.sortable && (
                                             <div className="flex flex-col">
-                                                <svg 
+                                                <svg
                                                     className={`w-3 h-3 ${
-                                                        sortKey === column.dataIndex && sortOrder === 'asc' 
-                                                            ? 'text-blue-600' : 'text-gray-400'
+                                                        sortKey === column.dataIndex &&
+                                                        sortOrder === 'asc'
+                                                            ? 'text-blue-600'
+                                                            : 'text-gray-400'
                                                     }`}
-                                                    fill="currentColor" 
+                                                    fill="currentColor"
                                                     viewBox="0 0 20 20"
                                                 >
-                                                    <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                        clipRule="evenodd"
+                                                    />
                                                 </svg>
-                                                <svg 
+                                                <svg
                                                     className={`w-3 h-3 -mt-1 ${
-                                                        sortKey === column.dataIndex && sortOrder === 'desc' 
-                                                            ? 'text-blue-600' : 'text-gray-400'
+                                                        sortKey === column.dataIndex &&
+                                                        sortOrder === 'desc'
+                                                            ? 'text-blue-600'
+                                                            : 'text-gray-400'
                                                     }`}
-                                                    fill="currentColor" 
+                                                    fill="currentColor"
                                                     viewBox="0 0 20 20"
                                                 >
-                                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
                                                 </svg>
                                             </div>
                                         )}
@@ -168,7 +192,7 @@ export default function DataTable({
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {paginatedData.map((record, index) => (
-                            <tr 
+                            <tr
                                 key={record.key || index}
                                 className={`
                                     ${striped && index % 2 === 1 ? 'bg-gray-50' : 'bg-white'}
@@ -180,14 +204,18 @@ export default function DataTable({
                                         key={column.key}
                                         className={`
                                             ${sizeClasses[size]} text-gray-900
-                                            ${column.align === 'center' ? 'text-center' : 
-                                              column.align === 'right' ? 'text-right' : 'text-left'}
+                                            ${
+                                                column.align === 'center'
+                                                    ? 'text-center'
+                                                    : column.align === 'right'
+                                                      ? 'text-right'
+                                                      : 'text-left'
+                                            }
                                         `}
                                     >
-                                        {column.render 
+                                        {column.render
                                             ? column.render(record[column.dataIndex], record)
-                                            : record[column.dataIndex]
-                                        }
+                                            : record[column.dataIndex]}
                                     </td>
                                 ))}
                             </tr>
@@ -218,7 +246,11 @@ export default function DataTable({
                     <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                         <div>
                             <p className="text-sm text-gray-700">
-                                显示第 <span className="font-medium">{(currentPage - 1) * pageSize + 1}</span> 到{' '}
+                                显示第{' '}
+                                <span className="font-medium">
+                                    {(currentPage - 1) * pageSize + 1}
+                                </span>{' '}
+                                到{' '}
                                 <span className="font-medium">
                                     {Math.min(currentPage * pageSize, data.length)}
                                 </span>{' '}
@@ -226,18 +258,29 @@ export default function DataTable({
                             </p>
                         </div>
                         <div>
-                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <nav
+                                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                                aria-label="Pagination"
+                            >
                                 <button
                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                     disabled={currentPage === 1}
                                     className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">Previous</span>
-                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    <svg
+                                        className="h-5 w-5"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                            clipRule="evenodd"
+                                        />
                                     </svg>
                                 </button>
-                                
+
                                 {/* 页码按钮 */}
                                 {[...Array(totalPages)].map((_, index) => {
                                     const page = index + 1;
@@ -252,9 +295,10 @@ export default function DataTable({
                                                 onClick={() => setCurrentPage(page)}
                                                 className={`
                                                     relative inline-flex items-center px-4 py-2 border text-sm font-medium
-                                                    ${currentPage === page
-                                                        ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                    ${
+                                                        currentPage === page
+                                                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                                                     }
                                                 `}
                                             >
@@ -278,13 +322,23 @@ export default function DataTable({
                                 })}
 
                                 <button
-                                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                                    onClick={() =>
+                                        setCurrentPage(Math.min(totalPages, currentPage + 1))
+                                    }
                                     disabled={currentPage === totalPages}
                                     className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <span className="sr-only">Next</span>
-                                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                    <svg
+                                        className="h-5 w-5"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                            clipRule="evenodd"
+                                        />
                                     </svg>
                                 </button>
                             </nav>

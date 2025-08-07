@@ -50,9 +50,7 @@ export default function AuthGuard({ children, fallback }: AuthGuardProps) {
                             <h2 className="text-xl font-semibold text-gray-900 mb-2">
                                 验证登录状态
                             </h2>
-                            <p className="text-gray-600">
-                                正在验证您的登录状态，请稍候...
-                            </p>
+                            <p className="text-gray-600">正在验证您的登录状态，请稍候...</p>
                         </div>
                     </div>
                 </div>
@@ -67,16 +65,22 @@ export default function AuthGuard({ children, fallback }: AuthGuardProps) {
                 <div className="w-full max-w-md">
                     <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
                         <div className="mx-auto w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            <svg
+                                className="w-8 h-8 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                />
                             </svg>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                            您已登录
-                        </h1>
-                        <p className="text-gray-600 mb-6">
-                            欢迎回来，{user?.username}
-                        </p>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">您已登录</h1>
+                        <p className="text-gray-600 mb-6">欢迎回来，{user?.username}</p>
                         <button
                             onClick={() => router.replace('/')}
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"

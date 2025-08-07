@@ -24,19 +24,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [authState, setAuthState] = useState<AuthState>(initialAuthState);
 
     // 设置认证状态 - 使用useCallback但不依赖任何状态
-    const setAuthData = useCallback((isAuthenticated: boolean, user: User | null, token: string | null) => {
-        setAuthState({
-            isAuthenticated,
-            user,
-            token,
-            isLoading: false,
-            error: null,
-        });
-    }, []);
+    const setAuthData = useCallback(
+        (isAuthenticated: boolean, user: User | null, token: string | null) => {
+            setAuthState({
+                isAuthenticated,
+                user,
+                token,
+                isLoading: false,
+                error: null,
+            });
+        },
+        [],
+    );
 
     // 设置错误状态 - 使用useCallback但不依赖任何状态
     const setError = useCallback((error: string) => {
-        setAuthState(prev => ({
+        setAuthState((prev) => ({
             ...prev,
             error,
             isLoading: false,
@@ -45,7 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // 清除错误 - 使用useCallback但不依赖任何状态
     const clearError = useCallback(() => {
-        setAuthState(prev => ({
+        setAuthState((prev) => ({
             ...prev,
             error: null,
         }));
@@ -54,7 +57,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // 验证token
     const verifyToken = useCallback(async (): Promise<boolean> => {
         const token = AuthTokenManager.getToken();
-        
+
         if (!token) {
             setAuthData(false, null, null);
             return false;
@@ -84,7 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 const username = result.data.username || AuthTokenManager.getUser()?.username;
                 const user: User = {
                     username: username || 'unknown',
-                    loginTime: AuthTokenManager.getUser()?.loginTime
+                    loginTime: AuthTokenManager.getUser()?.loginTime,
                 };
                 setAuthData(true, user, token);
                 return true;
@@ -103,45 +106,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }, [setAuthData, setError]);
 
     // 登录函数
-    const login = useCallback(async (username: string, password: string): Promise<boolean> => {
-        try {
-            clearError();
-            setAuthState(prev => ({ ...prev, isLoading: true }));
+    const login = useCallback(
+        async (username: string, password: string): Promise<boolean> => {
+            try {
+                clearError();
+                setAuthState((prev) => ({ ...prev, isLoading: true }));
 
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // 保存token和用户信息
-                AuthTokenManager.saveToken(result.data.token);
-                AuthTokenManager.saveUser({
-                    username: result.data.user.username
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
                 });
 
-                const user: User = {
-                    username: result.data.user.username,
-                    loginTime: result.data.user.login_time
-                };
+                const result = await response.json();
 
-                setAuthData(true, user, result.data.token);
-                return true;
-            } else {
-                setError(result.message || '登录失败');
+                if (result.success) {
+                    // 保存token和用户信息
+                    AuthTokenManager.saveToken(result.data.token);
+                    AuthTokenManager.saveUser({
+                        username: result.data.user.username,
+                    });
+
+                    const user: User = {
+                        username: result.data.user.username,
+                        loginTime: result.data.user.login_time,
+                    };
+
+                    setAuthData(true, user, result.data.token);
+                    return true;
+                } else {
+                    setError(result.message || '登录失败');
+                    return false;
+                }
+            } catch (error) {
+                console.error('登录失败:', error);
+                setError('网络连接失败，请检查网络后重试');
                 return false;
             }
-        } catch (error) {
-            console.error('登录失败:', error);
-            setError('网络连接失败，请检查网络后重试');
-            return false;
-        }
-    }, [setAuthData, setError, clearError]);
+        },
+        [setAuthData, setError, clearError],
+    );
 
     // 登出函数
     const logout = useCallback(() => {
@@ -154,7 +160,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const initializeAuth = async () => {
             console.log('[AuthProvider] 初始化认证状态...');
             const token = AuthTokenManager.getToken();
-            
+
             if (!token) {
                 setAuthData(false, null, null);
                 return;
@@ -184,7 +190,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     const username = result.data.username || AuthTokenManager.getUser()?.username;
                     const user: User = {
                         username: username || 'unknown',
-                        loginTime: AuthTokenManager.getUser()?.loginTime
+                        loginTime: AuthTokenManager.getUser()?.loginTime,
                     };
                     setAuthData(true, user, token);
                 } else {
@@ -207,44 +213,47 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (!authState.isAuthenticated) return;
 
         // 只在长时间无操作时才定期验证，而不是频繁验证
-        const interval = setInterval(async () => {
-            const token = AuthTokenManager.getToken();
-            
-            // 首先进行客户端检查，避免不必要的网络请求
-            if (!token || AuthTokenManager.isTokenExpired(token)) {
-                AuthTokenManager.clearToken();
-                setAuthData(false, null, null);
-                return;
-            }
+        const interval = setInterval(
+            async () => {
+                const token = AuthTokenManager.getToken();
 
-            // 检查token是否即将过期（剩余时间少于1小时）
-            const tokenData = JSON.parse(atob(token.split('.')[1]));
-            const expiresAt = tokenData.exp * 1000;
-            const oneHour = 60 * 60 * 1000;
-            
-            // 只有在token即将过期时才进行后端验证
-            if (expiresAt - Date.now() < oneHour) {
-                try {
-                    const response = await fetch('/api/auth/verify', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ token }),
-                    });
-
-                    const result = await response.json();
-
-                    if (!result.success || !result.data.valid) {
-                        AuthTokenManager.clearToken();
-                        setAuthData(false, null, null);
-                    }
-                } catch (error) {
-                    console.error('定期Token验证失败:', error);
-                    // 网络错误时不做处理，保持当前状态
+                // 首先进行客户端检查，避免不必要的网络请求
+                if (!token || AuthTokenManager.isTokenExpired(token)) {
+                    AuthTokenManager.clearToken();
+                    setAuthData(false, null, null);
+                    return;
                 }
-            }
-        }, 30 * 60 * 1000); // 每30分钟检查一次
+
+                // 检查token是否即将过期（剩余时间少于1小时）
+                const tokenData = JSON.parse(atob(token.split('.')[1]));
+                const expiresAt = tokenData.exp * 1000;
+                const oneHour = 60 * 60 * 1000;
+
+                // 只有在token即将过期时才进行后端验证
+                if (expiresAt - Date.now() < oneHour) {
+                    try {
+                        const response = await fetch('/api/auth/verify', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ token }),
+                        });
+
+                        const result = await response.json();
+
+                        if (!result.success || !result.data.valid) {
+                            AuthTokenManager.clearToken();
+                            setAuthData(false, null, null);
+                        }
+                    } catch (error) {
+                        console.error('定期Token验证失败:', error);
+                        // 网络错误时不做处理，保持当前状态
+                    }
+                }
+            },
+            30 * 60 * 1000,
+        ); // 每30分钟检查一次
 
         return () => clearInterval(interval);
     }, [authState.isAuthenticated, setAuthData]);
@@ -257,11 +266,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         clearError,
     };
 
-    return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 // 使用认证上下文的Hook
@@ -276,13 +281,14 @@ export function useAuth(): AuthContextType {
 // 检查是否已认证的Hook
 export function useRequireAuth(): AuthContextType {
     const auth = useAuth();
-    
+
     useEffect(() => {
         if (!auth.isLoading && !auth.isAuthenticated) {
             // 可以在这里处理未认证的情况，比如重定向到登录页
             if (typeof window !== 'undefined') {
                 const currentPath = window.location.pathname;
-                const redirectUrl = currentPath !== '/login' ? `?redirect=${encodeURIComponent(currentPath)}` : '';
+                const redirectUrl =
+                    currentPath !== '/login' ? `?redirect=${encodeURIComponent(currentPath)}` : '';
                 window.location.href = `/login${redirectUrl}`;
             }
         }

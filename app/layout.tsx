@@ -28,12 +28,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="zh-CN" data-oid="xdzh8s8">
-            <body className="" data-oid="t2ln..8">
+        <html lang="zh-CN">
+            <body className="">
                 <AuthProvider>
-                    <AuthGuard>
-                        {children}
-                    </AuthGuard>
+                    <AuthGuard>{children}</AuthGuard>
                 </AuthProvider>
             </body>
         </html>

@@ -1,6 +1,15 @@
 'use client';
 
-import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+    BarChart as RechartsBarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from 'recharts';
 import { ChartDataPoint } from '../../../types/monitor-dashboard';
 
 interface BarChartProps {
@@ -29,12 +38,11 @@ export default function BarChart({
     showGrid = true,
     yAxisLabel,
     xAxisLabel,
-    loading = false
+    loading = false,
 }: BarChartProps) {
-    
     if (loading) {
         return (
-            <div 
+            <div
                 className="bg-gray-100 rounded-lg flex items-center justify-center animate-pulse"
                 style={{ height }}
             >
@@ -52,20 +60,20 @@ export default function BarChart({
             return (
                 <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
                     <p className="font-medium text-gray-900 mb-2">
-                        {xAxisLabel ? `${xAxisLabel}: ` : ''}{label}
+                        {xAxisLabel ? `${xAxisLabel}: ` : ''}
+                        {label}
                     </p>
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center space-x-2 text-sm">
-                            <div 
+                            <div
                                 className="w-3 h-3 rounded-full"
                                 style={{ backgroundColor: entry.color }}
                             ></div>
                             <span className="text-gray-600">{entry.name}:</span>
                             <span className="font-medium text-gray-900">
-                                {typeof entry.value === 'number' 
-                                    ? entry.value.toLocaleString() 
-                                    : entry.value
-                                }
+                                {typeof entry.value === 'number'
+                                    ? entry.value.toLocaleString()
+                                    : entry.value}
                             </span>
                         </div>
                     ))}
@@ -88,14 +96,14 @@ export default function BarChart({
                     }}
                 >
                     {showGrid && (
-                        <CartesianGrid 
-                            strokeDasharray="3 3" 
+                        <CartesianGrid
+                            strokeDasharray="3 3"
                             stroke="#f0f0f0"
                             horizontal={true}
                             vertical={false}
                         />
                     )}
-                    <XAxis 
+                    <XAxis
                         dataKey={xAxisKey}
                         axisLine={false}
                         tickLine={false}
@@ -105,7 +113,8 @@ export default function BarChart({
                         textAnchor={data.length > 7 ? 'end' : 'middle'}
                         height={data.length > 7 ? 80 : 60}
                     />
-                    <YAxis 
+
+                    <YAxis
                         axisLine={false}
                         tickLine={false}
                         tick={{ fontSize: 12, fill: '#6b7280' }}
@@ -116,13 +125,14 @@ export default function BarChart({
                             return value.toLocaleString();
                         }}
                     />
+
                     <Tooltip content={<CustomTooltip />} />
                     {showLegend && (
-                        <Legend 
+                        <Legend
                             iconType="rect"
                             wrapperStyle={{
                                 paddingTop: '20px',
-                                fontSize: '14px'
+                                fontSize: '14px',
                             }}
                         />
                     )}
@@ -133,7 +143,13 @@ export default function BarChart({
                             name={bar.name}
                             fill={bar.color}
                             stackId={bar.stackId}
-                            radius={bars.length === 1 ? [4, 4, 0, 0] : index === bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                            radius={
+                                bars.length === 1
+                                    ? [4, 4, 0, 0]
+                                    : index === bars.length - 1
+                                      ? [4, 4, 0, 0]
+                                      : [0, 0, 0, 0]
+                            }
                             animationDuration={800}
                             animationEasing="ease-out"
                         />

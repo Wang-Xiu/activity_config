@@ -19,69 +19,74 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
     const [dateRange, setDateRange] = useState<string>('');
     const [refreshing, setRefreshing] = useState(false);
     const toastFunctions = useToast();
-    
+
     // 使用 ref 存储 toast 函数，避免依赖变化
     const toastRef = useRef(toastFunctions);
     toastRef.current = toastFunctions;
-    
+
     // 使用 ref 记录是否已经初始化加载过
     const hasInitialized = useRef(false);
-    
+
     // 获取监控数据 - 移除所有可能变化的依赖
-    const fetchMonitorData = useCallback(async (targetDateRange?: string) => {
-        try {
-            setRefreshing(true);
-            const requestData: MonitorDataRequest = {
-                act_id: activityId,
-                date_range: targetDateRange || undefined
-            };
+    const fetchMonitorData = useCallback(
+        async (targetDateRange?: string) => {
+            try {
+                setRefreshing(true);
+                const requestData: MonitorDataRequest = {
+                    act_id: activityId,
+                    date_range: targetDateRange || undefined,
+                };
 
-            console.log('正在调用监控数据API:', requestData);
+                console.log('正在调用监控数据API:', requestData);
 
-            const response = await fetch('/api/universal/monitor-data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            });
+                const response = await fetch('/api/universal/monitor-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    setData(result.data);
+                    toastRef.current.showSuccess('监控数据加载成功');
+                } else {
+                    throw new Error(result.message || '获取监控数据失败');
+                }
+            } catch (error) {
+                console.error('获取监控数据失败:', error);
+                toastRef.current.showError(
+                    '获取监控数据失败: ' + (error instanceof Error ? error.message : '未知错误'),
+                );
+            } finally {
+                setLoading(false);
+                setRefreshing(false);
             }
-
-            const result = await response.json();
-            
-            if (result.success) {
-                setData(result.data);
-                toastRef.current.showSuccess('监控数据加载成功');
-            } else {
-                throw new Error(result.message || '获取监控数据失败');
-            }
-        } catch (error) {
-            console.error('获取监控数据失败:', error);
-            toastRef.current.showError('获取监控数据失败: ' + (error instanceof Error ? error.message : '未知错误'));
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    }, [activityId]); // 只依赖 activityId
+        },
+        [activityId],
+    ); // 只依赖 activityId
 
     // 当 activityId 变化时，重置状态并初始化加载
     useEffect(() => {
         if (!activityId) return;
-        
+
         console.log('MonitorDashboard: activityId 变化，重置并初始化，activityId =', activityId);
-        
+
         // 重置所有状态
         setLoading(true);
         setData(null);
         setDateRange('');
         setRefreshing(false);
-        
+
         // 重置初始化标记并开始加载
         hasInitialized.current = false;
-        
+
         // 短暂延迟确保状态重置完成
         const timer = setTimeout(() => {
             if (!hasInitialized.current) {
@@ -89,16 +94,19 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                 fetchMonitorData();
             }
         }, 0);
-        
+
         return () => clearTimeout(timer);
     }, [activityId, fetchMonitorData]);
 
     // 处理日期范围变更
-    const handleDateRangeChange = useCallback((newDateRange: string) => {
-        console.log('MonitorDashboard: 日期范围变更，newDateRange =', newDateRange);
-        setDateRange(newDateRange);
-        fetchMonitorData(newDateRange);
-    }, [fetchMonitorData]);
+    const handleDateRangeChange = useCallback(
+        (newDateRange: string) => {
+            console.log('MonitorDashboard: 日期范围变更，newDateRange =', newDateRange);
+            setDateRange(newDateRange);
+            fetchMonitorData(newDateRange);
+        },
+        [fetchMonitorData],
+    );
 
     // 手动刷新 - 使用当前的日期范围
     const handleRefresh = useCallback(() => {
@@ -129,20 +137,25 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                     {[1, 2, 3].map((index) => (
                         <div key={index} className="bg-white p-6 rounded-lg shadow">
                             <LoadingSkeleton width="250px" height="24px" className="mb-6" />
-                            
+
                             {/* 模拟指标卡片 */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                                 {[1, 2, 3, 4].map((cardIndex) => (
                                     <div key={cardIndex} className="p-4 border rounded-lg">
-                                        <LoadingSkeleton width="80px" height="16px" className="mb-2" />
+                                        <LoadingSkeleton
+                                            width="80px"
+                                            height="16px"
+                                            className="mb-2"
+                                        />
+
                                         <LoadingSkeleton width="60px" height="32px" />
                                     </div>
                                 ))}
                             </div>
-                            
+
                             {/* 模拟图表区域 */}
                             <LoadingSkeleton height="300px" className="mb-4" />
-                            
+
                             {/* 模拟表格 */}
                             <div className="space-y-3">
                                 <LoadingSkeleton height="20px" />
@@ -162,9 +175,7 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
             <div className="bg-white p-12 rounded-lg shadow text-center">
                 <div className="text-6xl text-gray-300 mb-4">📊</div>
                 <h3 className="text-xl font-medium text-gray-700 mb-3">暂无监控数据</h3>
-                <p className="text-gray-500 mb-6">
-                    无法获取活动 #{activityId} 的监控数据
-                </p>
+                <p className="text-gray-500 mb-6">无法获取活动 #{activityId} 的监控数据</p>
                 <LoadingButton
                     variant="primary"
                     loading={refreshing}
@@ -188,7 +199,8 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                             {data.activity_info.name} - 监控仪表盘
                         </h1>
                         <p className="text-sm text-gray-500 mt-1">
-                            活动期间：{data.activity_info.start_date} 至 {data.activity_info.end_date} 
+                            活动期间：{data.activity_info.start_date} 至{' '}
+                            {data.activity_info.end_date}
                             （共 {data.activity_info.duration_days} 天）
                         </p>
                     </div>
@@ -199,6 +211,7 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                             defaultStartDate={data.activity_info.start_date}
                             defaultEndDate={data.activity_info.end_date}
                         />
+
                         <LoadingButton
                             variant="secondary"
                             loading={refreshing}
@@ -206,13 +219,18 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
                             onClick={handleRefresh}
                             size="sm"
                         >
-                            <svg 
-                                className="w-4 h-4 mr-2" 
-                                fill="none" 
-                                stroke="currentColor" 
+                            <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
                                 viewBox="0 0 24 24"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                />
                             </svg>
                             刷新数据
                         </LoadingButton>

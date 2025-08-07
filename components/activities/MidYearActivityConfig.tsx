@@ -10,7 +10,14 @@ type StringArray = string[];
 type GiftInfoWithPrice = GiftInfo & { need_price?: string };
 type GiftListType = Record<string, GiftInfoWithPrice>;
 type PrizeListType = Record<string, { need_num: number; gift_list: GiftListType }>;
-type ConfigValue = string | number | boolean | GiftInfoWithPrice | StringArray | PrizeListType | Record<string, unknown>;
+type ConfigValue =
+    | string
+    | number
+    | boolean
+    | GiftInfoWithPrice
+    | StringArray
+    | PrizeListType
+    | Record<string, unknown>;
 type ConfigPath = (string | number)[];
 
 interface MidYearActivityConfigProps {
@@ -18,13 +25,17 @@ interface MidYearActivityConfigProps {
     onStatusChange?: (status: string) => void;
 }
 
-export default function MidYearActivityConfig({ activity, onStatusChange }: MidYearActivityConfigProps) {
+export default function MidYearActivityConfig({
+    activity,
+    onStatusChange,
+}: MidYearActivityConfigProps) {
     const [activeConfigTab, setActiveConfigTab] = useState('send_msg');
     const [mounted, setMounted] = useState(false);
-    const { config, setConfig, apiStatus, fetchConfig, submitConfig } = useActivityConfig<MidYearConfig>({
-        activity,
-        onStatusChange,
-    });
+    const { config, setConfig, apiStatus, fetchConfig, submitConfig } =
+        useActivityConfig<MidYearConfig>({
+            activity,
+            onStatusChange,
+        });
 
     useEffect(() => {
         setMounted(true);
@@ -61,13 +72,19 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
     };
 
     // 渲染文本输入字段
-    const renderTextField = (label: string, path: ConfigPath, value: string | number | undefined) => (
+    const renderTextField = (
+        label: string,
+        path: ConfigPath,
+        value: string | number | undefined,
+    ) => (
         <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
             <input
                 type="text"
                 value={value || ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleConfigChange(path, e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleConfigChange(path, e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
         </div>
@@ -79,7 +96,9 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
             <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
             <textarea
                 value={value || ''}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleConfigChange(path, e.target.value)}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                    handleConfigChange(path, e.target.value)
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 rows={3}
             />
@@ -114,7 +133,9 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
             <input
                 type="text"
                 value={value || ''}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleConfigChange(path, e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleConfigChange(path, e.target.value)
+                }
                 placeholder="YYYY-MM-DD HH:MM:SS"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             />
@@ -239,20 +260,39 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                     <div>
                         <h3 className="text-lg font-semibold mb-4">发送消息配置</h3>
                         <div className="space-y-6">
-                            {renderToggle('是否开启发送通知', ['send_msg_config', 'send_msg'], config?.send_msg_config?.send_msg)}
-                            
+                            {renderToggle(
+                                '是否开启发送通知',
+                                ['send_msg_config', 'send_msg'],
+                                config?.send_msg_config?.send_msg,
+                            )}
+
                             <div className="border-t pt-4">
                                 <h4 className="font-medium text-gray-800 mb-3">通知发送内容</h4>
-                                {renderTextField('匹配完成通知', ['send_msg_config', 'send_msg_info', 'match_done'], 
-                                    config?.send_msg_config?.send_msg_info?.match_done)}
-                                {renderTextField('周四提示通知', ['send_msg_config', 'send_msg_info', 'thursday_tips'], 
-                                    config?.send_msg_config?.send_msg_info?.thursday_tips)}
-                                {renderTextField('差20点提示', ['send_msg_config', 'send_msg_info', 'need_20_value'], 
-                                    config?.send_msg_config?.send_msg_info?.need_20_value)}
-                                {renderTextField('两天提示', ['send_msg_config', 'send_msg_info', 'two_days_tips'], 
-                                    config?.send_msg_config?.send_msg_info?.two_days_tips)}
-                                {renderTextField('第四周提示', ['send_msg_config', 'send_msg_info', 'fourth_week'], 
-                                    config?.send_msg_config?.send_msg_info?.fourth_week)}
+                                {renderTextField(
+                                    '匹配完成通知',
+                                    ['send_msg_config', 'send_msg_info', 'match_done'],
+                                    config?.send_msg_config?.send_msg_info?.match_done,
+                                )}
+                                {renderTextField(
+                                    '周四提示通知',
+                                    ['send_msg_config', 'send_msg_info', 'thursday_tips'],
+                                    config?.send_msg_config?.send_msg_info?.thursday_tips,
+                                )}
+                                {renderTextField(
+                                    '差20点提示',
+                                    ['send_msg_config', 'send_msg_info', 'need_20_value'],
+                                    config?.send_msg_config?.send_msg_info?.need_20_value,
+                                )}
+                                {renderTextField(
+                                    '两天提示',
+                                    ['send_msg_config', 'send_msg_info', 'two_days_tips'],
+                                    config?.send_msg_config?.send_msg_info?.two_days_tips,
+                                )}
+                                {renderTextField(
+                                    '第四周提示',
+                                    ['send_msg_config', 'send_msg_info', 'fourth_week'],
+                                    config?.send_msg_config?.send_msg_info?.fourth_week,
+                                )}
                             </div>
                         </div>
                     </div>
@@ -263,46 +303,89 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                     <div>
                         <h3 className="text-lg font-semibold mb-4">告警配置</h3>
                         <div className="space-y-6">
-                            {renderToggle('是否开启告警邮件发送', ['send_warning_config', 'send_warning'], 
-                                config?.send_warning_config?.send_warning)}
-                            
-                            {renderTextField('告警产生的活动名', ['send_warning_config', 'send_warning_act_name'], 
-                                config?.send_warning_config?.send_warning_act_name)}
-                            
-                            {renderTextField('告警邮件发送间隔(秒)', ['send_warning_config', 'send_warning_interval'], 
-                                config?.send_warning_config?.send_warning_interval)}
-                            
+                            {renderToggle(
+                                '是否开启告警邮件发送',
+                                ['send_warning_config', 'send_warning'],
+                                config?.send_warning_config?.send_warning,
+                            )}
+
+                            {renderTextField(
+                                '告警产生的活动名',
+                                ['send_warning_config', 'send_warning_act_name'],
+                                config?.send_warning_config?.send_warning_act_name,
+                            )}
+
+                            {renderTextField(
+                                '告警邮件发送间隔(秒)',
+                                ['send_warning_config', 'send_warning_interval'],
+                                config?.send_warning_config?.send_warning_interval,
+                            )}
+
                             <div className="border-t pt-4">
-                                <h4 className="font-medium text-gray-800 mb-3">告警礼物时间间隔配置</h4>
-                                {Object.entries(config?.send_warning_config?.interval_warning_time || {} as Record<string, string>).map(([key, value]) => (
+                                <h4 className="font-medium text-gray-800 mb-3">
+                                    告警礼物时间间隔配置
+                                </h4>
+                                {Object.entries(
+                                    config?.send_warning_config?.interval_warning_time ||
+                                        ({} as Record<string, string>),
+                                ).map(([key, value]) => (
                                     <div key={key} className="flex items-center space-x-2 mb-2">
-                                        <span className="text-sm text-gray-600 w-24">礼物ID: {key}</span>
+                                        <span className="text-sm text-gray-600 w-24">
+                                            礼物ID: {key}
+                                        </span>
                                         <input
                                             type="text"
                                             value={value || ''}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                const newIntervalWarningTime = {...(config?.send_warning_config?.interval_warning_time || {})};
+                                                const newIntervalWarningTime = {
+                                                    ...(config?.send_warning_config
+                                                        ?.interval_warning_time || {}),
+                                                };
                                                 newIntervalWarningTime[key] = e.target.value;
-                                                handleConfigChange(['send_warning_config', 'interval_warning_time'], newIntervalWarningTime);
+                                                handleConfigChange(
+                                                    [
+                                                        'send_warning_config',
+                                                        'interval_warning_time',
+                                                    ],
+
+                                                    newIntervalWarningTime,
+                                                );
                                             }}
                                             className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                         />
                                     </div>
                                 ))}
                             </div>
-                            
+
                             <div className="border-t pt-4">
-                                <h4 className="font-medium text-gray-800 mb-3">告警礼物数量阈值配置</h4>
-                                {Object.entries(config?.send_warning_config?.interval_warning_prize || {} as Record<string, string>).map(([key, value]) => (
+                                <h4 className="font-medium text-gray-800 mb-3">
+                                    告警礼物数量阈值配置
+                                </h4>
+                                {Object.entries(
+                                    config?.send_warning_config?.interval_warning_prize ||
+                                        ({} as Record<string, string>),
+                                ).map(([key, value]) => (
                                     <div key={key} className="flex items-center space-x-2 mb-2">
-                                        <span className="text-sm text-gray-600 w-24">礼物ID: {key}</span>
+                                        <span className="text-sm text-gray-600 w-24">
+                                            礼物ID: {key}
+                                        </span>
                                         <input
                                             type="text"
                                             value={value || ''}
                                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                const newIntervalWarningPrize = {...(config?.send_warning_config?.interval_warning_prize || {})};
+                                                const newIntervalWarningPrize = {
+                                                    ...(config?.send_warning_config
+                                                        ?.interval_warning_prize || {}),
+                                                };
                                                 newIntervalWarningPrize[key] = e.target.value;
-                                                handleConfigChange(['send_warning_config', 'interval_warning_prize'], newIntervalWarningPrize);
+                                                handleConfigChange(
+                                                    [
+                                                        'send_warning_config',
+                                                        'interval_warning_prize',
+                                                    ],
+
+                                                    newIntervalWarningPrize,
+                                                );
                                             }}
                                             className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                         />
@@ -321,92 +404,244 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">导入礼物配置</h4>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">导入礼物ID列表</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        导入礼物ID列表
+                                    </label>
                                     <input
                                         type="text"
-                                        value={config?.act_config?.import_gifts ? config.act_config.import_gifts.join(', ') : ''}
+                                        value={
+                                            config?.act_config?.import_gifts
+                                                ? config.act_config.import_gifts.join(', ')
+                                                : ''
+                                        }
                                         onChange={(e) => {
-                                            const giftIds = e.target.value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-                                            handleConfigChange(['act_config', 'import_gifts'], giftIds);
+                                            const giftIds = e.target.value
+                                                .split(',')
+                                                .map((id) => parseInt(id.trim()))
+                                                .filter((id) => !isNaN(id));
+                                            handleConfigChange(
+                                                ['act_config', 'import_gifts'],
+                                                giftIds,
+                                            );
                                         }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
+
                                     <p className="text-xs text-gray-500 mt-1">多个ID用逗号分隔</p>
                                 </div>
                             </div>
 
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">家族榜配置</h4>
-                                
-                                {renderTextAreaField('介绍信息', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'intro_msg'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.intro_msg)}
-                                
-                                {renderTextAreaField('备用信息1', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.spare_msg)}
-                                
-                                {renderTextAreaField('备用信息2', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'spare_msg_2'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.spare_msg_2)}
-                                
-                                {renderDateTimeField('开始时间', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'start_time'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.start_time)}
-                                
-                                {renderDateTimeField('结束时间', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'end_time'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.end_time)}
-                                
-                                {renderTextField('榜单值比例', 
-                                    ['act_config', 'rank_game_config', 'family_rank_config', 'rank_value_ratio'], 
-                                    config?.act_config?.rank_game_config?.family_rank_config?.rank_value_ratio)}
-                                
+
+                                {renderTextAreaField(
+                                    '介绍信息',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'intro_msg',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.intro_msg,
+                                )}
+
+                                {renderTextAreaField(
+                                    '备用信息1',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'spare_msg',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.spare_msg,
+                                )}
+
+                                {renderTextAreaField(
+                                    '备用信息2',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'spare_msg_2',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.spare_msg_2,
+                                )}
+
+                                {renderDateTimeField(
+                                    '开始时间',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'start_time',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.start_time,
+                                )}
+
+                                {renderDateTimeField(
+                                    '结束时间',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'end_time',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.end_time,
+                                )}
+
+                                {renderTextField(
+                                    '榜单值比例',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'family_rank_config',
+                                        'rank_value_ratio',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.family_rank_config
+                                        ?.rank_value_ratio,
+                                )}
+
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">家族赛上榜礼物ID</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        家族赛上榜礼物ID
+                                    </label>
                                     <input
                                         type="text"
-                                        value={config?.act_config?.rank_game_config?.family_rank_config?.rank_gift?.join(', ') || ''}
+                                        value={
+                                            config?.act_config?.rank_game_config?.family_rank_config?.rank_gift?.join(
+                                                ', ',
+                                            ) || ''
+                                        }
                                         onChange={(e) => {
-                                            const giftIds = e.target.value.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-                                            handleConfigChange(['act_config', 'rank_game_config', 'family_rank_config', 'rank_gift'], giftIds);
+                                            const giftIds = e.target.value
+                                                .split(',')
+                                                .map((id) => parseInt(id.trim()))
+                                                .filter((id) => !isNaN(id));
+                                            handleConfigChange(
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'rank_gift',
+                                                ],
+
+                                                giftIds,
+                                            );
                                         }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
+
                                     <p className="text-xs text-gray-500 mt-1">多个ID用逗号分隔</p>
                                 </div>
-                                
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">阶段配置</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="border p-3 rounded-md">
                                             <h6 className="font-medium mb-2">第一阶段</h6>
-                                            {renderDateTimeField('开始时间', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'start_time'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.first_stage?.start_time || '')}
-                                            
-                                            {renderDateTimeField('结束时间', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'end_time'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.first_stage?.end_time || '')}
-                                            
-                                            {renderTextField('晋级所需值', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'first_stage', 'winner_need_value'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.first_stage?.winner_need_value || '')}
+                                            {renderDateTimeField(
+                                                '开始时间',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'first_stage',
+                                                    'start_time',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.first_stage?.start_time ||
+                                                    '',
+                                            )}
+
+                                            {renderDateTimeField(
+                                                '结束时间',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'first_stage',
+                                                    'end_time',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.first_stage?.end_time ||
+                                                    '',
+                                            )}
+
+                                            {renderTextField(
+                                                '晋级所需值',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'first_stage',
+                                                    'winner_need_value',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.first_stage
+                                                    ?.winner_need_value || '',
+                                            )}
                                         </div>
-                                        
+
                                         <div className="border p-3 rounded-md">
                                             <h6 className="font-medium mb-2">第二阶段</h6>
-                                            {renderDateTimeField('开始时间', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'start_time'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.second_stage?.start_time || '')}
-                                            
-                                            {renderDateTimeField('结束时间', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'end_time'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.second_stage?.end_time || '')}
-                                            
-                                            {renderTextField('晋级所需值', 
-                                                ['act_config', 'rank_game_config', 'family_rank_config', 'second_stage', 'winner_need_value'], 
-                                                config?.act_config?.rank_game_config?.family_rank_config?.second_stage?.winner_need_value || '')}
+                                            {renderDateTimeField(
+                                                '开始时间',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'second_stage',
+                                                    'start_time',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.second_stage
+                                                    ?.start_time || '',
+                                            )}
+
+                                            {renderDateTimeField(
+                                                '结束时间',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'second_stage',
+                                                    'end_time',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.second_stage?.end_time ||
+                                                    '',
+                                            )}
+
+                                            {renderTextField(
+                                                '晋级所需值',
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'family_rank_config',
+                                                    'second_stage',
+                                                    'winner_need_value',
+                                                ],
+
+                                                config?.act_config?.rank_game_config
+                                                    ?.family_rank_config?.second_stage
+                                                    ?.winner_need_value || '',
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -414,48 +649,129 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
 
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">风云榜配置</h4>
-                                
-                                {renderTextAreaField('介绍信息', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'intro_msg'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.intro_msg || '')}
-                                
-                                {renderTextAreaField('备用信息1', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'spare_msg'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.spare_msg || '')}
-                                
-                                {renderTextAreaField('备用信息2', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'spare_msg_2'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.spare_msg_2 || '')}
-                                
-                                {renderDateTimeField('开始时间', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'start_time'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.start_time || '')}
-                                
-                                {renderDateTimeField('结束时间', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'end_time'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.end_time || '')}
-                                
-                                {renderTextField('榜单值比例', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'rank_value_ratio'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.rank_value_ratio || '')}
-                                
+
+                                {renderTextAreaField(
+                                    '介绍信息',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'intro_msg',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.intro_msg || '',
+                                )}
+
+                                {renderTextAreaField(
+                                    '备用信息1',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'spare_msg',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.spare_msg || '',
+                                )}
+
+                                {renderTextAreaField(
+                                    '备用信息2',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'spare_msg_2',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.spare_msg_2 || '',
+                                )}
+
+                                {renderDateTimeField(
+                                    '开始时间',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'start_time',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.start_time || '',
+                                )}
+
+                                {renderDateTimeField(
+                                    '结束时间',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'end_time',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.end_time || '',
+                                )}
+
+                                {renderTextField(
+                                    '榜单值比例',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'rank_value_ratio',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.rank_value_ratio || '',
+                                )}
+
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">风云榜上榜礼物ID</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        风云榜上榜礼物ID
+                                    </label>
                                     <input
                                         type="text"
-                                        value={config?.act_config?.rank_game_config?.user_rank_config?.rank_gift?.join(', ') || ''}
+                                        value={
+                                            config?.act_config?.rank_game_config?.user_rank_config?.rank_gift?.join(
+                                                ', ',
+                                            ) || ''
+                                        }
                                         onChange={(e) => {
-                                            const giftIds = e.target.value.split(',').map(id => parseInt(id.trim()));
-                                            handleConfigChange(['act_config', 'rank_game_config', 'user_rank_config', 'rank_gift'], giftIds);
+                                            const giftIds = e.target.value
+                                                .split(',')
+                                                .map((id) => parseInt(id.trim()));
+                                            handleConfigChange(
+                                                [
+                                                    'act_config',
+                                                    'rank_game_config',
+                                                    'user_rank_config',
+                                                    'rank_gift',
+                                                ],
+
+                                                giftIds,
+                                            );
                                         }}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                                     />
+
                                     <p className="text-xs text-gray-500 mt-1">多个ID用逗号分隔</p>
                                 </div>
-                                
-                                {renderTextField('参与奖所需榜单值', 
-                                    ['act_config', 'rank_game_config', 'user_rank_config', 'patch_in_prize_need_value'], 
-                                    config?.act_config?.rank_game_config?.user_rank_config?.patch_in_prize_need_value || '')}
+
+                                {renderTextField(
+                                    '参与奖所需榜单值',
+                                    [
+                                        'act_config',
+                                        'rank_game_config',
+                                        'user_rank_config',
+                                        'patch_in_prize_need_value',
+                                    ],
+
+                                    config?.act_config?.rank_game_config?.user_rank_config
+                                        ?.patch_in_prize_need_value || '',
+                                )}
                             </div>
                         </div>
                     </div>
@@ -468,108 +784,263 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                         <div className="space-y-6">
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">神豪签到配置</h4>
-                                
-                                {renderTextField('最大补签数', 
-                                    ['act_config', 'sign_game_config', 'rich_sign_in', 'remedy_sign_in_max_num'], 
-                                    config?.act_config?.sign_game_config?.rich_sign_in?.remedy_sign_in_max_num || '')}
-                                
-                                {renderTextField('补签需人民币', 
-                                    ['act_config', 'sign_game_config', 'rich_sign_in', 'remedy_sign_in_need_rmb'], 
-                                    config?.act_config?.sign_game_config?.rich_sign_in?.remedy_sign_in_need_rmb || '')}
-                                
+
+                                {renderTextField(
+                                    '最大补签数',
+                                    [
+                                        'act_config',
+                                        'sign_game_config',
+                                        'rich_sign_in',
+                                        'remedy_sign_in_max_num',
+                                    ],
+
+                                    config?.act_config?.sign_game_config?.rich_sign_in
+                                        ?.remedy_sign_in_max_num || '',
+                                )}
+
+                                {renderTextField(
+                                    '补签需人民币',
+                                    [
+                                        'act_config',
+                                        'sign_game_config',
+                                        'rich_sign_in',
+                                        'remedy_sign_in_need_rmb',
+                                    ],
+
+                                    config?.act_config?.sign_game_config?.rich_sign_in
+                                        ?.remedy_sign_in_need_rmb || '',
+                                )}
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">累计签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config?.act_config?.sign_game_config?.rich_sign_in?.total_sign_in_prize || {} as Record<string, { need_num: number; gift_list: Record<string, GiftInfo & { need_price?: string }> }>).map(([key, prize]) => (
+                                        {Object.entries(
+                                            config?.act_config?.sign_game_config?.rich_sign_in
+                                                ?.total_sign_in_prize ||
+                                                ({} as Record<
+                                                    string,
+                                                    {
+                                                        need_num: number;
+                                                        gift_list: Record<
+                                                            string,
+                                                            GiftInfo & { need_price?: string }
+                                                        >;
+                                                    }
+                                                >),
+                                        ).map(([key, prize]) => (
                                             <div key={key} className="border p-3 rounded-md">
                                                 <div className="flex justify-between items-center mb-2">
-                                                    <h6 className="font-medium">累计{prize.need_num}天奖励</h6>
+                                                    <h6 className="font-medium">
+                                                        累计{prize.need_num}天奖励
+                                                    </h6>
                                                 </div>
-                                                
-                                                {Object.entries(prize?.gift_list || {} as Record<string, GiftInfo & { need_price?: string }>).map(([giftKey, gift]) => (
+
+                                                {Object.entries(
+                                                    prize?.gift_list ||
+                                                        ({} as Record<
+                                                            string,
+                                                            GiftInfo & { need_price?: string }
+                                                        >),
+                                                ).map(([giftKey, gift]) => (
                                                     <div key={giftKey} className="mt-2">
-                                                        {renderGiftField(`奖励礼物${giftKey}`, 
-                                                            ['act_config', 'sign_game_config', 'rich_sign_in', 'total_sign_in_prize', key, 'gift_list', giftKey], 
-                                                            gift)}
+                                                        {renderGiftField(
+                                                            `奖励礼物${giftKey}`,
+                                                            [
+                                                                'act_config',
+                                                                'sign_game_config',
+                                                                'rich_sign_in',
+                                                                'total_sign_in_prize',
+                                                                key,
+                                                                'gift_list',
+                                                                giftKey,
+                                                            ],
+
+                                                            gift,
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                                
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">每日签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config?.act_config?.sign_game_config?.rich_sign_in?.prize_list || {} as Record<string, Array<GiftInfo & { need_price?: string }>>).slice(0, 6).map(([day, gifts]) => (
-                                            <div key={day} className="border p-3 rounded-md">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <h6 className="font-medium">第{day}天奖励</h6>
-                                                </div>
-                                                
-                                                {Object.entries(gifts || [] as Array<GiftInfo & { need_price?: string }>).map(([giftKey, gift]) => (
-                                                    <div key={giftKey} className="mt-2">
-                                                        {renderGiftField(`奖励礼物${giftKey}`, 
-                                                            ['act_config', 'sign_game_config', 'rich_sign_in', 'prize_list', day, giftKey], 
-                                                            gift)}
+                                        {Object.entries(
+                                            config?.act_config?.sign_game_config?.rich_sign_in
+                                                ?.prize_list ||
+                                                ({} as Record<
+                                                    string,
+                                                    Array<GiftInfo & { need_price?: string }>
+                                                >),
+                                        )
+                                            .slice(0, 6)
+                                            .map(([day, gifts]) => (
+                                                <div key={day} className="border p-3 rounded-md">
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <h6 className="font-medium">
+                                                            第{day}天奖励
+                                                        </h6>
                                                     </div>
-                                                ))}
-                                            </div>
-                                        ))}
+
+                                                    {Object.entries(
+                                                        gifts ||
+                                                            ([] as Array<
+                                                                GiftInfo & { need_price?: string }
+                                                            >),
+                                                    ).map(([giftKey, gift]) => (
+                                                        <div key={giftKey} className="mt-2">
+                                                            {renderGiftField(
+                                                                `奖励礼物${giftKey}`,
+                                                                [
+                                                                    'act_config',
+                                                                    'sign_game_config',
+                                                                    'rich_sign_in',
+                                                                    'prize_list',
+                                                                    day,
+                                                                    giftKey,
+                                                                ],
+
+                                                                gift,
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ))}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">普通用户签到配置</h4>
-                                
-                                {renderTextField('最大补签数', 
-                                    ['act_config', 'sign_game_config', 'user_sign_in', 'remedy_sign_in_max_num'], 
-                                    config?.act_config?.sign_game_config?.user_sign_in?.remedy_sign_in_max_num || '')}
-                                
-                                {renderTextField('补签需人民币', 
-                                    ['act_config', 'sign_game_config', 'user_sign_in', 'remedy_sign_in_need_rmb'], 
-                                    config?.act_config?.sign_game_config?.user_sign_in?.remedy_sign_in_need_rmb || '')}
-                                
+
+                                {renderTextField(
+                                    '最大补签数',
+                                    [
+                                        'act_config',
+                                        'sign_game_config',
+                                        'user_sign_in',
+                                        'remedy_sign_in_max_num',
+                                    ],
+
+                                    config?.act_config?.sign_game_config?.user_sign_in
+                                        ?.remedy_sign_in_max_num || '',
+                                )}
+
+                                {renderTextField(
+                                    '补签需人民币',
+                                    [
+                                        'act_config',
+                                        'sign_game_config',
+                                        'user_sign_in',
+                                        'remedy_sign_in_need_rmb',
+                                    ],
+
+                                    config?.act_config?.sign_game_config?.user_sign_in
+                                        ?.remedy_sign_in_need_rmb || '',
+                                )}
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">累计签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config?.act_config?.sign_game_config?.user_sign_in?.total_sign_in_prize || {} as Record<string, { need_num: number; gift_list: Record<string, GiftInfo & { need_price?: string }> }>).map(([key, prize]) => (
+                                        {Object.entries(
+                                            config?.act_config?.sign_game_config?.user_sign_in
+                                                ?.total_sign_in_prize ||
+                                                ({} as Record<
+                                                    string,
+                                                    {
+                                                        need_num: number;
+                                                        gift_list: Record<
+                                                            string,
+                                                            GiftInfo & { need_price?: string }
+                                                        >;
+                                                    }
+                                                >),
+                                        ).map(([key, prize]) => (
                                             <div key={key} className="border p-3 rounded-md">
                                                 <div className="flex justify-between items-center mb-2">
-                                                    <h6 className="font-medium">累计{prize.need_num}天奖励</h6>
+                                                    <h6 className="font-medium">
+                                                        累计{prize.need_num}天奖励
+                                                    </h6>
                                                 </div>
-                                                
-                                                {Object.entries(prize?.gift_list || {}).map(([giftKey, gift]: [string, GiftInfo & { need_price?: string }]) => (
-                                                    <div key={giftKey} className="mt-2">
-                                                        {renderGiftField(`奖励礼物${giftKey}`, 
-                                                            ['act_config', 'sign_game_config', 'user_sign_in', 'total_sign_in_prize', key, 'gift_list', giftKey], 
-                                                            gift)}
-                                                    </div>
-                                                ))}
+
+                                                {Object.entries(prize?.gift_list || {}).map(
+                                                    ([giftKey, gift]: [
+                                                        string,
+                                                        GiftInfo & { need_price?: string },
+                                                    ]) => (
+                                                        <div key={giftKey} className="mt-2">
+                                                            {renderGiftField(
+                                                                `奖励礼物${giftKey}`,
+                                                                [
+                                                                    'act_config',
+                                                                    'sign_game_config',
+                                                                    'user_sign_in',
+                                                                    'total_sign_in_prize',
+                                                                    key,
+                                                                    'gift_list',
+                                                                    giftKey,
+                                                                ],
+
+                                                                gift,
+                                                            )}
+                                                        </div>
+                                                    ),
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                                
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">每日签到奖励</h5>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(config?.act_config?.sign_game_config?.user_sign_in?.prize_list || {}).slice(0, 6).map(([day, gifts]: [string, Array<GiftInfo & { need_price?: string }>]) => (
-                                            <div key={day} className="border p-3 rounded-md">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <h6 className="font-medium">第{day}天奖励</h6>
-                                                </div>
-                                                
-                                                {Object.entries(gifts || {}).map(([giftKey, gift]: [string, GiftInfo & { need_price?: string }]) => (
-                                                    <div key={giftKey} className="mt-2">
-                                                        {renderGiftField(`奖励礼物${giftKey}`, 
-                                                            ['act_config', 'sign_game_config', 'user_sign_in', 'prize_list', day, giftKey], 
-                                                            gift)}
+                                        {Object.entries(
+                                            config?.act_config?.sign_game_config?.user_sign_in
+                                                ?.prize_list || {},
+                                        )
+                                            .slice(0, 6)
+                                            .map(
+                                                ([day, gifts]: [
+                                                    string,
+                                                    Array<GiftInfo & { need_price?: string }>,
+                                                ]) => (
+                                                    <div
+                                                        key={day}
+                                                        className="border p-3 rounded-md"
+                                                    >
+                                                        <div className="flex justify-between items-center mb-2">
+                                                            <h6 className="font-medium">
+                                                                第{day}天奖励
+                                                            </h6>
+                                                        </div>
+
+                                                        {Object.entries(gifts || {}).map(
+                                                            ([giftKey, gift]: [
+                                                                string,
+                                                                GiftInfo & { need_price?: string },
+                                                            ]) => (
+                                                                <div key={giftKey} className="mt-2">
+                                                                    {renderGiftField(
+                                                                        `奖励礼物${giftKey}`,
+                                                                        [
+                                                                            'act_config',
+                                                                            'sign_game_config',
+                                                                            'user_sign_in',
+                                                                            'prize_list',
+                                                                            day,
+                                                                            giftKey,
+                                                                        ],
+
+                                                                        gift,
+                                                                    )}
+                                                                </div>
+                                                            ),
+                                                        )}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        ))}
+                                                ),
+                                            )}
                                     </div>
                                 </div>
                             </div>
@@ -584,41 +1055,82 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                         <div className="space-y-6">
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">基础配置</h4>
-                                
-                                {renderDateTimeField('开始时间', 
-                                    ['act_config', 'draw_game_config', 'start_time'], 
-                                    config?.act_config?.draw_game_config?.start_time || '')}
-                                
-                                {renderDateTimeField('结束时间', 
-                                    ['act_config', 'draw_game_config', 'end_time'], 
-                                    config?.act_config?.draw_game_config?.end_time || '')}
-                                
-                                {renderTextAreaField('游戏说明', 
-                                    ['act_config', 'draw_game_config', 'game_msg'], 
-                                    config?.act_config?.draw_game_config?.game_msg || '')}
-                                
+
+                                {renderDateTimeField(
+                                    '开始时间',
+                                    ['act_config', 'draw_game_config', 'start_time'],
+                                    config?.act_config?.draw_game_config?.start_time || '',
+                                )}
+
+                                {renderDateTimeField(
+                                    '结束时间',
+                                    ['act_config', 'draw_game_config', 'end_time'],
+                                    config?.act_config?.draw_game_config?.end_time || '',
+                                )}
+
+                                {renderTextAreaField(
+                                    '游戏说明',
+                                    ['act_config', 'draw_game_config', 'game_msg'],
+                                    config?.act_config?.draw_game_config?.game_msg || '',
+                                )}
+
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">切换奖池时间</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        切换奖池时间
+                                    </label>
                                     <div className="space-y-2">
-                                        {(config?.act_config?.draw_game_config?.change_pool_time || []).map((time: string, index: number) => (
-                                            <div key={index} className="flex items-center space-x-2">
+                                        {(
+                                            config?.act_config?.draw_game_config
+                                                ?.change_pool_time || []
+                                        ).map((time: string, index: number) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-center space-x-2"
+                                            >
                                                 <input
                                                     type="text"
                                                     value={time}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                        const newTimes = [...(config?.act_config?.draw_game_config?.change_pool_time || [])];
+                                                    onChange={(
+                                                        e: ChangeEvent<HTMLInputElement>,
+                                                    ) => {
+                                                        const newTimes = [
+                                                            ...(config?.act_config?.draw_game_config
+                                                                ?.change_pool_time || []),
+                                                        ];
+
                                                         newTimes[index] = e.target.value;
-                                                        handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
+                                                        handleConfigChange(
+                                                            [
+                                                                'act_config',
+                                                                'draw_game_config',
+                                                                'change_pool_time',
+                                                            ],
+
+                                                            newTimes,
+                                                        );
                                                     }}
                                                     className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                                     placeholder="YYYY-MM-DD HH:MM:SS"
                                                 />
+
                                                 <button
                                                     className="px-2 py-1 bg-red-500 text-white rounded"
                                                     onClick={() => {
-                                                        const newTimes = [...(config?.act_config?.draw_game_config?.change_pool_time || [])];
+                                                        const newTimes = [
+                                                            ...(config?.act_config?.draw_game_config
+                                                                ?.change_pool_time || []),
+                                                        ];
+
                                                         newTimes.splice(index, 1);
-                                                        handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
+                                                        handleConfigChange(
+                                                            [
+                                                                'act_config',
+                                                                'draw_game_config',
+                                                                'change_pool_time',
+                                                            ],
+
+                                                            newTimes,
+                                                        );
                                                     }}
                                                 >
                                                     删除
@@ -628,8 +1140,21 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                         <button
                                             className="px-3 py-1 bg-blue-500 text-white rounded"
                                             onClick={() => {
-                                                const newTimes = [...(config?.act_config?.draw_game_config?.change_pool_time || []), ''];
-                                                handleConfigChange(['act_config', 'draw_game_config', 'change_pool_time'], newTimes);
+                                                const newTimes = [
+                                                    ...(config?.act_config?.draw_game_config
+                                                        ?.change_pool_time || []),
+                                                    '',
+                                                ];
+
+                                                handleConfigChange(
+                                                    [
+                                                        'act_config',
+                                                        'draw_game_config',
+                                                        'change_pool_time',
+                                                    ],
+
+                                                    newTimes,
+                                                );
                                             }}
                                         >
                                             添加时间
@@ -641,70 +1166,156 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">购买道具礼物配置</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {Object.entries(config?.act_config?.draw_game_config?.pay_prop_gift || {} as Record<string, GiftInfo & { need_price?: string }>).map(([key, gift]) => (
+                                    {Object.entries(
+                                        config?.act_config?.draw_game_config?.pay_prop_gift ||
+                                            ({} as Record<
+                                                string,
+                                                GiftInfo & { need_price?: string }
+                                            >),
+                                    ).map(([key, gift]) => (
                                         <div key={key} className="border p-3 rounded-md">
                                             <div className="flex justify-between items-center mb-2">
                                                 <h6 className="font-medium">道具{key}</h6>
                                             </div>
-                                            
+
                                             <div className="grid grid-cols-2 gap-3">
                                                 <div>
-                                                    <label className="text-xs text-gray-500">礼物ID</label>
+                                                    <label className="text-xs text-gray-500">
+                                                        礼物ID
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={gift?.gift_id || ''}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newGift = {...gift, gift_id: e.target.value};
-                                                            handleConfigChange(['act_config', 'draw_game_config', 'pay_prop_gift', key], newGift);
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newGift = {
+                                                                ...gift,
+                                                                gift_id: e.target.value,
+                                                            };
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'draw_game_config',
+                                                                    'pay_prop_gift',
+                                                                    key,
+                                                                ],
+
+                                                                newGift,
+                                                            );
                                                         }}
                                                         className="w-full px-2 py-1 border border-gray-300 rounded-md"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="text-xs text-gray-500">礼物类型</label>
+                                                    <label className="text-xs text-gray-500">
+                                                        礼物类型
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={gift?.gift_type || ''}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newGift = {...gift, gift_type: e.target.value};
-                                                            handleConfigChange(['act_config', 'draw_game_config', 'pay_prop_gift', key], newGift);
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newGift = {
+                                                                ...gift,
+                                                                gift_type: e.target.value,
+                                                            };
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'draw_game_config',
+                                                                    'pay_prop_gift',
+                                                                    key,
+                                                                ],
+
+                                                                newGift,
+                                                            );
                                                         }}
                                                         className="w-full px-2 py-1 border border-gray-300 rounded-md"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="text-xs text-gray-500">礼物数量</label>
+                                                    <label className="text-xs text-gray-500">
+                                                        礼物数量
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={gift?.gift_num || ''}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newGift = {...gift, gift_num: e.target.value};
-                                                            handleConfigChange(['act_config', 'draw_game_config', 'pay_prop_gift', key], newGift);
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newGift = {
+                                                                ...gift,
+                                                                gift_num: e.target.value,
+                                                            };
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'draw_game_config',
+                                                                    'pay_prop_gift',
+                                                                    key,
+                                                                ],
+
+                                                                newGift,
+                                                            );
                                                         }}
                                                         className="w-full px-2 py-1 border border-gray-300 rounded-md"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="text-xs text-gray-500">需要价格</label>
+                                                    <label className="text-xs text-gray-500">
+                                                        需要价格
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={gift?.need_price || ''}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newGift = {...gift, need_price: e.target.value};
-                                                            handleConfigChange(['act_config', 'draw_game_config', 'pay_prop_gift', key], newGift);
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newGift = {
+                                                                ...gift,
+                                                                need_price: e.target.value,
+                                                            };
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'draw_game_config',
+                                                                    'pay_prop_gift',
+                                                                    key,
+                                                                ],
+
+                                                                newGift,
+                                                            );
                                                         }}
                                                         className="w-full px-2 py-1 border border-gray-300 rounded-md"
                                                     />
                                                 </div>
                                             </div>
                                             <div className="mt-2">
-                                                <label className="text-xs text-gray-500">备注</label>
+                                                <label className="text-xs text-gray-500">
+                                                    备注
+                                                </label>
                                                 <input
                                                     type="text"
                                                     value={gift?.remark || ''}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                        const newGift = {...gift, remark: e.target.value};
-                                                        handleConfigChange(['act_config', 'draw_game_config', 'pay_prop_gift', key], newGift);
+                                                    onChange={(
+                                                        e: ChangeEvent<HTMLInputElement>,
+                                                    ) => {
+                                                        const newGift = {
+                                                            ...gift,
+                                                            remark: e.target.value,
+                                                        };
+                                                        handleConfigChange(
+                                                            [
+                                                                'act_config',
+                                                                'draw_game_config',
+                                                                'pay_prop_gift',
+                                                                key,
+                                                            ],
+
+                                                            newGift,
+                                                        );
                                                     }}
                                                     className="w-full px-2 py-1 border border-gray-300 rounded-md"
                                                 />
@@ -724,63 +1335,127 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                         <div className="space-y-6">
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">基础配置</h4>
-                                
-                                {renderDateTimeField('开始时间', 
-                                    ['act_config', 'fight_game_config', 'start_time'], 
-                                    config?.act_config?.fight_game_config?.start_time || '')}
-                                
-                                {renderDateTimeField('结束时间', 
-                                    ['act_config', 'fight_game_config', 'end_time'], 
-                                    config?.act_config?.fight_game_config?.end_time || '')}
-                                
-                                {renderTextField('PK玩法开启时间', 
-                                    ['act_config', 'fight_game_config', 'pk_game_start'], 
-                                    config?.act_config?.fight_game_config?.pk_game_start || '')}
-                                
-                                {renderTextField('PK玩法结束时间', 
-                                    ['act_config', 'fight_game_config', 'pk_game_end'], 
-                                    config?.act_config?.fight_game_config?.pk_game_end || '')}
-                                
-                                {renderTextAreaField('抽奖区域文案', 
-                                    ['act_config', 'fight_game_config', 'game_msg_draw'], 
-                                    config?.act_config?.fight_game_config?.game_msg_draw || '')}
-                                
-                                {renderTextAreaField('掐架区域文案', 
-                                    ['act_config', 'fight_game_config', 'game_msg_fight'], 
-                                    config?.act_config?.fight_game_config?.game_msg_fight || '')}
+
+                                {renderDateTimeField(
+                                    '开始时间',
+                                    ['act_config', 'fight_game_config', 'start_time'],
+                                    config?.act_config?.fight_game_config?.start_time || '',
+                                )}
+
+                                {renderDateTimeField(
+                                    '结束时间',
+                                    ['act_config', 'fight_game_config', 'end_time'],
+                                    config?.act_config?.fight_game_config?.end_time || '',
+                                )}
+
+                                {renderTextField(
+                                    'PK玩法开启时间',
+                                    ['act_config', 'fight_game_config', 'pk_game_start'],
+                                    config?.act_config?.fight_game_config?.pk_game_start || '',
+                                )}
+
+                                {renderTextField(
+                                    'PK玩法结束时间',
+                                    ['act_config', 'fight_game_config', 'pk_game_end'],
+                                    config?.act_config?.fight_game_config?.pk_game_end || '',
+                                )}
+
+                                {renderTextAreaField(
+                                    '抽奖区域文案',
+                                    ['act_config', 'fight_game_config', 'game_msg_draw'],
+                                    config?.act_config?.fight_game_config?.game_msg_draw || '',
+                                )}
+
+                                {renderTextAreaField(
+                                    '掐架区域文案',
+                                    ['act_config', 'fight_game_config', 'game_msg_fight'],
+                                    config?.act_config?.fight_game_config?.game_msg_fight || '',
+                                )}
                             </div>
 
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">武林打架配置</h4>
-                                
-                                {renderTextField('最大回合数', 
-                                    ['act_config', 'fight_game_config', 'fight_config', 'max_round'], 
-                                    config?.act_config?.fight_game_config?.fight_config?.max_round || '')}
-                                
+
+                                {renderTextField(
+                                    '最大回合数',
+                                    [
+                                        'act_config',
+                                        'fight_game_config',
+                                        'fight_config',
+                                        'max_round',
+                                    ],
+
+                                    config?.act_config?.fight_game_config?.fight_config
+                                        ?.max_round || '',
+                                )}
+
                                 <div className="mt-4">
                                     <h5 className="font-medium text-gray-700 mb-2">消息配置</h5>
-                                    
+
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">开始消息</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            开始消息
+                                        </label>
                                         <div className="space-y-2">
-                                            {(config?.act_config?.fight_game_config?.fight_config?.msg_config?.start_msg || []).map((msg, index) => (
-                                                <div key={index} className="flex items-center space-x-2">
+                                            {(
+                                                config?.act_config?.fight_game_config?.fight_config
+                                                    ?.msg_config?.start_msg || []
+                                            ).map((msg, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center space-x-2"
+                                                >
                                                     <input
-                                                    type="text"
-                                                    value={msg}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.start_msg || [])];
+                                                        type="text"
+                                                        value={msg}
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newMsgs = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.start_msg || []),
+                                                            ];
+
                                                             newMsgs[index] = e.target.value;
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'start_msg',
+                                                                ],
+
+                                                                newMsgs,
+                                                            );
                                                         }}
                                                         className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                                     />
+
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.start_msg || [])];
+                                                            const newMsgs = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.start_msg || []),
+                                                            ];
+
                                                             newMsgs.splice(index, 1);
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'start_msg',
+                                                                ],
+
+                                                                newMsgs,
+                                                            );
                                                         }}
                                                     >
                                                         删除
@@ -790,36 +1465,93 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.start_msg || []), ''];
-                                                    handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'start_msg'], newMsgs);
+                                                    const newMsgs = [
+                                                        ...(config?.act_config?.fight_game_config
+                                                            ?.fight_config?.msg_config?.start_msg ||
+                                                            []),
+                                                        '',
+                                                    ];
+
+                                                    handleConfigChange(
+                                                        [
+                                                            'act_config',
+                                                            'fight_game_config',
+                                                            'fight_config',
+                                                            'msg_config',
+                                                            'start_msg',
+                                                        ],
+
+                                                        newMsgs,
+                                                    );
                                                 }}
                                             >
                                                 添加消息
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">攻击消息</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            攻击消息
+                                        </label>
                                         <div className="space-y-2">
-                                            {(config?.act_config?.fight_game_config?.fight_config?.msg_config?.attack_msg || []).map((msg, index) => (
-                                                <div key={index} className="flex items-center space-x-2">
+                                            {(
+                                                config?.act_config?.fight_game_config?.fight_config
+                                                    ?.msg_config?.attack_msg || []
+                                            ).map((msg, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center space-x-2"
+                                                >
                                                     <input
                                                         type="text"
                                                         value={msg}
                                                         onChange={(e) => {
-                                                            const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.attack_msg || [])];
+                                                            const newMsgs = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.attack_msg || []),
+                                                            ];
+
                                                             newMsgs[index] = e.target.value;
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'attack_msg',
+                                                                ],
+
+                                                                newMsgs,
+                                                            );
                                                         }}
                                                         className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                                     />
+
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.attack_msg || [])];
+                                                            const newMsgs = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.attack_msg || []),
+                                                            ];
+
                                                             newMsgs.splice(index, 1);
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'attack_msg',
+                                                                ],
+
+                                                                newMsgs,
+                                                            );
                                                         }}
                                                     >
                                                         删除
@@ -829,36 +1561,95 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newMsgs = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.attack_msg || []), ''];
-                                                    handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'attack_msg'], newMsgs);
+                                                    const newMsgs = [
+                                                        ...(config?.act_config?.fight_game_config
+                                                            ?.fight_config?.msg_config
+                                                            ?.attack_msg || []),
+                                                        '',
+                                                    ];
+
+                                                    handleConfigChange(
+                                                        [
+                                                            'act_config',
+                                                            'fight_game_config',
+                                                            'fight_config',
+                                                            'msg_config',
+                                                            'attack_msg',
+                                                        ],
+
+                                                        newMsgs,
+                                                    );
                                                 }}
                                             >
                                                 添加消息
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">功夫列表</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            功夫列表
+                                        </label>
                                         <div className="space-y-2">
-                                            {(config?.act_config?.fight_game_config?.fight_config?.msg_config?.kungfu_list || []).map((kungfu, index) => (
-                                                <div key={index} className="flex items-center space-x-2">
+                                            {(
+                                                config?.act_config?.fight_game_config?.fight_config
+                                                    ?.msg_config?.kungfu_list || []
+                                            ).map((kungfu, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex items-center space-x-2"
+                                                >
                                                     <input
-                                                    type="text"
-                                                    value={kungfu}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                            const newKungfus = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.kungfu_list || [])];
+                                                        type="text"
+                                                        value={kungfu}
+                                                        onChange={(
+                                                            e: ChangeEvent<HTMLInputElement>,
+                                                        ) => {
+                                                            const newKungfus = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.kungfu_list || []),
+                                                            ];
+
                                                             newKungfus[index] = e.target.value;
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'kungfu_list',
+                                                                ],
+
+                                                                newKungfus,
+                                                            );
                                                         }}
                                                         className="flex-1 px-2 py-1 border border-gray-300 rounded-md"
                                                     />
+
                                                     <button
                                                         className="px-2 py-1 bg-red-500 text-white rounded"
                                                         onClick={() => {
-                                                            const newKungfus = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.kungfu_list || [])];
+                                                            const newKungfus = [
+                                                                ...(config?.act_config
+                                                                    ?.fight_game_config
+                                                                    ?.fight_config?.msg_config
+                                                                    ?.kungfu_list || []),
+                                                            ];
+
                                                             newKungfus.splice(index, 1);
-                                                            handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
+                                                            handleConfigChange(
+                                                                [
+                                                                    'act_config',
+                                                                    'fight_game_config',
+                                                                    'fight_config',
+                                                                    'msg_config',
+                                                                    'kungfu_list',
+                                                                ],
+
+                                                                newKungfus,
+                                                            );
                                                         }}
                                                     >
                                                         删除
@@ -868,8 +1659,24 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                                             <button
                                                 className="px-3 py-1 bg-blue-500 text-white rounded"
                                                 onClick={() => {
-                                                    const newKungfus = [...(config?.act_config?.fight_game_config?.fight_config?.msg_config?.kungfu_list || []), ''];
-                                                    handleConfigChange(['act_config', 'fight_game_config', 'fight_config', 'msg_config', 'kungfu_list'], newKungfus);
+                                                    const newKungfus = [
+                                                        ...(config?.act_config?.fight_game_config
+                                                            ?.fight_config?.msg_config
+                                                            ?.kungfu_list || []),
+                                                        '',
+                                                    ];
+
+                                                    handleConfigChange(
+                                                        [
+                                                            'act_config',
+                                                            'fight_game_config',
+                                                            'fight_config',
+                                                            'msg_config',
+                                                            'kungfu_list',
+                                                        ],
+
+                                                        newKungfus,
+                                                    );
                                                 }}
                                             >
                                                 添加功夫
@@ -881,18 +1688,24 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
 
                             <div className="border p-4 rounded-md">
                                 <h4 className="font-medium text-gray-800 mb-3">奖励配置</h4>
-                                
-                                {renderGiftField('下注所需礼物', 
-                                    ['act_config', 'fight_game_config', 'join_need_prize'], 
-                                    config?.act_config?.fight_game_config?.join_need_prize)}
-                                
-                                {renderGiftField('下注成功奖励', 
-                                    ['act_config', 'fight_game_config', 'success_prize'], 
-                                    config?.act_config?.fight_game_config?.success_prize)}
-                                
-                                {renderGiftField('抽奖额外获得礼物', 
-                                    ['act_config', 'fight_game_config', 'extra_gift'], 
-                                    config?.act_config?.fight_game_config?.extra_gift)}
+
+                                {renderGiftField(
+                                    '下注所需礼物',
+                                    ['act_config', 'fight_game_config', 'join_need_prize'],
+                                    config?.act_config?.fight_game_config?.join_need_prize,
+                                )}
+
+                                {renderGiftField(
+                                    '下注成功奖励',
+                                    ['act_config', 'fight_game_config', 'success_prize'],
+                                    config?.act_config?.fight_game_config?.success_prize,
+                                )}
+
+                                {renderGiftField(
+                                    '抽奖额外获得礼物',
+                                    ['act_config', 'fight_game_config', 'extra_gift'],
+                                    config?.act_config?.fight_game_config?.extra_gift,
+                                )}
                             </div>
                         </div>
                     </div>
@@ -921,9 +1734,7 @@ export default function MidYearActivityConfig({ activity, onStatusChange }: MidY
                         重置配置
                     </button>
                 </div>
-                {apiStatus && (
-                    <div className="text-sm text-gray-600">{apiStatus}</div>
-                )}
+                {apiStatus && <div className="text-sm text-gray-600">{apiStatus}</div>}
             </div>
 
             {/* JSON预览区域 */}

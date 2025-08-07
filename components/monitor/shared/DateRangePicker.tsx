@@ -13,7 +13,7 @@ export default function DateRangePicker({
     value,
     onChange,
     defaultStartDate,
-    defaultEndDate
+    defaultEndDate,
 }: DateRangePickerProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [startDate, setStartDate] = useState('');
@@ -77,7 +77,7 @@ export default function DateRangePicker({
                 const start = new Date();
                 start.setDate(end.getDate() - 6);
                 return [start.toISOString().split('T')[0], end.toISOString().split('T')[0]];
-            }
+            },
         },
         {
             label: '最近30天',
@@ -86,7 +86,7 @@ export default function DateRangePicker({
                 const start = new Date();
                 start.setDate(end.getDate() - 29);
                 return [start.toISOString().split('T')[0], end.toISOString().split('T')[0]];
-            }
+            },
         },
         {
             label: '本月',
@@ -95,8 +95,8 @@ export default function DateRangePicker({
                 const start = new Date(now.getFullYear(), now.getMonth(), 1);
                 const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
                 return [start.toISOString().split('T')[0], end.toISOString().split('T')[0]];
-            }
-        }
+            },
+        },
     ];
 
     // 格式化显示文本
@@ -114,12 +114,32 @@ export default function DateRangePicker({
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
-                <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <svg
+                    className="w-4 h-4 mr-2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                 </svg>
                 <span className="truncate max-w-48">{getDisplayText()}</span>
-                <svg className="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                    className="w-4 h-4 ml-2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                    />
                 </svg>
             </button>
 

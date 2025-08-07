@@ -18,37 +18,41 @@ const variantClasses = {
     success: 'bg-green-500 hover:bg-green-600 text-white border-green-500',
     danger: 'bg-red-500 hover:bg-red-600 text-white border-red-500',
     warning: 'bg-orange-500 hover:bg-orange-600 text-white border-orange-500',
-    info: 'bg-purple-500 hover:bg-purple-600 text-white border-purple-500'
+    info: 'bg-purple-500 hover:bg-purple-600 text-white border-purple-500',
 };
 
 const sizeClasses = {
     xs: 'px-2 py-1 text-xs',
     sm: 'px-3 py-1.5 text-sm',
     md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base'
+    lg: 'px-6 py-3 text-base',
 };
 
 const spinnerSizes = {
     xs: 'xs' as const,
     sm: 'xs' as const,
     md: 'sm' as const,
-    lg: 'md' as const
+    lg: 'md' as const,
 };
 
-const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(({
-    loading = false,
-    loadingText,
-    children,
-    variant = 'primary',
-    size = 'md',
-    fullWidth = false,
-    className = '',
-    disabled,
-    ...props
-}, ref) => {
-    const isDisabled = loading || disabled;
-    
-    const buttonClasses = `
+const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
+    (
+        {
+            loading = false,
+            loadingText,
+            children,
+            variant = 'primary',
+            size = 'md',
+            fullWidth = false,
+            className = '',
+            disabled,
+            ...props
+        },
+        ref,
+    ) => {
+        const isDisabled = loading || disabled;
+
+        const buttonClasses = `
         inline-flex items-center justify-center
         font-medium rounded-md border
         transition-all duration-200
@@ -61,26 +65,18 @@ const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(({
         ${className}
     `.trim();
 
-    return (
-        <button
-            ref={ref}
-            className={buttonClasses}
-            disabled={isDisabled}
-            {...props}
-        >
-            {loading && (
-                <LoadingSpinner
-                    size={spinnerSizes[size]}
-                    color="white"
-                    className="mr-2"
-                />
-            )}
-            <span className={loading ? 'opacity-75' : ''}>
-                {loading && loadingText ? loadingText : children}
-            </span>
-        </button>
-    );
-});
+        return (
+            <button ref={ref} className={buttonClasses} disabled={isDisabled} {...props}>
+                {loading && (
+                    <LoadingSpinner size={spinnerSizes[size]} color="white" className="mr-2" />
+                )}
+                <span className={loading ? 'opacity-75' : ''}>
+                    {loading && loadingText ? loadingText : children}
+                </span>
+            </button>
+        );
+    },
+);
 
 LoadingButton.displayName = 'LoadingButton';
 
