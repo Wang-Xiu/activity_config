@@ -41,11 +41,11 @@ function ConfigRenderer({
 }: ConfigRendererProps) {
     // 使用传入的函数，如果没有传入则使用默认函数
     const displayFieldName = useMemo(
-        () => getDisplayFieldName || ((name) => name),
+        () => getDisplayFieldName || ((name: string) => name),
         [getDisplayFieldName],
     );
     const pureEnglishCheck = useMemo(
-        () => isPureEnglish || ((str) => /^[a-zA-Z0-9_]+$/.test(str)),
+        () => isPureEnglish || ((str: string) => /^[a-zA-Z0-9_]+$/.test(str)),
         [isPureEnglish],
     );
     const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
@@ -533,7 +533,7 @@ export default function UniversalActivityConfig({
     // 获取当前用户信息
     const { user } = useAuth();
 
-    // 使用动态字段名映射Hook
+    // 使用动态字段名映射Hook - 禁用缓存，每次都获取最新数据
     const {
         fieldNameMapping: dynamicFieldNameMapping,
         getDisplayFieldName: dynamicGetDisplayFieldName,
@@ -542,7 +542,9 @@ export default function UniversalActivityConfig({
         error: mappingError,
         isFallback: isMappingFallback,
         refetch: refetchMapping,
-    } = useFieldNameMapping();
+    } = useFieldNameMapping({
+        enableCache: false, // 禁用缓存，确保每次都获取最新数据
+    });
 
     // 跳转到监控数据页面
     const handleViewMonitorData = async () => {

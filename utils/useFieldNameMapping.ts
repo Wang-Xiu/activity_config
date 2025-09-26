@@ -19,7 +19,7 @@ const DEFAULT_RETRY_DELAY = 1000; // 1秒
  */
 export default function useFieldNameMapping(options: UseFieldNameMappingOptions = {}): UseFieldNameMappingReturn {
     const {
-        enableCache = true,
+        enableCache = false, // 默认禁用缓存，确保获取最新数据
         cacheExpiration = DEFAULT_CACHE_EXPIRATION,
         retryCount = DEFAULT_RETRY_COUNT,
         retryDelay = DEFAULT_RETRY_DELAY,
@@ -168,17 +168,20 @@ export default function useFieldNameMapping(options: UseFieldNameMappingOptions 
         let mounted = true;
         
         const initializeMapping = async () => {
-            // 先尝试从缓存加载
-            const cachedData = loadFromCache();
-            if (cachedData) {
-                console.log('使用缓存的字段名映射配置');
-                setFieldNameMapping(cachedData);
-                setIsFallback(false);
-                return;
+            // 如果启用缓存，先尝试从缓存加载
+            if (enableCache) {
+                const cachedData = loadFromCache();
+                if (cachedData) {
+                    console.log('使用缓存的字段名映射配置');
+                    setFieldNameMapping(cachedData);
+                    setIsFallback(false);
+                    return;
+                }
             }
             
-            // 缓存不存在或过期，从服务器获取
+            // 缓存未启用、不存在或过期，从服务器获取最新数据
             if (mounted) {
+                console.log('从服务器获取最新字段名映射配置（缓存已禁用）');
                 await fetchFieldNameMapping();
             }
         };
@@ -188,7 +191,7 @@ export default function useFieldNameMapping(options: UseFieldNameMappingOptions 
         return () => {
             mounted = false;
         };
-    }, [loadFromCache, fetchFieldNameMapping]);
+    }, [loadFromCache, fetchFieldNameMapping, enableCache]);
     
     return {
         fieldNameMapping,
