@@ -52,10 +52,19 @@ if [ ! -f "$ENV_FILE" ]; then
     exit 1
 fi
 
-# 检查Docker服务是否运行
-if ! systemctl is-active --quiet docker; then
-    echo "启动Docker服务..."
-    sudo systemctl start docker
+# 检查Docker服务是否运行 (适配 macOS 和 Linux)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Linux 系统使用 systemctl
+    if ! systemctl is-active --quiet docker; then
+        echo "启动Docker服务..."
+        sudo systemctl start docker
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS 系统检查 Docker Desktop
+    if ! docker info >/dev/null 2>&1; then
+        echo "请确保 Docker Desktop 已启动"
+        exit 1
+    fi
 fi
 
 echo "开始部署应用到 $ENV_NAME..."
@@ -109,11 +118,23 @@ docker-compose -f $COMPOSE_FILE ps
 echo "测试应用连接..."
 if curl -f -s http://localhost:$APP_PORT > /dev/null; then
     echo "✅ 应用启动成功！"
-    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):$APP_PORT"
+    # 获取本机IP地址 (适配 macOS 和 Linux)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        LOCAL_IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+    else
+        LOCAL_IP=$(hostname -I | awk '{print $1}')
+    fi
+    echo "🌍 应用访问地址: http://${LOCAL_IP:-localhost}:$APP_PORT"
     echo "📊 环境: $ENV_NAME"
 else
     echo "⚠️  应用可能还在启动中，请稍等片刻后访问"
-    echo "🌍 应用访问地址: http://$(hostname -I | awk '{print $1}'):$APP_PORT"
+    # 获取本机IP地址 (适配 macOS 和 Linux)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        LOCAL_IP=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+    else
+        LOCAL_IP=$(hostname -I | awk '{print $1}')
+    fi
+    echo "🌍 应用访问地址: http://${LOCAL_IP:-localhost}:$APP_PORT"
     echo "📊 环境: $ENV_NAME"
 fi
 
