@@ -416,7 +416,7 @@ export default function useStressTest(): UseStressTestReturn {
                 
                 // 更新进度
                 const currentRequests = resultsRef.current.length;
-                const progress = (currentRequests / config.totalRequests) * 100;
+                const progress = (currentRequests / totalRequestCount) * 100;
                 const elapsedTime = Date.now() - testStartTimeRef.current;
                 const currentRPS = currentRequests / (elapsedTime / 1000);
                 
