@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
 import { LoginRequest, LoginResponse } from '../../../../types/auth';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -26,17 +27,12 @@ export async function POST(request: NextRequest) {
         console.log('登录用户:', username);
         
         // 调用后端登录接口
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+            body: {
                 username,
                 password
-            }),
+            },
         });
         
         if (!backendResponse.ok) {

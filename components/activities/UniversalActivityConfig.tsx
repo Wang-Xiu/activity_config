@@ -11,6 +11,7 @@ import { useToast, ToastContainer } from '../Toast';
 import { LoadingButton, LoadingSkeleton } from '../ui/loading';
 import VersionInfo from '../ui/VersionInfo';
 import { useAuth } from '../auth/AuthProvider';
+import StressTestPage from '../stress-test/StressTestPage';
 
 interface UniversalActivityConfigProps {
     activity: Activity;
@@ -1111,6 +1112,12 @@ export default function UniversalActivityConfig({
                 >
                     JSON预览
                 </button>
+                <button
+                    className={`px-4 py-2 ${activeTab === 'stress-test' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+                    onClick={() => setActiveTab('stress-test')}
+                >
+                    压力测试
+                </button>
             </div>
 
             {/* 重要提示文案 */}
@@ -1241,7 +1248,7 @@ export default function UniversalActivityConfig({
                             <div className="text-gray-500">暂无活动配置数据</div>
                         )}
                     </div>
-                ) : (
+                ) : activeTab === 'json' ? (
                     <div className="bg-white p-4 rounded-lg shadow">
                         <h3 className="text-lg font-semibold mb-4">活动配置预览 (act_config)</h3>
                         {isLoadingConfig ? (
@@ -1256,7 +1263,9 @@ export default function UniversalActivityConfig({
                             </pre>
                         )}
                     </div>
-                )}
+                ) : activeTab === 'stress-test' ? (
+                    <StressTestPage activityId={activityId} />
+                ) : null}
             </div>
 
             {/* API操作按钮和状态 */}
