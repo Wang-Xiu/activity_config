@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
-import { callInternalApi, buildInternalApiUrl } from '../../../../utils/internalApiClient';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -19,15 +19,9 @@ export async function POST(request: NextRequest) {
             }, { status: 400 });
         }
 
-        // 构建API发现URL
-        const apiUrl = buildInternalApiUrl('/index.php', {
-            r: 'activity/a-discovery/get-controller-apis',
-            act_id: activityId,
-            debug: '1',
-            password: '!!!!',
-            uid: '100056',
-            auth: '1'
-        });
+        // 使用配置文件构建API发现URL
+        const baseApiUrl = buildApiUrl('getApiList');
+        const apiUrl = `${baseApiUrl}&act_id=${activityId}`;
         
         console.log('正在调用API发现接口:', apiUrl);
 

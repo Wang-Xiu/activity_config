@@ -72,13 +72,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         try {
             // 调用后端验证token
-            const response = await fetch('/api/auth/verify', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token }),
-            });
+            const { postToNextjsApi } = await import('../../utils/frontendApiClient');
+            const response = await postToNextjsApi('/api/auth/verify', { token });
 
             const result = await response.json();
 
@@ -112,13 +107,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 clearError();
                 setAuthState((prev) => ({ ...prev, isLoading: true }));
 
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, password }),
-                });
+                const { postToNextjsApi } = await import('../../utils/frontendApiClient');
+                const response = await postToNextjsApi('/api/auth/login', { username, password });
 
                 const result = await response.json();
 

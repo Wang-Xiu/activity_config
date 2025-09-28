@@ -49,13 +49,8 @@ export default function useStressTest(): UseStressTestReturn {
             
             console.log(`正在获取活动ID ${activityId} 的API列表...`);
             
-            const response = await fetch('/api/activity/get-apis', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ activityId }),
-            });
+            const { postToNextjsApi } = await import('./frontendApiClient');
+            const response = await postToNextjsApi('/api/activity/get-apis', { activityId });
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

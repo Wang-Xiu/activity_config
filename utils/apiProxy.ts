@@ -18,6 +18,7 @@ export async function fetchWithFallback(url: string, options?: RequestInit, fall
 
     // 运行时正常调用API（使用内部API客户端，自动添加安全头）
     try {
+        console.log('📦 apiProxy 正在调用内部API:', url.substring(0, 100) + '...');
         return await callInternalApi(url, {
             method: (options?.method as 'GET' | 'POST' | 'PUT' | 'DELETE') || 'GET',
             headers: options?.headers as Record<string, string> | undefined,

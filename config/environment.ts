@@ -28,6 +28,8 @@ export const ENV_CONFIG = {
             verifyToken: '/index.php?r=activity/act-common/verify&debug=1&uid=100056&auth=1',
             // 字段名映射配置接口
             getExtConfigName: '/index.php?r=activity/act-common/get-ext-config-name&debug=1&uid=100056&auth=1',
+            // 压力测试相关接口
+            getApiList: '/index.php?r=activity/a-discovery/get-controller-apis&debug=1&password=!!!!&uid=100056&auth=1',
         },
         // 生产环境配置
         production: {
@@ -46,6 +48,8 @@ export const ENV_CONFIG = {
             verifyToken: '/index.php?r=activity/act-common/verify&debug=1&uid=100056&auth=1',
             // 字段名映射配置接口
             getExtConfigName: '/index.php?r=activity/act-common/get-ext-config-name&debug=1&uid=100056&auth=1',
+            // 压力测试相关接口
+            getApiList: '/index.php?r=activity/a-discovery/get-controller-apis&debug=1&password=!!!!&uid=100056&auth=1',
         }
     }
 };
@@ -63,7 +67,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName' | 'getApiList') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };

@@ -46,23 +46,68 @@ export const API_SECURITY_CONFIG = {
  * @param method HTTP方法
  * @returns 签名字符串
  */
-export function generateSignature(url: string, timestamp: number, method: string = 'GET'): string {
-    const crypto = require('crypto');
+export async function generateSignature(url: string, timestamp: number, method: string = 'GET'): Promise<string> {
     const data = `${method.toUpperCase()}|${url}|${timestamp}|${API_SECURITY_CONFIG.SIGNATURE_SECRET}`;
-    return crypto.createHash('sha256').update(data).digest('hex');
+    
+    // 检查是否在浏览器环境
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        // 浏览器环境使用 Web Crypto API
+        const encoder = new TextEncoder();
+        const dataBuffer = encoder.encode(data);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', dataBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+        // Node.js 环境使用 crypto 模块
+        const crypto = require('crypto');
+        return crypto.createHash('sha256').update(data).digest('hex');
+    }
 }
 
 /**
- * 获取安全请求头
+ * 获取简化的安全请求头（用于性能优化）
+ * @param url 请求URL
+ * @param method HTTP方法
+ * @returns 包含基础安全信息的请求头对象
+ */
+export function getBasicSecureHeaders(url: string, method: string = 'GET'): Record<string, string> {
+    const timestamp = Date.now();
+    
+    const headers = {
+        'X-API-Key': API_SECURITY_CONFIG.API_KEY,
+        'X-Client-Source': API_SECURITY_CONFIG.CLIENT_SOURCE,
+        'X-Timestamp': timestamp.toString(),
+        'X-Request-ID': `${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+        'User-Agent': API_SECURITY_CONFIG.USER_AGENT,
+        'Content-Type': 'application/json',
+    };
+    
+    console.log('生成基础安全请求头:', {
+        url: url.substring(0, 80) + '...',
+        method,
+        timestamp,
+        headers: {
+            'X-API-Key': headers['X-API-Key'].substring(0, 10) + '...',
+            'X-Client-Source': headers['X-Client-Source'],
+            'X-Timestamp': headers['X-Timestamp'],
+            'X-Request-ID': headers['X-Request-ID'],
+        }
+    });
+    
+    return headers;
+}
+
+/**
+ * 获取完整的安全请求头（包含签名）
  * @param url 请求URL
  * @param method HTTP方法
  * @returns 包含安全信息的请求头对象
  */
-export function getSecureHeaders(url: string, method: string = 'GET'): Record<string, string> {
+export async function getSecureHeaders(url: string, method: string = 'GET'): Promise<Record<string, string>> {
     const timestamp = Date.now();
-    const signature = generateSignature(url, timestamp, method);
+    const signature = await generateSignature(url, timestamp, method);
     
-    return {
+    const headers = {
         'X-API-Key': API_SECURITY_CONFIG.API_KEY,
         'X-Client-Source': API_SECURITY_CONFIG.CLIENT_SOURCE,
         'X-Timestamp': timestamp.toString(),
@@ -70,6 +115,20 @@ export function getSecureHeaders(url: string, method: string = 'GET'): Record<st
         'User-Agent': API_SECURITY_CONFIG.USER_AGENT,
         'Content-Type': 'application/json',
     };
+    
+    console.log('生成完整安全请求头:', {
+        url: url.substring(0, 80) + '...',
+        method,
+        timestamp,
+        headers: {
+            'X-API-Key': headers['X-API-Key'].substring(0, 10) + '...',
+            'X-Client-Source': headers['X-Client-Source'],
+            'X-Timestamp': headers['X-Timestamp'],
+            'X-Signature': headers['X-Signature'].substring(0, 10) + '...',
+        }
+    });
+    
+    return headers;
 }
 
 /**

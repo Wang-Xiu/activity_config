@@ -108,6 +108,18 @@ export class ApiClient {
         
         return headers;
     }
+
+    // 获取安全头（前端到Next.js API）
+    private static getSecurityHeaders(): HeadersInit {
+        const timestamp = Date.now().toString();
+        return {
+            'X-API-Key': 'activity-config-secret-key-2024',
+            'X-Client-Source': 'activity-config-system',
+            'X-Timestamp': timestamp,
+            'X-Request-ID': `${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
+            'User-Agent': 'ActivityConfigSystem/1.0',
+        };
+    }
     
     // 通用的API请求方法
     static async request<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -115,9 +127,18 @@ export class ApiClient {
             ...options,
             headers: {
                 ...this.getAuthHeaders(),
-                ...options.headers,
+                ...this.getSecurityHeaders(), // 添加安全头
+                ...options.headers, // 用户自定义头优先级最高
             },
         };
+
+        console.log('🔒 前端API请求安全头:', {
+            'X-API-Key': (config.headers as any)['X-API-Key']?.substring(0, 20) + '...',
+            'X-Client-Source': (config.headers as any)['X-Client-Source'],
+            'X-Timestamp': (config.headers as any)['X-Timestamp'],
+            'X-Request-ID': (config.headers as any)['X-Request-ID'],
+            url: url
+        });
         
         const response = await fetch(url, config);
         

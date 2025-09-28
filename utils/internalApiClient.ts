@@ -4,8 +4,6 @@
  * 这些接口需要安全验证
  */
 
-import { getSecureHeaders } from '../config/security';
-
 /**
  * 内部API调用配置
  */
@@ -14,6 +12,7 @@ interface InternalApiConfig {
     headers?: Record<string, string>;
     body?: any;
     timeout?: number;
+    useFullSecurity?: boolean; // 是否使用完整的安全验证（包含签名）
 }
 
 /**
@@ -27,22 +26,37 @@ export async function callInternalApi(url: string, config: InternalApiConfig = {
         method = 'GET',
         headers = {},
         body,
-        timeout = 30000
+        timeout = 30000,
+        useFullSecurity = false // 默认使用基础安全头，提高性能
     } = config;
+
+    console.log(`🔒 开始调用内部API: ${method} ${url.substring(0, 100)}...`);
 
     // 创建AbortController用于超时控制
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-        // 合并安全头和自定义头
-        const secureHeaders = getSecureHeaders(url, method);
+        // 简化安全头生成，先测试基础功能
+        const basicHeaders = {
+            'X-API-Key': 'activity-config-secret-key-2024',
+            'X-Client-Source': 'activity-config-system',
+            'X-Timestamp': Date.now().toString(),
+            'Content-Type': 'application/json',
+            'User-Agent': 'ActivityConfigSystem/1.0',
+        };
+            
         const finalHeaders = {
-            ...secureHeaders,
+            ...basicHeaders,
             ...headers, // 自定义头可以覆盖安全头中的某些字段
         };
 
-        console.log(`调用内部API: ${method} ${url}`);
+        console.log(`🔒 内部API安全头已添加:`, {
+            'X-API-Key': finalHeaders['X-API-Key'].substring(0, 20) + '...',
+            'X-Client-Source': finalHeaders['X-Client-Source'],
+            'X-Timestamp': finalHeaders['X-Timestamp'],
+            总头数量: Object.keys(finalHeaders).length
+        });
 
         const response = await fetch(url, {
             method,
@@ -53,9 +67,11 @@ export async function callInternalApi(url: string, config: InternalApiConfig = {
             credentials: 'include',
         });
 
+        console.log(`✅ 内部API调用完成: ${response.status} ${response.statusText}`);
         clearTimeout(timeoutId);
         return response;
     } catch (error) {
+        console.error(`❌ 内部API调用失败:`, error);
         clearTimeout(timeoutId);
         throw error;
     }

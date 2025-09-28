@@ -39,13 +39,8 @@ export default function MonitorDashboard({ activityId }: MonitorDashboardProps) 
 
                 console.log('正在调用监控数据API:', requestData);
 
-                const response = await fetch('/api/universal/monitor-data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                });
+                const { postToNextjsApi } = await import('../../utils/frontendApiClient');
+                const response = await postToNextjsApi('/api/universal/monitor-data', requestData);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);

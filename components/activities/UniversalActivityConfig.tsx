@@ -656,14 +656,9 @@ export default function UniversalActivityConfig({
             console.log('正在调用API: /api/universal/config');
             console.log('POST参数:', { activityId });
 
-            const response = await fetch('/api/universal/config', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    activityId: activityId,
-                }),
+            const { postToNextjsApi } = await import('../../utils/frontendApiClient');
+            const response = await postToNextjsApi('/api/universal/config', {
+                activityId: activityId,
             });
 
             if (!response.ok) {
