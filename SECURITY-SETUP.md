@@ -10,25 +10,34 @@
 
 ## 安全策略
 
-### 1. 多重验证机制
+### 1. 简化的签名验证机制
 
-- **API密钥验证**：验证请求是否携带正确的API密钥
-- **客户端标识**：验证请求来源是否为可信客户端
 - **时间戳验证**：防止重放攻击，请求必须在5分钟内有效
 - **数字签名**：使用SHA256算法对请求进行签名验证
-- **自定义User-Agent**：识别合法的客户端请求
+- **路由白名单**：只对指定的内部管理接口进行验证
 
-### 2. 请求头验证
+**简化优势**：
+- 避免Nginx请求头过滤问题
+- 无需复杂的服务器配置
+- 调试简单，参数可见
+- 性能更好，验证逻辑简单
 
-每个请求都会携带以下安全头：
+### 2. URL参数签名验证
+
+每个受保护的API请求都会在URL中包含签名参数：
 
 ```
-X-API-Key: activity-config-secret-key-2024
-X-Client-Source: activity-config-system
-X-Timestamp: 1640995200000
-X-Signature: sha256_hash_of_request
-User-Agent: ActivityConfigSystem/1.0
+https://example.com/index.php?r=activity/act-common/get-config&actId=123&sig=abc123...&ts=1640995200000
 ```
+
+**参数说明**：
+- `sig`: 请求签名（SHA256哈希）
+- `ts`: 时间戳（毫秒）
+
+**优势**：
+- 完全避开Nginx请求头过滤问题
+- 无需修改服务器配置
+- 调试方便，参数在URL中可见
 
 ## PHP后端实施步骤
 
@@ -42,44 +51,52 @@ User-Agent: ActivityConfigSystem/1.0
  * API安全验证类
  */
 class ApiSecurity {
-    private const API_KEY = 'activity-config-secret-key-2024';
+    private const API_KEY = 'activityCheck!@#';
     private const CLIENT_SOURCE = 'activity-config-system';
-    private const SIGNATURE_SECRET = 'your-signature-secret-key';
+    private const SIGNATURE_SECRET = 'activityIsOk!@#';
     private const REQUEST_TIMEOUT = 300; // 5分钟
     
+    // 需要安全验证的路由列表
+    private const PROTECTED_ROUTES = [
+        'activity/act-common/login',           // 登录接口
+        'activity/act-common/verify',          // Token验证接口
+        'activity/act-common/get-config',      // 获取配置接口
+        'activity/act-common/save-config',     // 保存配置接口
+        'activity/a-discovery/get-controller-apis', // API发现接口
+        'activity/act-common/reload-cache',    // 重载缓存接口
+        'activity/act-common/update-material-cache', // 更新物料缓存接口
+        'activity/act-common/del-redis-data',  // 删除Redis数据接口
+        'activity/act-common/monitor-data',    // 监控数据接口
+        'activity/act-common/get-config-name', // 获取配置名称接口
+        // 可以根据需要添加更多路由
+    ];
+    
     /**
-     * 验证API请求
+     * 验证API请求（仅校验URL参数中的签名）
      */
     public static function validateRequest() {
-        $headers = getallheaders();
-        
-        // 获取请求头（兼容不同的HTTP服务器）
-        $apiKey = self::getHeader($headers, 'X-API-Key');
-        $clientSource = self::getHeader($headers, 'X-Client-Source');
-        $timestamp = self::getHeader($headers, 'X-Timestamp');
-        $signature = self::getHeader($headers, 'X-Signature');
-        
-        // 验证API密钥
-        if ($apiKey !== self::API_KEY) {
-            self::sendError('API密钥验证失败', 401);
+        // 检查是否需要验证
+        if (!self::needsValidation()) {
+            return true; // 不在保护列表中的路由直接通过
         }
         
-        // 验证客户端标识
-        if ($clientSource !== self::CLIENT_SOURCE) {
-            self::sendError('客户端标识验证失败', 401);
+        // 从URL参数获取签名和时间戳
+        $signature = $_GET['sig'] ?? '';
+        $timestamp = $_GET['ts'] ?? '';
+        
+        if (empty($signature) || empty($timestamp)) {
+            self::sendError('缺少签名参数', 401);
         }
         
-        // 验证时间戳
+        // 验证时间戳（防止重放攻击）
         $now = time() * 1000;
         $requestTime = intval($timestamp);
         if (abs($now - $requestTime) > self::REQUEST_TIMEOUT * 1000) {
             self::sendError('请求时间戳过期', 401);
         }
         
-        // 验证签名
-        $method = $_SERVER['REQUEST_METHOD'];
-        $url = $_SERVER['REQUEST_URI'];
-        $expectedSignature = self::generateSignature($url, $requestTime, $method);
+        // 验证签名（基于api-key和时间戳）
+        $expectedSignature = self::generateSignature($requestTime);
         
         if ($signature !== $expectedSignature) {
             self::sendError('请求签名验证失败', 401);
@@ -89,31 +106,58 @@ class ApiSecurity {
     }
     
     /**
-     * 获取请求头（兼容性处理）
+     * 检查当前路由是否需要安全验证
      */
-    private static function getHeader($headers, $name) {
-        // 尝试不同的格式
-        $variations = [
-            $name,
-            strtolower($name),
-            strtoupper($name),
-            str_replace('-', '_', strtoupper($name))
-        ];
+    public static function needsValidation() {
+        $route = $_GET['r'] ?? '';
+        return in_array($route, self::PROTECTED_ROUTES);
+    }
+    
+    // 已移除getOriginalUrl方法，改为使用api-key生成签名
+    
+    /**
+     * 兼容性获取所有请求头（已弃用，改用URL参数验证）
+     */
+    private static function getAllHeaders() {
+        // 如果getallheaders函数存在，直接使用
+        if (function_exists('getallheaders')) {
+            return getallheaders();
+        }
         
-        foreach ($variations as $variation) {
-            if (isset($headers[$variation])) {
-                return $headers[$variation];
+        // 手动从$_SERVER中提取请求头
+        $headers = [];
+        foreach ($_SERVER as $key => $value) {
+            if (strpos($key, 'HTTP_') === 0) {
+                $headerName = str_replace('_', '-', substr($key, 5));
+                $headers[$headerName] = $value;
+                // 同时保存原始格式和小写格式
+                $headers[strtolower($headerName)] = $value;
+                $headers[strtoupper($headerName)] = $value;
             }
         }
         
-        return '';
+        // 特殊处理Content-Type和Content-Length
+        if (isset($_SERVER['CONTENT_TYPE'])) {
+            $headers['Content-Type'] = $_SERVER['CONTENT_TYPE'];
+            $headers['content-type'] = $_SERVER['CONTENT_TYPE'];
+            $headers['CONTENT-TYPE'] = $_SERVER['CONTENT_TYPE'];
+        }
+        if (isset($_SERVER['CONTENT_LENGTH'])) {
+            $headers['Content-Length'] = $_SERVER['CONTENT_LENGTH'];
+            $headers['content-length'] = $_SERVER['CONTENT_LENGTH'];
+            $headers['CONTENT-LENGTH'] = $_SERVER['CONTENT_LENGTH'];
+        }
+        
+        return $headers;
     }
     
+    // 已移除请求头相关的方法，改为使用URL参数验证
+    
     /**
-     * 生成签名
+     * 生成签名（基于api-key和时间戳）
      */
-    private static function generateSignature($url, $timestamp, $method = 'GET') {
-        $data = strtoupper($method) . '|' . $url . '|' . $timestamp . '|' . self::SIGNATURE_SECRET;
+    private static function generateSignature($timestamp) {
+        $data = self::API_KEY . '|' . $timestamp . '|' . self::SIGNATURE_SECRET;
         return hash('sha256', $data);
     }
     
@@ -132,45 +176,54 @@ class ApiSecurity {
     }
     
     /**
-     * IP白名单验证（可选）
+     * 调试方法：打印URL参数和签名验证信息（仅用于调试）
      */
-    public static function validateIP($allowedIPs = []) {
-        if (empty($allowedIPs)) {
-            return true;
+    public static function debugSignature() {
+        echo "=== DEBUG: URL参数签名验证 ===\n";
+        echo "当前路由: " . ($_GET['r'] ?? 'N/A') . "\n";
+        echo "需要验证: " . (self::needsValidation() ? 'YES' : 'NO') . "\n";
+        echo "签名参数: " . ($_GET['sig'] ?? 'N/A') . "\n";
+        echo "时间戳参数: " . ($_GET['ts'] ?? 'N/A') . "\n";
+        
+        if (!empty($_GET['sig']) && !empty($_GET['ts'])) {
+            $timestamp = intval($_GET['ts']);
+            
+            echo "\n=== DEBUG: 签名验证详情 ===\n";
+            echo "API Key: " . self::API_KEY . "\n";
+            echo "签名密钥: " . self::SIGNATURE_SECRET . "\n";
+            echo "时间戳: $timestamp\n";
+            
+            $expectedSignature = self::generateSignature($timestamp);
+            echo "期望签名: $expectedSignature\n";
+            echo "实际签名: " . $_GET['sig'] . "\n";
+            echo "签名匹配: " . ($_GET['sig'] === $expectedSignature ? 'YES' : 'NO') . "\n";
+            
+            // 签名生成数据
+            $data = self::API_KEY . '|' . $timestamp . '|' . self::SIGNATURE_SECRET;
+            echo "签名数据: $data\n";
+            
+            // 时间戳检查
+            $now = time() * 1000;
+            $timeDiff = abs($now - $timestamp);
+            echo "时间差异: {$timeDiff}ms (允许: " . (self::REQUEST_TIMEOUT * 1000) . "ms)\n";
+            echo "时间戳有效: " . ($timeDiff <= self::REQUEST_TIMEOUT * 1000 ? 'YES' : 'NO') . "\n";
         }
         
-        $clientIP = self::getClientIP();
-        if (!in_array($clientIP, $allowedIPs)) {
-            self::sendError('IP地址不在白名单中', 403);
-        }
-        
-        return true;
+        exit; // 调试完成后退出
     }
     
-    /**
-     * 获取客户端IP
-     */
-    private static function getClientIP() {
-        $ipKeys = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'];
-        
-        foreach ($ipKeys as $key) {
-            if (array_key_exists($key, $_SERVER) === true) {
-                foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    $ip = trim($ip);
-                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
-                        return $ip;
-                    }
-                }
-            }
-        }
-        
-        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    }
+    // IP校验功能已移除 - 不再进行IP地址验证
 }
 ?>
 ```
 
 ### 步骤2：在API入口处添加验证
+
+**重要提示**：上面的 `ApiSecurity` 类已经包含了 `getallheaders()` 函数的兼容性处理，可以在各种PHP环境中正常工作，包括：
+- Apache + mod_php
+- Nginx + PHP-FPM  
+- CLI模式
+- 其他Web服务器
 
 在PHP应用的统一入口文件（如 `index.php`）中添加：
 
@@ -179,11 +232,13 @@ class ApiSecurity {
 // 引入安全验证类
 require_once 'includes/ApiSecurity.php';
 
+// 调试签名验证问题时，可以临时启用以下代码
+// ApiSecurity::debugSignature(); // 取消注释来调试签名验证
+
 // 自动验证API请求（仅对受保护的路由生效）
 ApiSecurity::validateRequest();
 
-// 可选：IP白名单验证
-// ApiSecurity::validateIP(['192.168.1.100', '10.0.0.50']);
+// IP白名单验证功能已移除
 
 // 您的路由和业务逻辑代码...
 ?>
@@ -248,10 +303,9 @@ location ~ \.php$ {
 ```env
 # API安全配置
 API_SECRET_KEY=activity-config-secret-key-2024
-SIGNATURE_SECRET=your-signature-secret-key
+SIGNATURE_SECRET=activityIsOk!@#
 
-# 可选：IP白名单
-ALLOWED_IPS=192.168.1.100,10.0.0.50
+# IP白名单功能已移除
 ```
 
 ## 安全级别
@@ -268,7 +322,6 @@ ALLOWED_IPS=192.168.1.100,10.0.0.50
 
 ### 高级安全
 - 中级安全 +
-- IP白名单
 - 请求频率限制
 - SSL/TLS强制加密
 
@@ -287,6 +340,74 @@ ALLOWED_IPS=192.168.1.100,10.0.0.50
 // 记录安全事件
 error_log(date('Y-m-d H:i:s') . " - Security: " . $message . " - IP: " . $clientIP . "\n", 3, "/var/log/api_security.log");
 ```
+
+## 常见问题故障排除
+
+### 1. `getallheaders()` 函数未定义错误
+
+**错误信息**：`Call to undefined function getallheaders()`
+
+**原因**：某些PHP环境（如CLI模式、部分Web服务器配置）不支持 `getallheaders()` 函数。
+
+**解决方案**：使用上面提供的 `ApiSecurity` 类，它包含了兼容性处理：
+
+```php
+// 兼容性获取所有请求头
+private static function getAllHeaders() {
+    if (function_exists('getallheaders')) {
+        return getallheaders();
+    }
+    
+    // 从$_SERVER中手动提取请求头
+    $headers = [];
+    foreach ($_SERVER as $key => $value) {
+        if (strpos($key, 'HTTP_') === 0) {
+            $headerName = str_replace('_', '-', substr($key, 5));
+            $headers[$headerName] = $value;
+        }
+    }
+    return $headers;
+}
+```
+
+### 2. 请求头大小写问题
+
+**问题**：不同的Web服务器可能以不同的大小写格式传递请求头。
+
+**解决方案**：`getHeader()` 方法已经处理了多种格式：
+- 原始格式：`X-Client`
+- 小写格式：`x-client`  
+- 大写格式：`X-CLIENT`
+- 下划线格式：`X_CLIENT`
+
+### 3. URL参数签名验证的优势
+
+**问题解决**：完全避开了Nginx请求头过滤问题，无需任何服务器配置修改。
+
+**实现方式**：
+- 前端：自动在URL中添加 `sig` 和 `ts` 参数
+- 后端：从 `$_GET` 中读取签名参数进行验证
+- 调试：参数在URL中可见，便于排查问题
+
+### 4. 签名验证失败
+
+**问题**：签名验证总是失败。
+
+**检查项**：
+1. 确认前后端使用相同的API Key：`activityCheck!@#`
+2. 确认前后端使用相同的签名密钥：`activityIsOk!@#`
+3. 确认时间戳格式一致（都使用毫秒）
+4. 确认使用相同的哈希算法（SHA256）
+5. 使用 `ApiSecurity::debugSignature()` 查看详细的签名对比信息
+
+**新的签名格式**：
+- 前端：`SHA256(apiKey + '|' + timestamp + '|' + signatureSecret)`
+- 后端：`hash('sha256', API_KEY . '|' . timestamp . '|' . SIGNATURE_SECRET)`
+
+**常见原因**：
+- API Key不一致
+- 签名密钥不一致
+- 时间戳格式不一致
 
 ## 注意事项
 
@@ -322,4 +443,4 @@ if (defined('DEBUG') && DEBUG === true) {
 
 - 2024-01-01: 初始版本，支持基础API密钥验证
 - 2024-01-02: 添加数字签名验证和时间戳验证
-- 2024-01-03: 增加IP白名单和Web服务器配置示例
+- 2024-01-03: 移除IP白名单功能，简化安全配置

@@ -12,22 +12,41 @@ export interface FrontendApiConfig {
 }
 
 /**
- * 生成前端安全头（浏览器到Next.js API）
+ * 生成签名（基于api-key和时间戳）
  */
-function getFrontendSecurityHeaders(): Record<string, string> {
-    const timestamp = Date.now().toString();
-    return {
-        'X-API-Key': 'activity-config-secret-key-2024',
-        'X-Client-Source': 'activity-config-system',
-        'X-Timestamp': timestamp,
-        'X-Request-ID': `${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
-        'User-Agent': 'ActivityConfigSystem/1.0',
-        'Content-Type': 'application/json',
-    };
+async function generateSignature(timestamp: number): Promise<string> {
+    const apiKey = 'activityCheck!@#';
+    const signatureSecret = 'activityIsOk!@#';
+    const data = `${apiKey}|${timestamp}|${signatureSecret}`;
+    
+    // 检查是否在浏览器环境
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        // 浏览器环境使用 Web Crypto API
+        const encoder = new TextEncoder();
+        const dataBuffer = encoder.encode(data);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', dataBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+        // Node.js 环境使用 crypto 模块
+        const crypto = require('crypto');
+        return crypto.createHash('sha256').update(data).digest('hex');
+    }
 }
 
 /**
- * 调用Next.js API路由（带安全头）
+ * 添加签名参数到URL
+ */
+async function addSignatureToUrl(url: string): Promise<string> {
+    const timestamp = Date.now();
+    const signature = await generateSignature(timestamp);
+    
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}sig=${encodeURIComponent(signature)}&ts=${timestamp}`;
+}
+
+/**
+ * 调用Next.js API路由（带签名验证）
  * @param url API路径（如 '/api/universal/config'）
  * @param config 请求配置
  * @returns Promise<Response>
@@ -47,24 +66,23 @@ export async function callNextjsApi(url: string, config: FrontendApiConfig = {})
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-        // 生成安全头
-        const securityHeaders = getFrontendSecurityHeaders();
+        // 添加签名参数到URL
+        const signedUrl = await addSignatureToUrl(url);
         
         const finalHeaders = {
-            ...securityHeaders,
-            ...headers, // 自定义头可以覆盖安全头中的某些字段
+            'Content-Type': 'application/json',
+            'User-Agent': 'ActivityConfigSystem/1.0',
+            ...headers, // 自定义头可以覆盖默认头
         };
 
-        console.log(`🔒 前端安全头已添加:`, {
-            'X-API-Key': finalHeaders['X-API-Key'].substring(0, 20) + '...',
-            'X-Client-Source': finalHeaders['X-Client-Source'],
-            'X-Timestamp': finalHeaders['X-Timestamp'],
-            'X-Request-ID': finalHeaders['X-Request-ID'],
-            '总头数量': Object.keys(finalHeaders).length,
-            url: url
+        console.log(`🔒 前端API签名已添加:`, {
+            原始URL: url,
+            签名URL: signedUrl,
+            方法: method,
+            头数量: Object.keys(finalHeaders).length
         });
 
-        const response = await fetch(url, {
+        const response = await fetch(signedUrl, {
             method,
             headers: finalHeaders,
             body: body ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined,

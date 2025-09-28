@@ -12,7 +12,40 @@ interface InternalApiConfig {
     headers?: Record<string, string>;
     body?: any;
     timeout?: number;
-    useFullSecurity?: boolean; // 是否使用完整的安全验证（包含签名）
+}
+
+/**
+ * 生成签名（基于api-key和时间戳）
+ */
+async function generateSignature(timestamp: number): Promise<string> {
+    const apiKey = 'activityCheck!@#';
+    const signatureSecret = 'activityIsOk!@#';
+    const data = `${apiKey}|${timestamp}|${signatureSecret}`;
+    
+    // 检查是否在浏览器环境
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        // 浏览器环境使用 Web Crypto API
+        const encoder = new TextEncoder();
+        const dataBuffer = encoder.encode(data);
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', dataBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+        // Node.js 环境使用 crypto 模块
+        const crypto = require('crypto');
+        return crypto.createHash('sha256').update(data).digest('hex');
+    }
+}
+
+/**
+ * 添加签名参数到URL
+ */
+async function addSignatureToUrl(url: string): Promise<string> {
+    const timestamp = Date.now();
+    const signature = await generateSignature(timestamp);
+    
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}sig=${encodeURIComponent(signature)}&ts=${timestamp}`;
 }
 
 /**
@@ -27,7 +60,6 @@ export async function callInternalApi(url: string, config: InternalApiConfig = {
         headers = {},
         body,
         timeout = 30000,
-        useFullSecurity = false // 默认使用基础安全头，提高性能
     } = config;
 
     console.log(`🔒 开始调用内部API: ${method} ${url.substring(0, 100)}...`);
@@ -37,28 +69,23 @@ export async function callInternalApi(url: string, config: InternalApiConfig = {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-        // 简化安全头生成，先测试基础功能
-        const basicHeaders = {
-            'X-API-Key': 'activity-config-secret-key-2024',
-            'X-Client-Source': 'activity-config-system',
-            'X-Timestamp': Date.now().toString(),
+        // 添加签名参数到URL
+        const signedUrl = await addSignatureToUrl(url);
+        
+        const finalHeaders = {
             'Content-Type': 'application/json',
             'User-Agent': 'ActivityConfigSystem/1.0',
-        };
-            
-        const finalHeaders = {
-            ...basicHeaders,
-            ...headers, // 自定义头可以覆盖安全头中的某些字段
+            ...headers, // 自定义头可以覆盖默认头
         };
 
-        console.log(`🔒 内部API安全头已添加:`, {
-            'X-API-Key': finalHeaders['X-API-Key'].substring(0, 20) + '...',
-            'X-Client-Source': finalHeaders['X-Client-Source'],
-            'X-Timestamp': finalHeaders['X-Timestamp'],
-            总头数量: Object.keys(finalHeaders).length
+        console.log(`🔒 内部API签名已添加:`, {
+            原始URL: url.substring(0, 100) + '...',
+            签名URL长度: signedUrl.length,
+            方法: method,
+            头数量: Object.keys(finalHeaders).length
         });
 
-        const response = await fetch(url, {
+        const response = await fetch(signedUrl, {
             method,
             headers: finalHeaders,
             body: body ? (typeof body === 'string' ? body : JSON.stringify(body)) : undefined,
