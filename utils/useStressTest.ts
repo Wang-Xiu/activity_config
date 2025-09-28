@@ -134,41 +134,74 @@ export default function useStressTest(): UseStressTestReturn {
             // 构建PHP接口URL
             const fullUrl = buildPhpApiUrl(apiInfo, config.customParameters);
             
-            const response = await fetch(fullUrl, {
-                method: config.method,
-                headers: config.headers,
-                signal,
-                // 添加连接控制选项
-                keepalive: false, // 禁用keep-alive，避免连接池耗尽
-            });
+            // 创建超时控制器
+            const timeoutController = new AbortController();
+            const timeoutId = setTimeout(() => {
+                timeoutController.abort();
+            }, config.timeout);
             
-            const endTime = Date.now();
-            const responseTime = endTime - startTime;
-            
-            // 获取响应大小
-            const responseText = await response.text();
-            const responseSize = new Blob([responseText]).size;
-            
-            const result = {
-                success: response.ok,
-                responseTime,
-                statusCode: response.status,
-                responseSize,
-                error: response.ok ? undefined : `HTTP ${response.status}: ${response.statusText}`,
-            };
-            
-            // 调试信息：记录429状态码
-            if (response.status === 429) {
-                console.log('检测到429限流响应:', result);
+            // 监听外部信号，如果被取消则同时取消超时控制器
+            if (signal.aborted) {
+                timeoutController.abort();
+                clearTimeout(timeoutId);
+            } else {
+                signal.addEventListener('abort', () => {
+                    timeoutController.abort();
+                    clearTimeout(timeoutId);
+                }, { once: true });
             }
             
-            return result;
+            try {
+                const response = await fetch(fullUrl, {
+                    method: config.method,
+                    headers: config.headers,
+                    signal: timeoutController.signal,
+                    // 添加连接控制选项
+                    keepalive: false, // 禁用keep-alive，避免连接池耗尽
+                });
+                
+                clearTimeout(timeoutId);
+                
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                // 获取响应大小
+                const responseText = await response.text();
+                const responseSize = new Blob([responseText]).size;
+                
+                const result = {
+                    success: response.ok,
+                    responseTime,
+                    statusCode: response.status,
+                    responseSize,
+                    error: response.ok ? undefined : `HTTP ${response.status}: ${response.statusText}`,
+                };
+                
+                // 调试信息：记录429状态码
+                if (response.status === 429) {
+                    console.log('检测到429限流响应:', result);
+                }
+                
+                return result;
+            } catch (fetchError) {
+                clearTimeout(timeoutId);
+                throw fetchError;
+            }
         } catch (error) {
             const endTime = Date.now();
             const responseTime = endTime - startTime;
             
             if (error instanceof Error && error.name === 'AbortError') {
-                throw error; // 重新抛出取消错误
+                // 检查是否是超时导致的中止
+                if (responseTime >= config.timeout) {
+                    return {
+                        success: false,
+                        responseTime,
+                        statusCode: undefined,
+                        error: `请求超时 (${config.timeout}ms)`,
+                    };
+                }
+                throw error; // 重新抛出其他取消错误（如用户手动停止）
             }
             
             // 尝试从错误信息中提取状态码
