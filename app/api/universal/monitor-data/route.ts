@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 import { MonitorDashboardData, MonitorDataRequest } from '../../../../types/monitor-dashboard';
 
 // 强制动态渲染
@@ -30,14 +31,9 @@ export async function POST(request: NextRequest) {
         console.log('正在调用监控仪表盘API:', apiUrl);
         console.log('POST参数:', postData);
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(postData),
+            body: postData,
         });
 
         if (!backendResponse.ok) {

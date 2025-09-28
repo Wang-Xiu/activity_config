@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -17,13 +18,8 @@ export async function GET(request: NextRequest) {
         
         console.log('正在调用监控数据API:', fullUrl);
 
-        const backendResponse = await fetch(fullUrl, {
+        const backendResponse = await callInternalApi(fullUrl, {
             method: 'GET',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
         });
 
         if (!backendResponse.ok) {

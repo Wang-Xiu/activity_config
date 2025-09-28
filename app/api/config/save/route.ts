@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { MainConfig } from '../../../../types/config';
 import { validateConfig, sanitizeConfig } from '../../../../utils/configValidator';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -28,14 +29,9 @@ export async function POST(request: NextRequest) {
 
         // 调用后端API保存配置
         const apiUrl = buildApiUrl('saveConfig');
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(config),
+            body: config,
         });
 
         if (!backendResponse.ok) {

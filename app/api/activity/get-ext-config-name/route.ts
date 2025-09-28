@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
 import { fieldNameMapping } from '../../../../config/fieldNameMapping';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -10,14 +11,9 @@ export async function POST(request: NextRequest) {
         // 构建API URL
         const apiUrl = buildApiUrl('getExtConfigName');
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({}),
+            body: {},
         });
 
         if (!backendResponse.ok) {

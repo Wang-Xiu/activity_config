@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -56,15 +57,10 @@ export async function POST(request: NextRequest) {
             operator: operator || 'unknown'
         };
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            mode: 'cors',
-            credentials: 'include',
-            body: JSON.stringify(postData),
-        } as RequestInit);
+            body: postData,
+        });
 
         if (!backendResponse.ok) {
             throw new Error(`后端API调用失败: ${backendResponse.status} ${backendResponse.statusText}`);

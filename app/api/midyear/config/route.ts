@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { defaultConfig } from '../../../../config/defaultConfig';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -17,16 +18,11 @@ export async function GET(request: NextRequest) {
         const apiUrl = buildApiUrl('getConfigByMidyear');
         console.log('正在调用年中活动配置API:', apiUrl);
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST', // 年中活动使用通用配置接口，需要POST
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+            body: {
                 act_id: 'midyear' // 年中活动的活动ID
-            }),
+            },
         });
 
         if (!backendResponse.ok) {

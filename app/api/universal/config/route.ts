@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { universalDefaultConfig } from '../../../../config/universalDefaultConfig';
 import { buildApiUrl } from '../../../../config/environment';
+import { callInternalApi } from '../../../../utils/internalApiClient';
 
 // 强制动态渲染
 export const dynamic = 'force-dynamic';
@@ -22,14 +23,9 @@ export async function POST(request: NextRequest) {
         console.log('正在调用API:', apiUrl);
         console.log('POST参数:', postData);
 
-        const backendResponse = await fetch(apiUrl, {
+        const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(postData),
+            body: postData,
         });
 
         if (!backendResponse.ok) {
