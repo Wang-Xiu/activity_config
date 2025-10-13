@@ -30,6 +30,11 @@ export const ENV_CONFIG = {
             getExtConfigName: '/index.php?r=activity/act-common/get-ext-config-name&debug=1&uid=100056&auth=1',
             // 压力测试相关接口
             getApiList: '/index.php?r=activity/a-discovery/get-controller-apis&debug=1&password=!!!!&uid=100056&auth=1',
+            // 神壕管理相关接口
+            getShenhaoList: '/index.php?r=activity/act-common/get-rich-list&debug=1&uid=100056&auth=1',
+            createShenhao: '/index.php?r=activity/act-common/create-rich&debug=1&uid=100056&auth=1',
+            updateShenhao: '/index.php?r=activity/act-common/update-rich&debug=1&uid=100056&auth=1',
+            deleteShenhao: '/index.php?r=activity/act-common/del-rich&debug=1&uid=100056&auth=1',
         },
         // 生产环境配置
         production: {
@@ -50,6 +55,11 @@ export const ENV_CONFIG = {
             getExtConfigName: '/index.php?r=activity/act-common/get-ext-config-name&debug=1&uid=100056&auth=1',
             // 压力测试相关接口
             getApiList: '/index.php?r=activity/a-discovery/get-controller-apis&debug=1&password=!!!!&uid=100056&auth=1',
+            // 神壕管理相关接口
+            getShenhaoList: '/index.php?r=activity/act-common/get-rich-list&debug=1&uid=100056&auth=1',
+            createShenhao: '/index.php?r=activity/act-common/create-rich&debug=1&uid=100056&auth=1',
+            updateShenhao: '/index.php?r=activity/act-common/update-rich&debug=1&uid=100056&auth=1',
+            deleteShenhao: '/index.php?r=activity/act-common/del-rich&debug=1&uid=100056&auth=1',
         }
     }
 };
@@ -67,7 +77,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName' | 'getApiList') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName' | 'getApiList' | 'getShenhaoList' | 'createShenhao' | 'updateShenhao' | 'deleteShenhao') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };

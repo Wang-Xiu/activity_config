@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MonitorDashboard from '../../../components/monitor/MonitorDashboard';
-import { useToast, ToastContainer } from '../../../components/Toast';
+import { useToast } from '../../../components/ToastProvider';
 import { LoadingSpinner } from '../../../components/ui/loading';
 
 interface MonitorPageProps {
@@ -133,8 +133,6 @@ export default function MonitorPage({ params }: MonitorPageProps) {
                 <MonitorDashboard activityId={activityId} />
             </div>
 
-            {/* Toast 提示容器 */}
-            <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>
     );
 }

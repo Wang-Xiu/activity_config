@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '../components/auth/AuthProvider';
 import AuthGuard from '../components/auth/AuthGuard';
+import ToastProvider from '../components/ToastProvider';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +32,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <html lang="zh-CN">
             <body className="">
                 <AuthProvider>
-                    <AuthGuard>{children}</AuthGuard>
+                    <ToastProvider>
+                        <AuthGuard>{children}</AuthGuard>
+                    </ToastProvider>
                 </AuthProvider>
             </body>
         </html>

@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { ApiInfo, StressTestConfig } from '../../types/stress-test';
 import useStressTest from '../../utils/useStressTest';
 import { LoadingButton, LoadingSpinner } from '../ui/loading';
-import { useToast } from '../Toast';
+import { useToast } from '../ToastProvider';
 
 interface StressTestPageProps {
     activityId: string;

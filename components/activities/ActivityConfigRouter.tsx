@@ -6,6 +6,8 @@ import GemActivityConfig from './GemActivityConfig';
 import MidYearActivityConfig from './MidYearActivityConfig';
 // 导入通用活动配置组件
 import UniversalActivityConfig from './UniversalActivityConfig';
+// 导入神壕列表组件
+import ShenhaoList from '../shenhao/ShenhaoList';
 
 interface ActivityConfigRouterProps {
     activity: Activity;
@@ -40,6 +42,8 @@ export default function ActivityConfigRouter({
             return <MidYearActivityConfig activity={activity} onStatusChange={onStatusChange} />;
         case 'universal':
             return <UniversalActivityConfig activity={activity} onStatusChange={onStatusChange} />;
+        case 'shenhao':
+            return <ShenhaoList activityId={activity.id} />;
         default:
             return (
                 <div className="flex items-center justify-center h-full text-red-500">

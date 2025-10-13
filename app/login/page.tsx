@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import LoginForm from '../../components/auth/LoginForm';
 import { useAuth } from '../../components/auth/AuthProvider';
-import { useToast, ToastContainer } from '../../components/Toast';
+import { useToast } from '../../components/ToastProvider';
 
 export const dynamic = 'force-dynamic';
 
@@ -105,8 +105,6 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            {/* Toast 提示容器 */}
-            <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>
     );
 }

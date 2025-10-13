@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'midyear' | 'universal';
+    type: 'gem' | 'midyear' | 'universal' | 'shenhao';
 }
 
 // 活动配置
@@ -45,6 +45,17 @@ export const ACTIVITIES: Activity[] = [
         configUrl: '/api/midyear/config',
         monitorUrl: '/api/midyear/monitor',
         type: 'universal',
+    },
+    {
+        id: 'shenhao',
+        name: '神壕列表',
+        description: '神壕用户管理与配置',
+        icon: '👑',
+        color: 'yellow',
+        status: 'active',
+        configUrl: '/api/shenhao/list',
+        monitorUrl: '/api/shenhao/list',
+        type: 'shenhao',
     },
 ];
 

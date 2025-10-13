@@ -108,7 +108,7 @@ export default function Page() {
                         </div>
                     </div>
                     {selectedActivity && (
-                        <p className="mt-2 text-gray-600">当前活动：{selectedActivity.name}</p>
+                        <p className="mt-2 text-gray-600">当前位置：{selectedActivity.name}</p>
                     )}
                 </div>
 

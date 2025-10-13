@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { MonitorDashboardData, MonitorDataRequest } from '../../types/monitor-dashboard';
-import { useToast } from '../Toast';
+import { useToast } from '../ToastProvider';
 import { LoadingButton, LoadingSkeleton } from '../ui/loading';
 import PVUVSection from './PVUVSection';
 import PoolDataSection from './PoolDataSection';

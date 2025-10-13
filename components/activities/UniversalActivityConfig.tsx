@@ -7,7 +7,7 @@ import { UniversalConfig, ConfigVersionInfo } from '../../types/config';
 import { fieldNameMapping } from '../../config/fieldNameMapping';
 import useFieldNameMapping from '../../utils/useFieldNameMapping';
 import { ENV_CONFIG } from '../../config/environment';
-import { useToast, ToastContainer } from '../Toast';
+import { useToast } from '../ToastProvider';
 import { LoadingButton, LoadingSkeleton } from '../ui/loading';
 import VersionInfo from '../ui/VersionInfo';
 import { useAuth } from '../auth/AuthProvider';
@@ -1322,8 +1322,6 @@ export default function UniversalActivityConfig({
                 {apiStatus && <div className="text-sm text-gray-600">{apiStatus}</div>}
             </div>
 
-            {/* Toast 提示容器 */}
-            <ToastContainer toasts={toasts} onRemove={removeToast} />
         </div>
     );
 }
