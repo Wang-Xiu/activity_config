@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'midyear' | 'universal' | 'shenhao';
+    type: 'gem' | 'midyear' | 'universal' | 'shenhao' | 'security-logs';
 }
 
 // 活动配置
@@ -56,6 +56,17 @@ export const ACTIVITIES: Activity[] = [
         configUrl: '/api/shenhao/list',
         monitorUrl: '/api/shenhao/list',
         type: 'shenhao',
+    },
+    {
+        id: 'security-logs',
+        name: '安全威胁监控',
+        description: '监控和分析服务器恶意请求与攻击行为',
+        icon: '🛡️',
+        color: 'red',
+        status: 'active',
+        configUrl: '/api/security-logs/list',
+        monitorUrl: '/api/security-logs/statistics',
+        type: 'security-logs',
     },
 ];
 

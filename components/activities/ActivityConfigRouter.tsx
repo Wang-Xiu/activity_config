@@ -8,6 +8,8 @@ import MidYearActivityConfig from './MidYearActivityConfig';
 import UniversalActivityConfig from './UniversalActivityConfig';
 // 导入神壕列表组件
 import ShenhaoList from '../shenhao/ShenhaoList';
+// 导入安全日志组件
+import SecurityLogsPage from '../security-logs/SecurityLogsPage';
 
 interface ActivityConfigRouterProps {
     activity: Activity;
@@ -44,6 +46,8 @@ export default function ActivityConfigRouter({
             return <UniversalActivityConfig activity={activity} onStatusChange={onStatusChange} />;
         case 'shenhao':
             return <ShenhaoList activityId={activity.id} />;
+        case 'security-logs':
+            return <SecurityLogsPage activityId={activity.id} />;
         default:
             return (
                 <div className="flex items-center justify-center h-full text-red-500">

@@ -12,6 +12,7 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
     const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState<'left' | 'right'>('left');
     const containerRef = useRef<HTMLDivElement>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const formatDateTime = (dateTime?: string) => {
         if (!dateTime) return '未知';
@@ -33,11 +34,48 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
         }
     }, [isVisible]);
 
+    // 清理定时器
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+
+    const handleMouseEnter = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+        setIsVisible(true);
+    };
+
+    const handleMouseLeave = () => {
+        // 延迟隐藏，给用户时间移动到tooltip上
+        timeoutRef.current = setTimeout(() => {
+            setIsVisible(false);
+        }, 100);
+    };
+
+    const handleTooltipMouseEnter = () => {
+        // 鼠标进入tooltip时，取消隐藏
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    const handleTooltipMouseLeave = () => {
+        // 鼠标离开tooltip时，隐藏
+        setIsVisible(false);
+    };
+
     return (
         <div ref={containerRef} className="relative inline-block">
             <div
-                onMouseEnter={() => setIsVisible(true)}
-                onMouseLeave={() => setIsVisible(false)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
                 onClick={() => setIsVisible(!isVisible)}
                 className="cursor-pointer"
             >
@@ -52,9 +90,13 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
                         onClick={() => setIsVisible(false)}
                     ></div>
                     
-                    <div className={`absolute z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-xl top-full mt-2 transform transition-all duration-200 ease-out ${
-                        position === 'left' ? 'left-0' : 'right-0'
-                    }`}>
+                    <div 
+                        className={`absolute z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-xl top-full mt-2 transform transition-all duration-200 ease-out ${
+                            position === 'left' ? 'left-0' : 'right-0'
+                        }`}
+                        onMouseEnter={handleTooltipMouseEnter}
+                        onMouseLeave={handleTooltipMouseLeave}
+                    >
                         {/* 箭头 */}
                         <div className={`absolute -top-2 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45 ${
                             position === 'left' ? 'left-4' : 'right-4'
