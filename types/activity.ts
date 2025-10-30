@@ -8,7 +8,7 @@ export interface Activity {
     status: 'active' | 'inactive' | 'pending';
     configUrl: string;
     monitorUrl: string;
-    type: 'gem' | 'midyear' | 'universal' | 'shenhao' | 'security-logs';
+    type: 'gem' | 'midyear' | 'universal' | 'shenhao' | 'security-logs' | 'data-scripts';
 }
 
 // 活动配置
@@ -67,6 +67,17 @@ export const ACTIVITIES: Activity[] = [
         configUrl: '/api/security-logs/list',
         monitorUrl: '/api/security-logs/statistics',
         type: 'security-logs',
+    },
+    {
+        id: 'data-scripts',
+        name: '数据脚本',
+        description: '管理和访问后端数据查询脚本',
+        icon: '📜',
+        color: 'purple',
+        status: 'active',
+        configUrl: '/api/data-scripts/list',
+        monitorUrl: '/api/data-scripts/list',
+        type: 'data-scripts',
     },
 ];
 

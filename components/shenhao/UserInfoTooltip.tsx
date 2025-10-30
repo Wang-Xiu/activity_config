@@ -11,6 +11,7 @@ interface UserInfoTooltipProps {
 export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [position, setPosition] = useState<'left' | 'right'>('left');
+    const [verticalPosition, setVerticalPosition] = useState<'bottom' | 'top'>('bottom');
     const containerRef = useRef<HTMLDivElement>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -24,12 +25,23 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
         if (isVisible && containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
             
-            // 如果右侧空间不足，则显示在左侧
+            // 检查水平位置：如果右侧空间不足，则显示在左侧
             if (rect.left + 320 > windowWidth) {
                 setPosition('right');
             } else {
                 setPosition('left');
+            }
+            
+            // 检查垂直位置：如果下方空间不足（小于300px），则显示在上方
+            const spaceBelow = windowHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            
+            if (spaceBelow < 300 && spaceAbove > 250) {
+                setVerticalPosition('top');
+            } else {
+                setVerticalPosition('bottom');
             }
         }
     }, [isVisible]);
@@ -52,10 +64,10 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
     };
 
     const handleMouseLeave = () => {
-        // 延迟隐藏，给用户时间移动到tooltip上
+        // 延迟隐藏，给用户足够时间移动到tooltip上
         timeoutRef.current = setTimeout(() => {
             setIsVisible(false);
-        }, 100);
+        }, 300); // 增加延迟到300ms
     };
 
     const handleTooltipMouseEnter = () => {
@@ -67,8 +79,10 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
     };
 
     const handleTooltipMouseLeave = () => {
-        // 鼠标离开tooltip时，隐藏
-        setIsVisible(false);
+        // 鼠标离开tooltip时，稍作延迟再隐藏
+        timeoutRef.current = setTimeout(() => {
+            setIsVisible(false);
+        }, 200);
     };
 
     return (
@@ -84,21 +98,21 @@ export default function UserInfoTooltip({ user, children }: UserInfoTooltipProps
             
             {isVisible && (
                 <>
-                    {/* 遮罩层，点击关闭 */}
                     <div 
-                        className="fixed inset-0 z-40" 
-                        onClick={() => setIsVisible(false)}
-                    ></div>
-                    
-                    <div 
-                        className={`absolute z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-xl top-full mt-2 transform transition-all duration-200 ease-out ${
+                        className={`absolute z-50 w-80 p-4 bg-white border border-gray-200 rounded-lg shadow-xl transform transition-all duration-200 ease-out ${
                             position === 'left' ? 'left-0' : 'right-0'
+                        } ${
+                            verticalPosition === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
                         }`}
                         onMouseEnter={handleTooltipMouseEnter}
                         onMouseLeave={handleTooltipMouseLeave}
                     >
-                        {/* 箭头 */}
-                        <div className={`absolute -top-2 w-4 h-4 bg-white border-l border-t border-gray-200 transform rotate-45 ${
+                        {/* 箭头 - 根据垂直位置调整 */}
+                        <div className={`absolute w-4 h-4 bg-white border-gray-200 transform ${
+                            verticalPosition === 'bottom' 
+                                ? '-top-2 border-l border-t rotate-45' 
+                                : '-bottom-2 border-r border-b rotate-45'
+                        } ${
                             position === 'left' ? 'left-4' : 'right-4'
                         }`}></div>
                         

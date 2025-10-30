@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { SecurityLogEntry, THREAT_LEVEL_OPTIONS } from '../../types/security-logs';
-import LogDetailModal from './LogDetailModal';
+
+type SortField = 'log_time' | 'threat_level';
+type SortOrder = 'asc' | 'desc';
 
 interface SecurityLogsTableProps {
     logs: SecurityLogEntry[];
@@ -11,6 +12,9 @@ interface SecurityLogsTableProps {
     currentPage: number;
     pageSize: number;
     onPageChange: (page: number) => void;
+    sortField: SortField;
+    sortOrder: SortOrder;
+    onSortChange: (field: SortField) => void;
 }
 
 export default function SecurityLogsTable({ 
@@ -19,9 +23,34 @@ export default function SecurityLogsTable({
     total, 
     currentPage, 
     pageSize, 
-    onPageChange 
+    onPageChange,
+    sortField,
+    sortOrder,
+    onSortChange
 }: SecurityLogsTableProps) {
-    const [selectedLog, setSelectedLog] = useState<SecurityLogEntry | null>(null);
+
+    // 渲染排序图标
+    const renderSortIcon = (field: SortField) => {
+        if (sortField !== field) {
+            return (
+                <svg className="w-4 h-4 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+            );
+        }
+        if (sortOrder === 'desc') {
+            return (
+                <svg className="w-4 h-4 ml-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            );
+        }
+        return (
+            <svg className="w-4 h-4 ml-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+        );
+    };
 
     const getThreatLevelStyle = (level: string) => {
         const option = THREAT_LEVEL_OPTIONS.find(opt => opt.value === level);
@@ -89,8 +118,14 @@ export default function SecurityLogsTable({
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    时间
+                                <th 
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => onSortChange('log_time')}
+                                >
+                                    <div className="flex items-center">
+                                        时间
+                                        {renderSortIcon('log_time')}
+                                    </div>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     IP地址
@@ -104,14 +139,17 @@ export default function SecurityLogsTable({
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     状态码
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    威胁等级
+                                <th 
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => onSortChange('threat_level')}
+                                >
+                                    <div className="flex items-center">
+                                        威胁等级
+                                        {renderSortIcon('threat_level')}
+                                    </div>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     地理位置
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    操作
                                 </th>
                             </tr>
                         </thead>
@@ -147,18 +185,10 @@ export default function SecurityLogsTable({
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {log.country && log.city ? `${log.country}, ${log.city}` : log.country || log.city || '-'}
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button
-                                            onClick={() => setSelectedLog(log)}
-                                            className="text-indigo-600 hover:text-indigo-900"
-                                        >
-                                            详情
-                                        </button>
-                                    </td>
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                                         数据格式错误
                                     </td>
                                 </tr>
@@ -245,13 +275,6 @@ export default function SecurityLogsTable({
                     </div>
                 )}
             </div>
-
-            {/* 详情模态框 */}
-            <LogDetailModal
-                log={selectedLog}
-                isOpen={!!selectedLog}
-                onClose={() => setSelectedLog(null)}
-            />
         </>
     );
 }

@@ -1,5 +1,6 @@
-# 使用官方Node.js 18镜像
-FROM node:18
+# 使用 Node.js 18 镜像
+# 如果官方源无法访问，可以尝试使用镜像代理
+FROM swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/library/node:18
 
 # 设置工作目录
 WORKDIR /app
@@ -15,8 +16,9 @@ COPY . .
 
 # 设置环境变量（可以在构建时覆盖）
 ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+ENV NODE_ENV=production
 ENV BUILD_TIME=true
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # 构建应用
 RUN npm run build

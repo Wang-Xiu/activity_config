@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
     SecurityLogEntry, 
     SecurityStatistics, 
     SecurityLogListParams,
     SecurityApiResponse,
-    SecurityLogListResponse
+    SecurityLogListResponse,
+    calculateThreatLevel,
+    getThreatLevelWeight
 } from '../../types/security-logs';
 import { postToNextjsApi } from '../../utils/frontendApiClient';
 import { useToast } from '../ToastProvider';
@@ -21,6 +23,9 @@ interface SecurityLogsPageProps {
     activityId: string;
 }
 
+type SortField = 'log_time' | 'threat_level';
+type SortOrder = 'asc' | 'desc';
+
 export default function SecurityLogsPage({ activityId }: SecurityLogsPageProps) {
     const [logs, setLogs] = useState<SecurityLogEntry[]>([]);
     const [statistics, setStatistics] = useState<SecurityStatistics | null>(null);
@@ -28,6 +33,8 @@ export default function SecurityLogsPage({ activityId }: SecurityLogsPageProps) 
     const [statisticsLoading, setStatisticsLoading] = useState(false);
     const [total, setTotal] = useState(0);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [sortField, setSortField] = useState<SortField>('log_time');
+    const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
     const [filters, setFilters] = useState<SecurityLogListParams>({
         page: 1,
         page_size: 20,
@@ -147,6 +154,43 @@ export default function SecurityLogsPage({ activityId }: SecurityLogsPageProps) 
         fetchStatistics({ start_date: filters.start_date, end_date: filters.end_date });
     }, [filters]);
 
+    // 计算并排序日志数据
+    const sortedLogs = useMemo(() => {
+        // 先为每条日志计算威胁等级
+        const logsWithThreatLevel = logs.map(log => ({
+            ...log,
+            threat_level: calculateThreatLevel(log)
+        }));
+
+        // 根据排序配置进行排序
+        const sorted = [...logsWithThreatLevel].sort((a, b) => {
+            if (sortField === 'log_time') {
+                const timeA = new Date(a.log_time).getTime();
+                const timeB = new Date(b.log_time).getTime();
+                return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
+            } else if (sortField === 'threat_level') {
+                const weightA = getThreatLevelWeight(a.threat_level);
+                const weightB = getThreatLevelWeight(b.threat_level);
+                return sortOrder === 'desc' ? weightB - weightA : weightA - weightB;
+            }
+            return 0;
+        });
+
+        return sorted;
+    }, [logs, sortField, sortOrder]);
+
+    // 处理排序切换
+    const handleSortChange = useCallback((field: SortField) => {
+        if (sortField === field) {
+            // 同一字段，切换排序方向
+            setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
+        } else {
+            // 不同字段，设置为降序
+            setSortField(field);
+            setSortOrder('desc');
+        }
+    }, [sortField]);
+
     // 处理分页
     const handlePageChange = useCallback((page: number) => {
         const newFilters = { ...filters, page };
@@ -257,12 +301,15 @@ export default function SecurityLogsPage({ activityId }: SecurityLogsPageProps) 
 
             {/* 日志列表 */}
             <SecurityLogsTable
-                logs={logs}
+                logs={sortedLogs}
                 loading={loading}
                 total={total}
                 currentPage={filters.page || 1}
                 pageSize={filters.page_size || 20}
                 onPageChange={handlePageChange}
+                sortField={sortField}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
             />
         </div>
     );

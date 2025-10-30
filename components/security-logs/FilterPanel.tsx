@@ -1,6 +1,6 @@
 'use client';
 
-import { SecurityLogListParams, THREAT_LEVEL_OPTIONS, HTTP_METHOD_OPTIONS, STATUS_CODE_OPTIONS } from '../../types/security-logs';
+import { SecurityLogListParams, HTTP_METHOD_OPTIONS, STATUS_CODE_OPTIONS } from '../../types/security-logs';
 
 interface FilterPanelProps {
     filters: SecurityLogListParams;
@@ -227,24 +227,6 @@ export default function FilterPanel({ filters, onFiltersChange, onSearch, loadin
                     </select>
                 </div>
 
-                {/* 威胁等级 */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        威胁等级
-                    </label>
-                    <select
-                        value={filters.threat_level || ''}
-                        onChange={(e) => handleFilterChange('threat_level', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">全部等级</option>
-                        {THREAT_LEVEL_OPTIONS.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
 
                 {/* 搜索按钮 */}
                 <div className="flex items-end">

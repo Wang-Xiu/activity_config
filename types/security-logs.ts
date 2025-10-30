@@ -1,7 +1,7 @@
 // 安全日志相关类型定义
 
 // 威胁等级
-export type ThreatLevel = 'high' | 'medium' | 'low';
+export type ThreatLevel = 'high' | 'medium' | 'low' | 'unknown';
 
 // 威胁类型
 export type ThreatType = 
@@ -87,7 +87,6 @@ export interface SecurityLogListParams {
     ip?: string;                    // IP地址搜索
     method?: string;                // 请求方法筛选
     status?: string;                // 状态码筛选
-    threat_level?: ThreatLevel;     // 威胁等级筛选
     path_keyword?: string;          // 路径关键词搜索
     sort_field?: string;            // 排序字段
     sort_order?: 'asc' | 'desc';    // 排序方向
@@ -138,6 +137,7 @@ export const THREAT_LEVEL_OPTIONS = [
     { value: 'high', label: '高危', color: 'text-red-600 bg-red-50' },
     { value: 'medium', label: '中危', color: 'text-yellow-600 bg-yellow-50' },
     { value: 'low', label: '低危', color: 'text-green-600 bg-green-50' },
+    { value: 'unknown', label: '未分类', color: 'text-gray-600 bg-gray-50' },
 ] as const;
 
 // 威胁类型选项
@@ -169,3 +169,61 @@ export const STATUS_CODE_OPTIONS = [
     { value: '404', label: '404 - 未找到' },
     { value: '500', label: '500 - 服务器错误' },
 ] as const;
+
+/**
+ * 计算日志记录的威胁等级
+ * 根据状态码、请求方法、路径等特征判断威胁等级
+ */
+export function calculateThreatLevel(log: SecurityLogEntry): ThreatLevel {
+    const { status, method, path } = log;
+    
+    // 高危特征：SQL注入、路径遍历、敏感操作、认证失败
+    if (
+        path.toLowerCase().includes('sql') ||
+        path.includes('../') ||
+        path.includes('..\\') ||
+        path.toLowerCase().includes('admin') ||
+        path.toLowerCase().includes('phpinfo') ||
+        path.toLowerCase().includes('eval') ||
+        path.toLowerCase().includes('exec') ||
+        path.toLowerCase().includes('/etc/passwd') ||
+        status === 403 ||
+        status === 401
+    ) {
+        return 'high';
+    }
+    
+    // 中危特征：客户端错误、可疑操作、异常请求
+    if (
+        (status >= 400 && status < 500) ||
+        method === 'DELETE' ||
+        method === 'PUT' ||
+        path.toLowerCase().includes('upload') ||
+        path.toLowerCase().includes('config') ||
+        path.toLowerCase().includes('backup')
+    ) {
+        return 'medium';
+    }
+    
+    // 低危：服务器错误和其他异常
+    if (status >= 500) {
+        return 'low';
+    }
+    
+    // 未分类：正常请求或无法判断
+    return 'unknown';
+}
+
+/**
+ * 获取威胁等级的排序权重
+ * 用于排序：high > medium > low > unknown
+ */
+export function getThreatLevelWeight(level: ThreatLevel): number {
+    switch (level) {
+        case 'high': return 3;
+        case 'medium': return 2;
+        case 'low': return 1;
+        case 'unknown': return 0;
+        default: return 0;
+    }
+}
