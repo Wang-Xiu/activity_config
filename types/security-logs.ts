@@ -78,6 +78,17 @@ export interface TopAttackIP {
     last_seen: string;              // 最后发现时间
 }
 
+// 已封禁IP条目
+export interface BannedIPEntry {
+    ip: string;                     // IP地址
+    banned_at: string;              // 封禁时间
+    reason: string;                 // 封禁原因
+    ban_command: string;            // 封禁命令
+    attack_count?: number;          // 攻击次数
+    country?: string;               // 国家
+    city?: string;                  // 城市
+}
+
 // 安全日志列表参数
 export interface SecurityLogListParams {
     page?: number;
@@ -117,6 +128,8 @@ export interface SecurityApiResponse<T> {
     code: number;
     msg: string;
     data: T;
+    success?: boolean;  // 成功标志
+    message?: string;   // 错误消息（兼容字段）
 }
 
 // 日志列表响应
@@ -130,6 +143,12 @@ export interface SecurityLogListResponse {
 // Top IP列表响应
 export interface TopIPsResponse {
     top_ips: TopAttackIP[];
+}
+
+// 已封禁IP列表响应
+export interface BannedIPsResponse {
+    banned_ips: BannedIPEntry[];
+    total: number;
 }
 
 // 威胁等级选项

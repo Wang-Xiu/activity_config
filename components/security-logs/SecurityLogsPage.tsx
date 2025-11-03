@@ -18,6 +18,7 @@ import SecurityLogsTable from './SecurityLogsTable';
 import TrendChart from './TrendChart';
 import TopIPsList from './TopIPsList';
 import ThreatDistribution from './ThreatDistribution';
+import BannedIPsList from './BannedIPsList';
 
 interface SecurityLogsPageProps {
     activityId: string;
@@ -292,6 +293,9 @@ export default function SecurityLogsPage({ activityId }: SecurityLogsPageProps) 
             
             {/* Top 攻击IP - 独占一行 */}
             <TopIPsList refreshTrigger={refreshTrigger} />
+
+            {/* 已封禁IP名单 - 独占一行 */}
+            <BannedIPsList refreshTrigger={refreshTrigger} />
 
             {/* 威胁分布 */}
             <ThreatDistribution 
