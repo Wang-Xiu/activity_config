@@ -44,6 +44,10 @@ export const ENV_CONFIG = {
             
             // 数据脚本
             getDataScripts: '/index.php?r=activity/act-common/get-scripts-list&debug=1&uid=100056&auth=1',
+            // 活动用户群体
+            getActUserType: '/index.php?r=activity/act-common/get-act-user-type&debug=1&uid=100056&auth=1',
+            // 用户充值和积分情况
+            checkActUserSpend: '/index.php?r=activity/act-common/check-act-user-spend&debug=1&uid=100056&auth=1',
         },
         // 生产环境配置
         production: {
@@ -78,6 +82,10 @@ export const ENV_CONFIG = {
             
             // 数据脚本
             getDataScripts: '/index.php?r=activity/act-common/get-scripts-list&debug=1&uid=100056&auth=1',
+            // 活动用户群体
+            getActUserType: '/index.php?r=activity/act-common/get-act-user-type&debug=1&uid=100056&auth=1',
+            // 用户充值和积分情况
+            checkActUserSpend: '/index.php?r=activity/act-common/check-act-user-spend&debug=1&uid=100056&auth=1',
         }
     }
 };
@@ -95,7 +103,7 @@ export const getCurrentApiConfig = () => {
 };
 
 // 构建完整的API URL
-export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName' | 'getApiList' | 'getShenhaoList' | 'createShenhao' | 'updateShenhao' | 'deleteShenhao' | 'getSecurityLogs' | 'getSecurityStatistics' | 'getSecurityTrends' | 'getTopAttackIPs' | 'getBlackIpList' | 'getDataScripts') => {
+export const buildApiUrl = (endpoint: 'getConfig' | 'saveConfig' | 'getMonitorData' | 'getUniversalMonitorData' | 'getConfigByMidyear' | 'reloadCache' | 'updateMaterialCache' | 'saveUniversalConfig' | 'delRedisData' | 'login' | 'verifyToken' | 'getExtConfigName' | 'getApiList' | 'getShenhaoList' | 'createShenhao' | 'updateShenhao' | 'deleteShenhao' | 'getSecurityLogs' | 'getSecurityStatistics' | 'getSecurityTrends' | 'getTopAttackIPs' | 'getBlackIpList' | 'getDataScripts' | 'getActUserType' | 'checkActUserSpend') => {
     const config = getCurrentApiConfig();
     return `${config.baseUrl}${config[endpoint]}`;
 };

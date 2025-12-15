@@ -93,7 +93,7 @@ export default function LineChart({
                         top: 20,
                         right: 30,
                         left: 20,
-                        bottom: 5,
+                        bottom: data.length > 7 ? 80 : 60,
                     }}
                 >
                     {showGrid && (

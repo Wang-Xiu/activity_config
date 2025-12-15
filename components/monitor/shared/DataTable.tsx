@@ -215,7 +215,14 @@ export default function DataTable({
                                     >
                                         {column.render
                                             ? column.render(record[column.dataIndex], record)
-                                            : record[column.dataIndex]}
+                                            : (() => {
+                                                const value = record[column.dataIndex];
+                                                // 处理 NaN 或无效值，显示为 0
+                                                if (typeof value === 'number' && isNaN(value)) {
+                                                    return 0;
+                                                }
+                                                return value;
+                                            })()}
                                     </td>
                                 ))}
                             </tr>

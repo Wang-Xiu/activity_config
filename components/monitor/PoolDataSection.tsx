@@ -164,18 +164,20 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
                 sortable: true,
                 align: 'center' as const,
                 render: (value: number) => {
-                    const status = getRatioStatus(value);
+                    // 处理 NaN 或无效值，显示为 0
+                    const displayValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+                    const status = getRatioStatus(displayValue);
                     return (
                         <div className="flex items-center justify-center">
                             <div className="w-20 bg-gray-200 rounded-full h-2 mr-3">
                                 <div
                                     className={`h-2 rounded-full ${status.bgColor}`}
-                                    style={{ width: `${Math.min((value / 2) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((displayValue / 2) * 100, 100)}%` }}
                                 ></div>
                             </div>
                             <div className="text-center">
                                 <div className={`text-sm font-bold ${status.color}`}>
-                                    {value.toFixed(2)}
+                                    {displayValue.toFixed(2)}
                                 </div>
                                 <div className={`text-xs ${status.color}`}>{status.label}</div>
                             </div>
@@ -249,18 +251,20 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
                 sortable: true,
                 align: 'center' as const,
                 render: (value: number) => {
-                    const status = getRatioStatus(value);
+                    // 处理 NaN 或无效值，显示为 0
+                    const displayValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+                    const status = getRatioStatus(displayValue);
                     return (
                         <div className="flex items-center justify-center">
                             <div className="w-24 bg-gray-200 rounded-full h-3 mr-3">
                                 <div
                                     className={`h-3 rounded-full ${status.bgColor}`}
-                                    style={{ width: `${Math.min((value / 2) * 100, 100)}%` }}
+                                    style={{ width: `${Math.min((displayValue / 2) * 100, 100)}%` }}
                                 ></div>
                             </div>
                             <div className="text-center">
                                 <div className={`text-base font-bold ${status.color}`}>
-                                    {value.toFixed(2)}
+                                    {displayValue.toFixed(2)}
                                 </div>
                                 <div className={`text-xs ${status.color}`}>{status.label}</div>
                             </div>
@@ -355,7 +359,9 @@ export default function PoolDataSection({ data }: PoolDataSectionProps) {
 
                     <MetricCard
                         title="平均投入产出比"
-                        value={totalStats.avgRatio.toFixed(2)}
+                        value={(typeof totalStats.avgRatio === 'number' && !isNaN(totalStats.avgRatio)
+                            ? totalStats.avgRatio
+                            : 0).toFixed(2)}
                         color={
                             getRatioStatus(totalStats.avgRatio).status === 'optimal'
                                 ? 'green'

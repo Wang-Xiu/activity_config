@@ -3,7 +3,6 @@
 import { useMemo } from 'react';
 import {
     PVUVData,
-    DailyPVUVData,
     TableRowData,
     ChartDataPoint,
 } from '../../types/monitor-dashboard';
@@ -56,6 +55,26 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
         }));
     }, [data]);
 
+    // 计算图表高度，根据数据最大值动态调整
+    const chartHeight = useMemo(() => {
+        if (!chartData || chartData.length === 0) {
+            return 400;
+        }
+        const maxValue = Math.max(
+            ...chartData.map(item => Math.max(item.PV || 0, item.UV || 0))
+        );
+        // 基础高度400，根据最大值增加高度，但不超过800
+        // 如果最大值超过10000，增加更多高度
+        if (maxValue > 100000) {
+            return 600;
+        } else if (maxValue > 50000) {
+            return 500;
+        } else if (maxValue > 10000) {
+            return 450;
+        }
+        return 400;
+    }, [chartData]);
+
     // 表格列定义
     const columns = useMemo(
         () => [
@@ -89,7 +108,9 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
                 title: 'PV/UV比值',
                 dataIndex: 'ratio',
                 render: (_: any, record: TableRowData) => {
-                    const ratio = (record.pv as number) / (record.uv as number);
+                    const pv = record.pv as number;
+                    const uv = record.uv as number;
+                    const ratio = uv > 0 ? (pv / uv) : 0;
                     return <span className="text-gray-600">{ratio.toFixed(2)}</span>;
                 },
             },
@@ -216,7 +237,9 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
 
                     <MetricCard
                         title="平均PV/UV"
-                        value={(data.total.total_pv / data.total.total_uv).toFixed(2)}
+                        value={(data.total.total_uv > 0
+                            ? (data.total.total_pv / data.total.total_uv)
+                            : 0).toFixed(2)}
                         color="purple"
                         icon={
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,7 +323,7 @@ export default function PVUVSection({ data }: PVUVSectionProps) {
                                 strokeWidth: 3,
                             },
                         ]}
-                        height={300}
+                        height={chartHeight}
                         showLegend={true}
                         showGrid={true}
                         xAxisLabel="日期"

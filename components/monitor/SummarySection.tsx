@@ -15,13 +15,19 @@ export default function SummarySection({ data }: SummarySectionProps) {
         if (!data || !data.additional_metrics || !Array.isArray(data.additional_metrics)) {
             return [];
         }
-        return data.additional_metrics.map((metric, index) => ({
-            key: `metric-${index}`,
-            metric_name: metric.metric_name,
-            metric_value: metric.metric_value,
-            metric_unit: metric.metric_unit,
-            formatted_value: `${metric.metric_value.toLocaleString()} ${metric.metric_unit}`,
-        }));
+        return data.additional_metrics.map((metric, index) => {
+            // 处理 NaN 或无效值，显示为 0
+            const displayValue = typeof metric.metric_value === 'number' && !isNaN(metric.metric_value) 
+                ? metric.metric_value 
+                : 0;
+            return {
+                key: `metric-${index}`,
+                metric_name: metric.metric_name,
+                metric_value: displayValue,
+                metric_unit: metric.metric_unit,
+                formatted_value: `${displayValue.toLocaleString()} ${metric.metric_unit}`,
+            };
+        });
     }, [data]);
 
     // 核心指标数据
@@ -63,7 +69,9 @@ export default function SummarySection({ data }: SummarySectionProps) {
             },
             {
                 title: '总体投入产出比',
-                value: (data.period_total.overall_ratio * 100).toFixed(1),
+                value: (typeof data.period_total.overall_ratio === 'number' && !isNaN(data.period_total.overall_ratio)
+                    ? (data.period_total.overall_ratio * 100).toFixed(1)
+                    : '0.0'),
                 unit: '%',
                 color: 'purple' as const,
                 icon: (
@@ -160,16 +168,20 @@ export default function SummarySection({ data }: SummarySectionProps) {
                 title: '数值',
                 dataIndex: 'metric_value',
                 align: 'right' as const,
-                render: (value: number, record: TableRowData) => (
-                    <div className="text-right">
-                        <span className="text-2xl font-bold text-purple-600">
-                            {typeof value === 'number' && value >= 1000
-                                ? value.toLocaleString()
-                                : value}
-                        </span>
-                        <span className="ml-2 text-sm text-gray-500">{record.metric_unit}</span>
-                    </div>
-                ),
+                render: (value: number, record: TableRowData) => {
+                    // 处理 NaN 或无效值，显示为 0
+                    const displayValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+                    return (
+                        <div className="text-right">
+                            <span className="text-2xl font-bold text-purple-600">
+                                {displayValue >= 1000
+                                    ? displayValue.toLocaleString()
+                                    : displayValue}
+                            </span>
+                            <span className="ml-2 text-sm text-gray-500">{record.metric_unit}</span>
+                        </div>
+                    );
+                },
             },
             {
                 key: 'description',
@@ -293,7 +305,9 @@ export default function SummarySection({ data }: SummarySectionProps) {
                             </div>
                         </div>
                         <div className="text-2xl font-bold text-gray-900 mb-1">
-                            {data.period_total.overall_ratio.toFixed(2)}
+                            {(typeof data.period_total.overall_ratio === 'number' && !isNaN(data.period_total.overall_ratio)
+                                ? data.period_total.overall_ratio
+                                : 0).toFixed(2)}
                         </div>
                         <p className="text-sm text-gray-600">投入产出比（建议区间：1.3-1.7）</p>
                     </div>
@@ -307,10 +321,9 @@ export default function SummarySection({ data }: SummarySectionProps) {
                             </div>
                         </div>
                         <div className="text-2xl font-bold text-gray-900 mb-1">
-                            {(
-                                data.period_total.total_participation_times /
-                                data.period_total.total_participants
-                            ).toFixed(1)}
+                            {(data.period_total.total_participants > 0
+                                ? (data.period_total.total_participation_times / data.period_total.total_participants)
+                                : 0).toFixed(1)}
                         </div>
                         <p className="text-sm text-gray-600">平均每用户参与次数</p>
                     </div>

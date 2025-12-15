@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, createContext, useContext } from 'react';
+import { useState, useRef, createContext, useContext, useCallback } from 'react';
 import { ToastType, ToastContainer } from './Toast';
 
 interface ToastContextType {
@@ -31,38 +31,38 @@ export default function ToastProvider({ children }: ToastProviderProps) {
     const [toasts, setToasts] = useState<ToastType[]>([]);
     const counterRef = useRef(0);
 
-    const addToast = (message: string, type: ToastType['type'] = 'info', duration?: number) => {
+    const addToast = useCallback((message: string, type: ToastType['type'] = 'info', duration?: number) => {
         const id = `${Date.now()}-${++counterRef.current}`;
         const toast: ToastType = { id, message, type, duration };
         
         console.log('添加Toast:', toast);
         setToasts((prev) => [...prev, toast]);
-    };
+    }, []);
 
-    const removeToast = (id: string) => {
+    const removeToast = useCallback((id: string) => {
         console.log('移除Toast:', id);
         setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    };
+    }, []);
 
-    const showSuccess = (message: string, duration?: number) => {
+    const showSuccess = useCallback((message: string, duration?: number) => {
         console.log('显示成功Toast:', message);
         addToast(message, 'success', duration);
-    };
+    }, [addToast]);
     
-    const showError = (message: string, duration?: number) => {
+    const showError = useCallback((message: string, duration?: number) => {
         console.log('显示错误Toast:', message);
         addToast(message, 'error', duration);
-    };
+    }, [addToast]);
     
-    const showWarning = (message: string, duration?: number) => {
+    const showWarning = useCallback((message: string, duration?: number) => {
         console.log('显示警告Toast:', message);
         addToast(message, 'warning', duration);
-    };
+    }, [addToast]);
     
-    const showInfo = (message: string, duration?: number) => {
+    const showInfo = useCallback((message: string, duration?: number) => {
         console.log('显示信息Toast:', message);
         addToast(message, 'info', duration);
-    };
+    }, [addToast]);
 
     const contextValue: ToastContextType = {
         toasts,
