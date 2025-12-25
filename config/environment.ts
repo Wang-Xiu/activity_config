@@ -1,5 +1,5 @@
 // 环境配置
-export const ENV_CONFIG = {
+export const ENV_CONFIG = {   
     // 判断是否为生产环境
     isProduction: process.env.NODE_ENV === 'production',
     
