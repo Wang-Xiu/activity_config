@@ -1,26 +1,59 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import UserSpendDashboard from '../../../../components/monitor/UserSpendDashboard';
 import { LoadingSpinner } from '../../../../components/ui/loading';
 
 interface UserSpendPageProps {
-    params: {
-        activityId: string;
+    params?: {
+        activityId?: string;
     };
 }
 
 export const dynamic = 'force-dynamic';
 
 export default function UserSpendPage({ params }: UserSpendPageProps) {
-    const { activityId } = params;
     const router = useRouter();
+    const urlParams = useParams();
     const [mounted, setMounted] = useState(false);
+    
+    // 从多个来源获取 activityId，确保能正确获取
+    const activityId = (params?.activityId || urlParams?.activityId || '') as string;
 
     useEffect(() => {
         setMounted(true);
-    }, []);
+        
+        // 验证活动ID是否存在
+        if (!activityId) {
+            console.error('活动ID为空，无法加载用户充值和积分数据');
+        }
+    }, [activityId]);
+    
+    // 如果活动ID为空，显示错误提示
+    if (!activityId) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+                <div className="bg-white p-8 rounded-lg shadow-lg max-w-md mx-4">
+                    <div className="text-center">
+                        <div className="text-red-500 text-6xl mb-4">⚠️</div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            活动ID为空
+                        </h2>
+                        <p className="text-gray-600 mb-4">
+                            无法加载用户充值和积分数据，请返回并重新输入活动ID
+                        </p>
+                        <button
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                        >
+                            返回首页
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!mounted) {
         return (
