@@ -15,17 +15,19 @@ export async function POST(request: NextRequest) {
         // 构建API URL，将活动ID作为POST参数传递
         const apiUrl = buildApiUrl('getConfigByMidyear');
         
-        // 准备POST数据
-        const postData = {
-            act_id: activityId || '264'
-        };
+        // 准备POST数据 - PHP后端通过 $this->thisRequest->post() 读取参数，需要使用表单格式
+        const formData = new URLSearchParams();
+        formData.append('act_id', activityId || '264');
         
         console.log('正在调用API:', apiUrl);
-        console.log('POST参数:', postData);
+        console.log('POST参数 (act_id):', activityId || '264');
 
         const backendResponse = await callInternalApi(apiUrl, {
             method: 'POST',
-            body: postData,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData.toString(),
         });
 
         if (!backendResponse.ok) {
