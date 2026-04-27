@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../components/auth/AuthProvider';
 import { LoadingButton } from '../../components/ui/loading';
@@ -41,9 +41,26 @@ export default function MaterialOverridePage() {
     const [loading, setLoading] = useState(false);
     const [actIdForCover, setActIdForCover] = useState('');
     const [coverFlowLoading, setCoverFlowLoading] = useState(false);
+    const [deployEnvLabel, setDeployEnvLabel] = useState('检测中…');
 
-    const deployEnvLabel =
-        process.env.NEXT_PUBLIC_DEPLOY_ENV === 'prod' ? '正式环境' : '测试环境';
+    useEffect(() => {
+        let cancelled = false;
+        fetch('/api/config/deploy-env')
+            .then((r) => r.json())
+            .then((d: { label?: string }) => {
+                if (!cancelled && typeof d.label === 'string') {
+                    setDeployEnvLabel(d.label);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setDeployEnvLabel('测试环境');
+                }
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const handleSubmit = async () => {
         setReply('');
