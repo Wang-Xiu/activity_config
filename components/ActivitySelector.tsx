@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Activity } from '../types/activity';
 
 interface ActivitySelectorProps {
@@ -14,6 +15,7 @@ export default function ActivitySelector({
     selectedActivity,
     onActivitySelect,
 }: ActivitySelectorProps) {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -136,6 +138,23 @@ export default function ActivitySelector({
                                 )}
                             </div>
                         ))}
+                        <div className="border-t border-gray-100" role="none" />
+                        <div
+                            className="px-4 py-3 cursor-pointer hover:bg-gray-100 flex items-center"
+                            role="menuitem"
+                            onClick={() => {
+                                setIsOpen(false);
+                                router.push('/material-override');
+                            }}
+                        >
+                            <span className="text-2xl mr-3">📋</span>
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">覆盖物料配置</p>
+                                <p className="text-xs text-gray-500">
+                                    粘贴表格文本，由智谱模型生成配置内容
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

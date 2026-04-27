@@ -41,6 +41,8 @@ export interface VerifyTokenResponse {
 // 用户信息
 export interface User {
     username: string;
+    /** 展示用昵称；未返回时业务上可与 username 相同 */
+    nickname?: string;
     loginTime?: string;
 }
 

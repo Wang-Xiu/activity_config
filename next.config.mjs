@@ -1,6 +1,9 @@
 import path from 'path';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_DEPLOY_ENV: process.env.DEPLOY_ENV || 'test',
+  },
   allowedDevOrigins: [
     'http://172.18.26.11:3000'
   ],

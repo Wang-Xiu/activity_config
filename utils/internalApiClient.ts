@@ -72,11 +72,17 @@ export async function callInternalApi(url: string, config: InternalApiConfig = {
         // 添加签名参数到URL
         const signedUrl = await addSignatureToUrl(url);
         
-        const finalHeaders = {
-            'Content-Type': 'application/json',
+        const m = (method || 'GET').toUpperCase();
+        const finalHeaders: Record<string, string> = {
             'User-Agent': 'ActivityConfigSystem/1.0',
-            ...headers, // 自定义头可以覆盖默认头
+            ...headers,
         };
+        // GET/HEAD 若强行带 application/json，部分网关或 PHP 会直接 400
+        if (m !== 'GET' && m !== 'HEAD') {
+            if (!finalHeaders['Content-Type']) {
+                finalHeaders['Content-Type'] = 'application/json';
+            }
+        }
 
         console.log(`🔒 内部API签名已添加:`, {
             原始URL: url.substring(0, 100) + '...',
